@@ -1,3 +1,8 @@
+### Title: Logbook and Fish Ticket QC and Filtering
+### Purpose: Reduce the size of data frame, filter to study region, and remove any inaccuracies
+### Date Created: 10/15/2020
+
+# Load libraries -----
 library(dplyr)
 library(tidyr)
 library(reshape)
@@ -8,23 +13,22 @@ library(maps)
 library(mapdata)
 
 ##############################################################################################################
-# Load data for filtering, cleaning, etc.
+# Load data for filtering, cleaning, etc. -----
 setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
 load("../data/ODFW_data/logbooks")
 load("../data/ODFW_data/fish_tickets")
-load("../data/ODFW_data/vessel_data")
 
 ##############################################################################################################
-# Reduce the size of the logbook dataset by removing unnecessary columns
+# Reduce the size of the logbook dataset by removing unnecessary columns ----
 logbooks_reduced <- logbooks[-c(4, 5, 10, 17:20, 22, 23, 25:28, 30, 31, 33, 34, 38)] # Removes DOCNUM, FUEL, RETURNTIME, SETTIME through LORAN locations, other set and up types, MINDEPTH
 
 ##############################################################################################################
-# Change name of latitude and longitude to lat and lon, add negatives for longitude
+# Change name of latitude and longitude to lat and lon, add negatives for longitude ----
 logbooks_reduced$lat <- logbooks_reduced$SET_LAT
 logbooks_reduced$lon <- -abs((logbooks_reduced$SET_LONG)) # Add negs
 
 ##############################################################################################################
-# Filter logbooks to locations within approximately Oregon shelf fishing grounds (can look at minimum latitudes to get latitude values)
+# Filter logbooks to locations within approximately Oregon shelf fishing grounds (can look at minimum latitudes to get latitude values) ----
 logbooks_shelf <- filter(logbooks_reduced,
                lat >= 42.0000,
                lat <= 47.0000,
@@ -32,14 +36,13 @@ logbooks_shelf <- filter(logbooks_reduced,
                lon >= -125)
 
 ##############################################################################################################
-# Reformat dates and add a year column
+# Reformat dates and add a year column ----
 logbooks_shelf$year <- format(as.Date(logbooks_shelf$TOWDATE, format = "%Y-%m-%d"), '%Y')
 logbooks_shelf$year <- as.numeric(as.character((logbooks_shelf$year)))
-logbooks_shelf$year[is.na(logbooks_shelf$year)] <- 0
-logbooks_shelf <- logbooks_shelf[!(logbooks_shelf$year == 0), ]
+logbooks_shelf <- logbooks_shelf[!is.na(logbooks_shelf$year), ]
 
 ##############################################################################################################
-# Build LOESS model: play with SPAN and DEGREE of the LOESS function to find the best fit
+# Build LOESS model: play with SPAN and DEGREE of the LOESS function to find the best fit ----
 bathy.dat <- read.table("../data/etopo1.xyz", sep = '') # Load NOAA ETOPO1
 names(bathy.dat) <- c('lon', 'lat', 'depth')
 bathy.dat$depth[bathy.dat$depth > 0] <- NA # Make points on land NA
@@ -47,32 +50,32 @@ depth.loess <- loess(depth ~ lon * lat,
                      span = 0.01,
                      degree = 2,
                      data = bathy.dat) # Build LOESS
-# summary(lm(depth.loess$fitted ~ bathy.dat$depth)) # Will produce an error unless NA's are removed I think
+#summary(lm(depth.loess$fitted ~ bathy.dat$depth)) # Will produce an error unless NA's are removed I think
 
-# Predict depth on the new grid
+# Predict depth on the new grid ----
 logbooks_shelf$depth.pred <- predict(depth.loess, newdata = logbooks_shelf)
 
 ##############################################################################################################
-# Filter dataset by depth, gear
-# Remove points on land and in extremely unreasonably shallow water
+# Filter dataset by depth, gear -----
+# ***Remove points on land and in extremely unreasonably shallow water -----
 logbooks_depth <- logbooks_shelf[logbooks_shelf$depth.pred <= -10, ]
 
-# Remove depths above 200 meters
+# ***Remove depths above 200 meters ----
 logbooks_depth <- logbooks_depth[logbooks_depth$depth.pred >= -200, ]
 
-# Remove the large footrope gear
+# ***Remove the large footrope gear ----
 logbooks_gear <- logbooks_depth[!(logbooks_depth$GEAR == 391), ]
 logbooks_gear <- logbooks_gear[!is.na(logbooks_gear$GEAR), ]
 
 ##############################################################################################################
-# Create unique ID for each haul
+# Create unique ID for each haul ----
 logbooks_gear$Trawl_ID <-paste(logbooks_gear$TICKET,
                               logbooks_gear$NTOW,
                               sep = ".")
 logbooks_trawls <- logbooks_gear[!is.na(logbooks_gear$Trawl_ID), ] # Remove NA's just in case
 
 ##############################################################################################################
-# Reshape to get a species column for each haul
+# Reshape to get a species column for each haul ----
 logbooks_species <- logbooks_trawls %>% dplyr::select(Trawl_ID,
                                                       c(23:131)) # Dataframe with just the species data
 logbooks_characteristics <- logbooks_trawls %>% dplyr::select(Trawl_ID,
@@ -91,7 +94,7 @@ logbooks_characteristics <- logbook_characteristics %>% dplyr::select(Trawl_ID,
 logbooks_species <- melt(logbooks_species, id = "Trawl_ID")
 
 ###############################################################################################################
-# Put the two datasets back together
+# Put the two datasets back together -----
 match_id <- match(logbooks_species$trawl_ID,
                   logbooks_characteristics$trawl_ID)
 logbooks_species$TripID <- logbooks_characteristics$TripID[match_id]
@@ -104,34 +107,31 @@ colnames(logbooks_expanded)[11] <- "species"
 colnames(logbooks_expanded)[12] <- "species_weight"
 
 ###############################################################################################################
-# Raw data map to filter out any extra points on land
-# Create a species subset
-subset_petrale<-logbooks_expanded[logbooks_expanded$species == 'PTRL_ADJ', ] # Choose any species for this since species are now rows
-subset_petrale$pres<-1*(subset_petrale$species_weight > 0)
+# Raw data map to filter out any extra points on land ----
+# ***Create a species subset ----
+species_subset<-logbooks_expanded[logbooks_expanded$species == 'PTRL_ADJ', ] # Choose any species for this since species are now rows
 
-# Create bathymetry matrix
+# ***Create bathymetry matrix -----
 bathy.mat<-matrix(bathy.dat$depth, nrow = length(unique(bathy.dat$lon)),
                   ncol = length(unique(bathy.dat$lat)))[,order(unique(bathy.dat$lat))]
 
-# Map each decade to identify any points on land
-species_plot <- function(lower_yr, upper_yr) {
-        plot(1, 1, xlim = range(subset_petrale$lon, na.rm = TRUE) + c(-.5, .2),
-                ylim = range(subset_petrale$lat, na.rm = TRUE) + c(-.2, .2),
+# ***Map each decade to identify any points on land ----
+tow_plot <- function(lower_yr, upper_yr) {
+        plot(1, 1, xlim = range(species_subset$lon, na.rm = TRUE) + c(-.5, .2),
+                ylim = range(species_subset$lat, na.rm = TRUE) + c(-.2, .2),
                 ylab = "latitude °N",
                 xlab = "longitude °W",
-                main = paste(lower_yr,'s'))
+                main = paste(lower_yr, 's', sep = ""))
         map("worldHires",
             fill = T,
             col = "grey",
             add = T)
-        points(subset_petrale$lon[subset_petrale$year >= lower_yr &
-                                  subset_petrale$year <= upper_yr &
-                                  subset_petrale$pres == 1],
-                                  subset_petrale$lat[subset_petrale$year >= lower_yr &
-                                  subset_petrale$year <= upper_yr &
-                                  subset_petrale$pres == 1],
-                                  pch = ".",
-                                  col = 'purple')
+        points(species_subset$lon[species_subset$year >= lower_yr &
+                                  species_subset$year <= upper_yr],
+                                  species_subset$lat[species_subset$year >= lower_yr &
+                                  species_subset$year <= upper_yr],
+                                  col = 'purple',
+                                  pch = ".")
         contour(unique(bathy.dat$lon),
                 sort(unique(bathy.dat$lat)),
                 bathy.mat,
@@ -143,16 +143,16 @@ species_plot <- function(lower_yr, upper_yr) {
                 lwd = 2)
 }
 
-# Make four panel map
+# ***Make four panel map ----
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
-species_plot(1980, 1989)
-species_plot(1990, 1999)
-species_plot(2000, 2009)
-species_plot(2010, 2017)
+tow_plot(1980, 1989)
+tow_plot(1990, 1999)
+tow_plot(2000, 2009)
+tow_plot(2010, 2017)
 
 ###############################################################################################################
-# Filter out trawls still on land (identified through maps of each decade)
+# Filter out trawls still on land (identified through maps of each decade) ----
 logbooks_final <- filter(logbooks_expanded,
                 Trawl_ID != 5000406.1 &
                 Trawl_ID != 5000406.3 &
@@ -312,11 +312,9 @@ logbooks_final <- filter(logbooks_expanded,
                 Trawl_ID != 3142212.5)
 save(logbooks_final, file = "../data/ODFW_data/logbooks_corrected")
 
-
-
 ########################################################################################################################
-###########Fish Tickets#################################################################################################
-# Match fish ticket species numbers to species codes in logbooks_corrected
+### Fish Tickets ----
+# Match fish ticket species numbers to species codes ----
 combined <- logbook_lon_filtered
 match_id <- match(fish_tickets$TICKET,
                   combined$TICKET)
