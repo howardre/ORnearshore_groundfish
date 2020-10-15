@@ -5,7 +5,7 @@ library(reshape2)
 library(MASS)
 library(marmap)
 
-setwd("C:/Users/howar/Documents/Oregon State/Thesis/Logbook Data/Logbook")
+setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
 load("logbooks")
 load("fish_tickets")
 load("vessel_data")
