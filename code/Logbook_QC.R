@@ -5,10 +5,11 @@ library(reshape2)
 library(MASS)
 library(marmap)
 
+# Load data for filtering, cleaning, etc.
 setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
-load("logbooks")
-load("fish_tickets")
-load("vessel_data")
+load("../data/ODFW_data/logbooks")
+load("../data/ODFW_data/fish_tickets")
+load("../data/ODFW_data/vessel_data")
 
 log_location <- logbooks[-c(4, 5, 10, 17:20, 22, 23, 25:28, 30, 31, 33, 34, 38)]
 
