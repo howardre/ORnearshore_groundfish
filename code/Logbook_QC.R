@@ -47,19 +47,23 @@ depth.loess <- loess(depth ~ lon * lat,
                      data = bathy.dat) # Build LOESS
 # summary(lm(depth.loess$fitted ~ bathy.dat$depth)) # Will produce an error unless NA's are removed I think
 
-##############################################################################################################
-#Predict depth on the new grid
+# Predict depth on the new grid
 logbooks_shelf$depth.pred <- predict(depth.loess, newdata = logbooks_shelf)
-#remove points on land and in extremely unreasonably shallow water
-logbooks_shelf <- logbooks_shelf[logbooks_shelf$depth.pred <= -10, ]
-#remove depths above 200 meters
-logbook_final <- logbooks_shelf[logbooks_shelf$depth.pred >= -200, ]
+
+##############################################################################################################
+# Filter dataset by depth, gear
+# Remove points on land and in extremely unreasonably shallow water
+logbooks_depth <- logbooks_shelf[logbooks_shelf$depth.pred <= -10, ]
+
+# Remove depths above 200 meters
+logbooks_depth <- logbooks_depth[logbooks_depth$depth.pred >= -200, ]
 
 # Remove the large footrope gear
-logbook_final <- logbook_final[!(logbook_final$GEAR == 391), ]
-logbook_final <- logbook_final[!is.na(logbook_final$GEAR), ]
+logbooks_gear <- logbooks_depth[!(logbooks_depth$GEAR == 391), ]
+logbooks_gear <- logbooks_gear[!is.na(logbooks_gear$GEAR), ]
 
-#create unique ID for each haul
+##############################################################################################################
+# Create unique ID for each haul
 logbook_final$Trawl_ID <-
         paste(logbook_final$TICKET, logbook_final$NTOW, sep = ".")
 #logbook_final$Trawl_ID <- as.numeric(as.factor(logbook_final$Trawl_ID))
