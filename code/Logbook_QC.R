@@ -102,6 +102,96 @@ colnames(logbooks_expanded)[11] <- "species"
 colnames(logbooks_expanded)[12] <- "species_weight"
 
 ###############################################################################################################
+#### Raw data map to filter out any extra points on land
+windows(width = 28, height = 18)
+par(mfrow = c(1, 4))
+plot(1, 1,
+     xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-0.2, .2),
+     ylab = "latitude °N",
+     xlab = "longitude °W",
+     main = '1980s')
+map("worldHires",
+    fill = T,
+    col = "grey",
+    add = T)
+points(logbooks_expanded$lon[logbooks_expanded$year >= 1980 & logbooks_expanded$year <= 1989],
+       logbooks_expanded$lat[logbooks_expanded$year >= 1981 & logbooks_expanded$year <= 1989],
+       pch = ".",
+       col = 'purple')
+#contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=c(-10,-200),
+#        labcex=0.7,add=T,col='black', labels = NULL, lwd = 2)
+
+plot(1, 1, xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-.2, .2),
+     ylab = expression(paste("latitude (" ^ 0, 'N)')),
+     xlab = expression(paste("longitude (" ^ 0, 'E)')),
+     main = paste('Petrale Sole 1990s'))
+map("worldHires",
+    fill = T,
+    col = "grey",
+    add = T)
+points(logbooks_expanded$lon[logbooks_expanded$year >= 1990 & logbooks_expanded$year <= 1999],
+       logbooks_expanded$lat[logbooks_expanded$year >= 1990 & logbooks_expanded$year <= 1999],
+       pch = ".",
+       col = 'purple')
+contour( unique(bathy.dat$lon),
+         sort(unique(bathy.dat$lat)),
+         bathy.mat,
+         levels = c(-10, -200),
+         labcex = 0.7,
+         add = T,
+         col = 'black',
+         labels = NULL,
+         lwd = 2)
+
+plot(1, 1, xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-.2, .2),
+     ylab = expression(paste("latitude (" ^ 0, 'N)')),
+     xlab = expression(paste("longitude (" ^ 0, 'E)')),
+     main = paste('Petrale Sole 2000s'))
+map("worldHires",
+    fill = T,
+    col = "grey",
+    add = T)
+points(logbooks_expanded$lon[logbooks_expanded$year >= 2000 & logbooks_expanded$year <= 2009],
+       logbooks_expanded$lat[logbooks_expanded$year >= 2000 & logbooks_expanded$year <= 2009],
+       pch = ".",
+       col = 'purple')
+
+contour(unique(bathy.dat$lon),
+        sort(unique(bathy.dat$lat)),
+        bathy.mat,
+        levels = c(-10, -200),
+        labcex = 0.7,
+        add = T,
+        col = 'black',
+        labels = NULL,
+        lwd = 2)
+
+plot(1, 1, xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-.2, .2),
+     ylab = expression(paste("latitude (" ^ 0, 'N)')),
+     xlab = expression(paste("longitude (" ^ 0, 'E)')),
+     main = paste('Petrale Sole 2010s'))
+map("worldHires",
+    fill = T,
+    col = "grey",
+    add = T)
+points(logbooks_expanded$lon[logbooks_expanded$year >= 2010 & logbooks_expanded$year <= 2017],
+       logbooks_expanded$lat[logbooks_expanded$year >= 2010 & logbooks_expanded$year <= 2017],
+       pch = ".",
+       col = 'purple')
+contour( unique(bathy.dat$lon),
+         sort(unique(bathy.dat$lat)),
+         bathy.mat,
+         levels = c(-10, -200),
+         labcex = 0.7,
+         add = T,
+         col = 'black',
+         labels = NULL,
+         lwd = 2)
+###############################################################################################################
 # Filter out trawls still on land (identified through maps of each decade)
 logbooks_final <- filter(logbooks_expanded,
                 Trawl_ID != 5000406.1 &
@@ -262,96 +352,7 @@ logbooks_final <- filter(logbooks_expanded,
                 Trawl_ID != 3142212.5)
 save(logbooks_final, file = "../data/ODFW_data/logbooks_corrected")
 
-###############################################################################################################
-#### Raw data map
-windows(width = 28, height = 18)
-par(mfrow = c(1, 4))
-plot(1, 1,
-     xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-0.2, .2),
-     ylab = "latitude °N",
-     xlab = "longitude °W",
-     main = '1980s')
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_final$lon[logbooks_final$year >= 1980 & logbooks_final$year <= 1989],
-       logbooks_final$lat[logbooks_final$year >= 1981 & logbooks_final$year <= 1989],
-       pch = ".",
-       col = 'purple')
-#contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=c(-10,-200),
-#        labcex=0.7,add=T,col='black', labels = NULL, lwd = 2)
 
-plot(1, 1, xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-.2, .2),
-     ylab = expression(paste("latitude (" ^ 0, 'N)')),
-     xlab = expression(paste("longitude (" ^ 0, 'E)')),
-     main = paste('Petrale Sole 1990s'))
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_final$lon[logbooks_final$year >= 1990 & logbooks_final$year <= 1999],
-       logbooks_final$lat[logbooks_final$year >= 1990 & logbooks_final$year <= 1999],
-       pch = ".",
-       col = 'purple')
-contour( unique(bathy.dat$lon),
-         sort(unique(bathy.dat$lat)),
-         bathy.mat,
-         levels = c(-10, -200),
-         labcex = 0.7,
-         add = T,
-         col = 'black',
-         labels = NULL,
-         lwd = 2)
-
-plot(1, 1, xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-.2, .2),
-     ylab = expression(paste("latitude (" ^ 0, 'N)')),
-     xlab = expression(paste("longitude (" ^ 0, 'E)')),
-     main = paste('Petrale Sole 2000s'))
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_final$lon[logbooks_final$year >= 2000 & logbooks_final$year <= 2009],
-       logbooks_final$lat[logbooks_final$year >= 2000 & logbooks_final$year <= 2009],
-       pch = ".",
-       col = 'purple')
-
-contour(unique(bathy.dat$lon),
-        sort(unique(bathy.dat$lat)),
-        bathy.mat,
-        levels = c(-10, -200),
-        labcex = 0.7,
-        add = T,
-        col = 'black',
-        labels = NULL,
-        lwd = 2)
-
-plot(1, 1, xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-.2, .2),
-     ylab = expression(paste("latitude (" ^ 0, 'N)')),
-     xlab = expression(paste("longitude (" ^ 0, 'E)')),
-     main = paste('Petrale Sole 2010s'))
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_final$lon[logbooks_final$year >= 2010 & logbooks_final$year <= 2017],
-       logbooks_final$lat[logbooks_final$year >= 2010 & logbooks_final$year <= 2017],
-       pch = ".",
-       col = 'purple')
-contour( unique(bathy.dat$lon),
-         sort(unique(bathy.dat$lat)),
-         bathy.mat,
-         levels = c(-10, -200),
-         labcex = 0.7,
-         add = T,
-         col = 'black',
-         labels = NULL,
-         lwd = 2)
 
 ########################################################################################################################
 ###########Fish Tickets#################################################################################################
