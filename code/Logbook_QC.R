@@ -5,25 +5,25 @@ library(reshape2)
 library(MASS)
 library(marmap)
 
+##############################################################################################################
 # Load data for filtering, cleaning, etc.
 setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
 load("../data/ODFW_data/logbooks")
 load("../data/ODFW_data/fish_tickets")
 load("../data/ODFW_data/vessel_data")
 
-logbooks_reduced <- logbooks[-c(4, 5, 10, 17:20, 22, 23, 25:28, 30, 31, 33, 34, 38)]
+##############################################################################################################
+# Reduce the size of the logbook dataset by removing unnecessary columns
+logbooks_reduced <- logbooks[-c(4, 5, 10, 17:20, 22, 23, 25:28, 30, 31, 33, 34, 38)] # Removes DOCNUM, FUEL, RETURNTIME, SETTIME through LORAN locations, other set and up types, MINDEPTH
 
-# logbooks_reduced$lat <- ifelse(is.na(logbooks_reduced$SET_LAT),
-#                           logbooks_reduced$UP_LAT,logbooks_reduced$SET_LAT)
-# logbooks_reduced$lon <- ifelse(is.na(logbooks_reduced$SET_LONG),
-                           # logbooks_reduced$UP_LONG,logbooks_reduced$SET_LONG)
-
+##############################################################################################################
+# Change name of latitude and longitude to lat and lon, add negatives for longitude
 logbooks_reduced$lat <- logbooks_reduced$SET_LAT
-logbooks_reduced$lon <- -abs((logbooks_reduced$SET_LONG))
+logbooks_reduced$lon <- -abs((logbooks_reduced$SET_LONG)) # Add negs
 
+##############################################################################################################
 # Filter logbooks to depths shallower than 110 fathoms and within OR nearshore
-logbook_depth <-
-        filter(logbooks_reduced,
+logbook_depth <- filter(logbooks_reduced,
                lat >= 42.0000,
                lat <= 47.0000,
                lon <= -123.9,
