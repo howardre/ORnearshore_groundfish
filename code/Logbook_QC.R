@@ -67,17 +67,12 @@ logbooks_gear <- logbooks_gear[!is.na(logbooks_gear$GEAR), ]
 logbooks_gear$Trawl_ID <-paste(logbooks_gear$TICKET,
                               logbooks_gear$NTOW,
                               sep = ".")
-#logbooks_gear$Trawl_ID <- as.numeric(as.factor(logbooks_gear$Trawl_ID))
-logbooks_gear$Trawl_ID[is.na(logbooks_gear$Trawl_ID)] <- 0
-logbook_final <- logbooks_gear[!(logbooks_gear$Trawl_ID == 0), ]
+logbooks_trawls <- logbooks_gear[!is.na(logbooks_gear$Trawl_ID), ] # Remove NA's just in case
 
 # Reshape to get a species column for each haul
-logbook_select <-
-        logbook_final %>% dplyr::select(Trawl_ID, c(23:131))
-logbook_hauls <-
-        logbook_final %>% dplyr::select(Trawl_ID, c(1:22), c(132:141))
-logbook_relevant <-
-        logbook_hauls %>% dplyr::select(Trawl_ID,
+logbook_species <- logbooks_trawls %>% dplyr::select(Trawl_ID, c(23:131)) # Dataframe with just the species data
+logbook_characteristics <- logbooks_trawls %>% dplyr::select(Trawl_ID, c(1:22), c(132:141)) # Dataframe with just the haul characteristics
+logbook_characteristics <- logbook_characteristics %>% dplyr::select(Trawl_ID,
                                         TICKET,
                                         lon,
                                         lat,
