@@ -36,16 +36,18 @@ logbooks_shelf$year <- as.numeric(as.character((logbooks_shelf$year)))
 logbooks_shelf$year[is.na(logbooks_shelf$year)] <- 0
 logbooks_shelf <- logbooks_shelf[!(logbooks_shelf$year == 0), ]
 
-#Build LOESS model: play with SPAN and DEGREE of the LOESS function to find the best fit
-bathy.dat <- read.table('../data/ODFW_data/etopo1.xyz', sep = '')
+##############################################################################################################
+# Build LOESS model: play with SPAN and DEGREE of the LOESS function to find the best fit
+bathy.dat <- read.table('../data/etopo1.xyz', sep = '') # Load NOAA ETOPO1
 names(bathy.dat) <- c('lon', 'lat', 'depth')
-bathy.dat$depth[bathy.dat$depth > 0] <- NA
+bathy.dat$depth[bathy.dat$depth > 0] <- NA # Make points on land NA
 depth.loess <- loess(depth ~ lon * lat,
                      span = 0.01,
                      degree = 2,
-                     data = bathy.dat)
-summary(lm(depth.loess$fitted ~ bathy.dat$depth))
+                     data = bathy.dat) # Build LOESS
+# summary(lm(depth.loess$fitted ~ bathy.dat$depth)) # Will produce an error unless NA's are removed I think
 
+##############################################################################################################
 #Predict depth on the new grid
 logbooks_shelf$depth.pred <- predict(depth.loess, newdata = logbooks_shelf)
 #remove points on land and in extremely unreasonably shallow water
