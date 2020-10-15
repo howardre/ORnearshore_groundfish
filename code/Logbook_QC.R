@@ -22,19 +22,22 @@ logbooks_reduced$lat <- logbooks_reduced$SET_LAT
 logbooks_reduced$lon <- -abs((logbooks_reduced$SET_LONG)) # Add negs
 
 ##############################################################################################################
-# Filter logbooks to depths shallower than 110 fathoms and within OR nearshore
-logbook_depth <- filter(logbooks_reduced,
+# Filter logbooks to locations within approximately Oregon shelf fishing grounds (can look at minimum latitudes to get latitude values)
+logbooks_shelf <- filter(logbooks_reduced,
                lat >= 42.0000,
                lat <= 47.0000,
                lon <= -123.9,
                lon >= -125)
-logbook_depth$year <- format(as.Date(logbook_depth$TOWDATE, format = "%Y-%m-%d"), '%Y')
-logbook_depth$year <- as.numeric(as.character((logbook_depth$year)))
-logbook_depth$year[is.na(logbook_depth$year)] <- 0
-logbook_depth <- logbook_depth[!(logbook_depth$year == 0), ]
+
+##############################################################################################################
+# Reformat dates and add a year column
+logbooks_shelf$year <- format(as.Date(logbooks_shelf$TOWDATE, format = "%Y-%m-%d"), '%Y')
+logbooks_shelf$year <- as.numeric(as.character((logbooks_shelf$year)))
+logbooks_shelf$year[is.na(logbooks_shelf$year)] <- 0
+logbooks_shelf <- logbooks_shelf[!(logbooks_shelf$year == 0), ]
 
 #Build LOESS model: play with SPAN and DEGREE of the LOESS function to find the best fit
-bathy.dat <- read.table('etopo1.xyz', sep = '')
+bathy.dat <- read.table('../data/ODFW_data/etopo1.xyz', sep = '')
 names(bathy.dat) <- c('lon', 'lat', 'depth')
 bathy.dat$depth[bathy.dat$depth > 0] <- NA
 depth.loess <- loess(depth ~ lon * lat,
@@ -44,11 +47,11 @@ depth.loess <- loess(depth ~ lon * lat,
 summary(lm(depth.loess$fitted ~ bathy.dat$depth))
 
 #Predict depth on the new grid
-logbook_depth$depth.pred <- predict(depth.loess, newdata = logbook_depth)
+logbooks_shelf$depth.pred <- predict(depth.loess, newdata = logbooks_shelf)
 #remove points on land and in extremely unreasonably shallow water
-logbook_depth <- logbook_depth[logbook_depth$depth.pred <= -10, ]
+logbooks_shelf <- logbooks_shelf[logbooks_shelf$depth.pred <= -10, ]
 #remove depths above 200 meters
-logbook_final <- logbook_depth[logbook_depth$depth.pred >= -200, ]
+logbook_final <- logbooks_shelf[logbooks_shelf$depth.pred >= -200, ]
 
 # Remove the large footrope gear
 logbook_final <- logbook_final[!(logbook_final$GEAR == 391), ]
