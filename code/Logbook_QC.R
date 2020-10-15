@@ -4,6 +4,8 @@ library(reshape)
 library(reshape2)
 library(MASS)
 library(marmap)
+library(maps)
+library(mapdata)
 
 ##############################################################################################################
 # Load data for filtering, cleaning, etc.
@@ -102,95 +104,54 @@ colnames(logbooks_expanded)[11] <- "species"
 colnames(logbooks_expanded)[12] <- "species_weight"
 
 ###############################################################################################################
-#### Raw data map to filter out any extra points on land
-windows(width = 28, height = 18)
-par(mfrow = c(1, 4))
-plot(1, 1,
-     xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-0.2, .2),
-     ylab = "latitude °N",
-     xlab = "longitude °W",
-     main = '1980s')
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_expanded$lon[logbooks_expanded$year >= 1980 & logbooks_expanded$year <= 1989],
-       logbooks_expanded$lat[logbooks_expanded$year >= 1981 & logbooks_expanded$year <= 1989],
-       pch = ".",
-       col = 'purple')
-#contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=c(-10,-200),
-#        labcex=0.7,add=T,col='black', labels = NULL, lwd = 2)
+# Raw data map to filter out any extra points on land
+# Create a species subset
+subset_petrale<-logbooks_expanded[logbooks_expanded$species == 'PTRL_ADJ', ] # Choose any species for this since species are now rows
+subset_petrale$pres<-1*(subset_petrale$species_weight > 0)
 
-plot(1, 1, xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-.2, .2),
-     ylab = expression(paste("latitude (" ^ 0, 'N)')),
-     xlab = expression(paste("longitude (" ^ 0, 'E)')),
-     main = paste('Petrale Sole 1990s'))
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_expanded$lon[logbooks_expanded$year >= 1990 & logbooks_expanded$year <= 1999],
-       logbooks_expanded$lat[logbooks_expanded$year >= 1990 & logbooks_expanded$year <= 1999],
-       pch = ".",
-       col = 'purple')
-contour( unique(bathy.dat$lon),
-         sort(unique(bathy.dat$lat)),
-         bathy.mat,
-         levels = c(-10, -200),
-         labcex = 0.7,
-         add = T,
-         col = 'black',
-         labels = NULL,
-         lwd = 2)
+# Create bathymetry matrix
+bathy.mat<-matrix(bathy.dat$depth, nrow = length(unique(bathy.dat$lon)),
+                  ncol = length(unique(bathy.dat$lat)))[,order(unique(bathy.dat$lat))]
 
-plot(1, 1, xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-.2, .2),
-     ylab = expression(paste("latitude (" ^ 0, 'N)')),
-     xlab = expression(paste("longitude (" ^ 0, 'E)')),
-     main = paste('Petrale Sole 2000s'))
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_expanded$lon[logbooks_expanded$year >= 2000 & logbooks_expanded$year <= 2009],
-       logbooks_expanded$lat[logbooks_expanded$year >= 2000 & logbooks_expanded$year <= 2009],
-       pch = ".",
-       col = 'purple')
+# Map each decade to identify any points on land
+species_plot <- function(lower_yr, upper_yr) {
+        plot(1, 1, xlim = range(subset_petrale$lon, na.rm = TRUE) + c(-.5, .2),
+                ylim = range(subset_petrale$lat, na.rm = TRUE) + c(-.2, .2),
+                ylab = "latitude °N",
+                xlab = "longitude °W",
+                main = paste(lower_yr,'s'))
+        map("worldHires",
+            fill = T,
+            col = "grey",
+            add = T)
+        points(subset_petrale$lon[subset_petrale$year >= lower_yr &
+                                  subset_petrale$year <= upper_yr &
+                                  subset_petrale$pres == 1],
+                                  subset_petrale$lat[subset_petrale$year >= lower_yr &
+                                  subset_petrale$year <= upper_yr &
+                                  subset_petrale$pres == 1],
+                                  pch = ".",
+                                  col = 'purple')
+        contour(unique(bathy.dat$lon),
+                sort(unique(bathy.dat$lat)),
+                bathy.mat,
+                levels = c(-10, -200),
+                labcex = 0.7,
+                add = T,
+                col = 'black',
+                labels = NULL,
+                lwd = 2)
+}
 
-contour(unique(bathy.dat$lon),
-        sort(unique(bathy.dat$lat)),
-        bathy.mat,
-        levels = c(-10, -200),
-        labcex = 0.7,
-        add = T,
-        col = 'black',
-        labels = NULL,
-        lwd = 2)
+# Make four panel map
+windows(width=28,height=18)
+par(mfrow=c(1,4))
+species_plot(1980, 1989)
+species_plot(1990, 1999)
+species_plot(2000, 2009)
+species_plot(2010, 2017)
 
-plot(1, 1, xlim = range(logbooks_expanded$lon, na.rm = TRUE) + c(-.5, .2),
-     ylim = range(logbooks_expanded$lat, na.rm = TRUE) + c(-.2, .2),
-     ylab = expression(paste("latitude (" ^ 0, 'N)')),
-     xlab = expression(paste("longitude (" ^ 0, 'E)')),
-     main = paste('Petrale Sole 2010s'))
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
-points(logbooks_expanded$lon[logbooks_expanded$year >= 2010 & logbooks_expanded$year <= 2017],
-       logbooks_expanded$lat[logbooks_expanded$year >= 2010 & logbooks_expanded$year <= 2017],
-       pch = ".",
-       col = 'purple')
-contour( unique(bathy.dat$lon),
-         sort(unique(bathy.dat$lat)),
-         bathy.mat,
-         levels = c(-10, -200),
-         labcex = 0.7,
-         add = T,
-         col = 'black',
-         labels = NULL,
-         lwd = 2)
+
 ###############################################################################################################
 # Filter out trawls still on land (identified through maps of each decade)
 logbooks_final <- filter(logbooks_expanded,
