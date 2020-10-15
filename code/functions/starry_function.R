@@ -1,5 +1,5 @@
 # for starry flounder only
-grid_plot <- function(lower_yr, upper_yr){
+species_plot <- function(lower_yr, upper_yr){
   plot(1,1,xlim=range(subset_starry$lon,na.rm=TRUE)+c(-.5,.2),
        ylim=range(subset_starry$lat,na.rm=TRUE)+c(-.2,.2),
        ylab=expression(paste("latitude ("^0,'N)')),
