@@ -38,7 +38,7 @@ logbooks_shelf <- logbooks_shelf[!(logbooks_shelf$year == 0), ]
 
 ##############################################################################################################
 # Build LOESS model: play with SPAN and DEGREE of the LOESS function to find the best fit
-bathy.dat <- read.table('../data/etopo1.xyz', sep = '') # Load NOAA ETOPO1
+bathy.dat <- read.table("../data/etopo1.xyz", sep = '') # Load NOAA ETOPO1
 names(bathy.dat) <- c('lon', 'lat', 'depth')
 bathy.dat$depth[bathy.dat$depth > 0] <- NA # Make points on land NA
 depth.loess <- loess(depth ~ lon * lat,
@@ -69,10 +69,14 @@ logbooks_gear$Trawl_ID <-paste(logbooks_gear$TICKET,
                               sep = ".")
 logbooks_trawls <- logbooks_gear[!is.na(logbooks_gear$Trawl_ID), ] # Remove NA's just in case
 
+##############################################################################################################
 # Reshape to get a species column for each haul
-logbook_species <- logbooks_trawls %>% dplyr::select(Trawl_ID, c(23:131)) # Dataframe with just the species data
-logbook_characteristics <- logbooks_trawls %>% dplyr::select(Trawl_ID, c(1:22), c(132:141)) # Dataframe with just the haul characteristics
-logbook_characteristics <- logbook_characteristics %>% dplyr::select(Trawl_ID,
+logbooks_species <- logbooks_trawls %>% dplyr::select(Trawl_ID,
+                                                      c(23:131)) # Dataframe with just the species data
+logbooks_characteristics <- logbooks_trawls %>% dplyr::select(Trawl_ID,
+                                                              c(1:22),
+                                                              c(132:141)) # Dataframe with just the haul characteristics
+logbooks_characteristics <- logbook_characteristics %>% dplyr::select(Trawl_ID,
                                         TICKET,
                                         lon,
                                         lat,
@@ -82,23 +86,24 @@ logbook_characteristics <- logbook_characteristics %>% dplyr::select(Trawl_ID,
                                         DURATION,
                                         GEAR,
                                         DOCNUM)
-logbook_species <- melt(logbook_select, id = "Trawl_ID")
+logbooks_species <- melt(logbooks_species, id = "Trawl_ID")
 
-# put the two datasets back together
-match_id <- match(logbook_species$trawl_ID, logbook_relevant$trawl_ID)
-logbook_species$TripID <- logbook_relevant$TripID[match_id]
-combined <-
-        merge(logbook_relevant,
-              logbook_species,
-              by = "Trawl_ID",
-              all = TRUE)
-colnames(combined)[5] <- "depth"
-colnames(combined)[11] <- "species"
-colnames(combined)[12] <- "species_weight"
+###############################################################################################################
+# Put the two datasets back together
+match_id <- match(logbooks_species$trawl_ID,
+                  logbooks_characteristics$trawl_ID)
+logbooks_species$TripID <- logbooks_characteristics$TripID[match_id]
+logbooks_expanded <- merge(logbooks_characteristics,
+                           logbooks_species,
+                           by = "Trawl_ID",
+                           all = TRUE)
+colnames(logbooks_expanded)[5] <- "depth"
+colnames(logbooks_expanded)[11] <- "species"
+colnames(logbooks_expanded)[12] <- "species_weight"
 
-# Filter out trawls still on land (identified through maps of each year)
-combined_filtered <-
-        filter(combined,
+###############################################################################################################
+# Filter out trawls still on land (identified through maps of each decade)
+logbooks_final <- filter(logbooks_expanded,
                 Trawl_ID != 5000406.1 &
                 Trawl_ID != 5000406.3 &
                 Trawl_ID != 5000422.1 &
@@ -255,98 +260,63 @@ combined_filtered <-
                 Trawl_ID != 3095427.9 &
                 Trawl_ID != 3104127.3 &
                 Trawl_ID != 3142212.5)
-combined <- combined_filtered
-save(combined, file = "logbooks_corrected")
-###########Fish Tickets############################################################################################################################33
+save(logbooks_final, file = "../data/ODFW_data/logbooks_corrected")
 
-# Match fish ticket species numbers to species codes in logbooks_corrected
-combined <- logbook_lon_filtered
-
-match_id <- match(fish_tickets$TICKET, combined$TICKET)
-fish_tickets$lon <- combined$lon[match_id]
-fish_tickets$lat <- combined$lat[match_id]
-fish_tickets$depth <- combined$depth.new[match_id]
-fish_tickets$lat[is.na(fish_tickets$lat)] <- 0
-tickets_corrected <- fish_tickets[!(fish_tickets$lat == 0), ]
-
-species_index <-
-        read.csv("/Users/howar/Documents/Oregon State/Thesis/Logbook Data/Logbook/species-code_index.csv",
-                header = T)
-match_id <- match(tickets_corrected$SP_CODE, species_index$?..ODFW)
-tickets_corrected$PACFIN <- species_index$PACFIN[match_id]
-tickets_corrected$scientific_name <-
-        species_index$scientific_name[match_id]
-tickets_corrected$common_name <- species_index$common_name[match_id]
-tickets_corrected$code <- species_index$code[match_id]
-
-# Filter out non-FMP species
-FMP_tickets <-
-        tickets_corrected[!(tickets_corrected$code == "non-FMP"), ]
-save(FMP_tickets, file  = "fish_tickets_final")
-# Match vessels to their license numbers
-
-
-
-
+###############################################################################################################
 #### Raw data map
-logbook_final <- logbook_final[logbook_final$depth.pred <= -15, ]
-
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 plot(1, 1,
-        xlim = range(logbook_final$lon, na.rm = TRUE) + c(-.5, .2),
-        ylim = range(logbook_final$lat, na.rm = TRUE) + c(-0.2, .2),
-        ylab = expression(paste("latitude (" ^ 0, 'N)')),
-        xlab = expression(paste("longitude (" ^ 0, 'E)')),
-        main = paste('Petrale Sole 1980s'))
+     xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-0.2, .2),
+     ylab = "latitude °N",
+     xlab = "longitude °W",
+     main = '1980s')
 map("worldHires",
     fill = T,
     col = "grey",
     add = T)
-points(logbook_final$lon[logbook_final$year >= 1981 & logbook_final$year <= 1989],
-       logbook_final$lat[logbook_final$year >= 1981 & logbook_final$year <= 1989],
+points(logbooks_final$lon[logbooks_final$year >= 1980 & logbooks_final$year <= 1989],
+       logbooks_final$lat[logbooks_final$year >= 1981 & logbooks_final$year <= 1989],
        pch = ".",
        col = 'purple')
 #contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=c(-10,-200),
 #        labcex=0.7,add=T,col='black', labels = NULL, lwd = 2)
 
-savePol = locator(40, type = "o")
-base_polygon = data.frame(x = savePol$x, y = savePol$y)
-
-plot(1, 1, xlim = range(logbook_final$lon, na.rm = TRUE) + c(-.5, .2),
-        ylim = range(logbook_final$lat, na.rm = TRUE) + c(-.2, .2),
-        ylab = expression(paste("latitude (" ^ 0, 'N)')),
-        xlab = expression(paste("longitude (" ^ 0, 'E)')),
-        main = paste('Petrale Sole 1990s'))
+plot(1, 1, xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-.2, .2),
+     ylab = expression(paste("latitude (" ^ 0, 'N)')),
+     xlab = expression(paste("longitude (" ^ 0, 'E)')),
+     main = paste('Petrale Sole 1990s'))
 map("worldHires",
     fill = T,
     col = "grey",
     add = T)
-points(logbook_final$lon[logbook_final$year >= 1990 & logbook_final$year <= 1999],
-       logbook_final$lat[logbook_final$year >= 1990 & logbook_final$year <= 1999],
+points(logbooks_final$lon[logbooks_final$year >= 1990 & logbooks_final$year <= 1999],
+       logbooks_final$lat[logbooks_final$year >= 1990 & logbooks_final$year <= 1999],
        pch = ".",
        col = 'purple')
 contour( unique(bathy.dat$lon),
-        sort(unique(bathy.dat$lat)),
-        bathy.mat,
-        levels = c(-10, -200),
-        labcex = 0.7,
-        add = T,
-        col = 'black',
-        labels = NULL,
-        lwd = 2)
+         sort(unique(bathy.dat$lat)),
+         bathy.mat,
+         levels = c(-10, -200),
+         labcex = 0.7,
+         add = T,
+         col = 'black',
+         labels = NULL,
+         lwd = 2)
 
-plot(1, 1, xlim = range(logbook_final$lon, na.rm = TRUE) + c(-.5, .2),
-        ylim = range(logbook_final$lat, na.rm = TRUE) + c(-.2, .2),
-        ylab = expression(paste("latitude (" ^ 0, 'N)')),
-        xlab = expression(paste("longitude (" ^ 0, 'E)')),
-        main = paste('Petrale Sole 2000s'))
+plot(1, 1, xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-.2, .2),
+     ylab = expression(paste("latitude (" ^ 0, 'N)')),
+     xlab = expression(paste("longitude (" ^ 0, 'E)')),
+     main = paste('Petrale Sole 2000s'))
 map("worldHires",
     fill = T,
     col = "grey",
     add = T)
-points(logbook_final$lon[logbook_final$year >= 2000 & logbook_final$year <= 2009],
-       logbook_final$lat[logbook_final$year >= 2000 & logbook_final$year <= 2009],
+points(logbooks_final$lon[logbooks_final$year >= 2000 & logbooks_final$year <= 2009],
+       logbooks_final$lat[logbooks_final$year >= 2000 & logbooks_final$year <= 2009],
        pch = ".",
        col = 'purple')
 
@@ -360,25 +330,56 @@ contour(unique(bathy.dat$lon),
         labels = NULL,
         lwd = 2)
 
-plot(1, 1, xlim = range(logbook_final$lon, na.rm = TRUE) + c(-.5, .2),
-        ylim = range(logbook_final$lat, na.rm = TRUE) + c(-.2, .2),
-        ylab = expression(paste("latitude (" ^ 0, 'N)')),
-        xlab = expression(paste("longitude (" ^ 0, 'E)')),
-        main = paste('Petrale Sole 2010s'))
+plot(1, 1, xlim = range(logbooks_final$lon, na.rm = TRUE) + c(-.5, .2),
+     ylim = range(logbooks_final$lat, na.rm = TRUE) + c(-.2, .2),
+     ylab = expression(paste("latitude (" ^ 0, 'N)')),
+     xlab = expression(paste("longitude (" ^ 0, 'E)')),
+     main = paste('Petrale Sole 2010s'))
 map("worldHires",
     fill = T,
     col = "grey",
     add = T)
-points(logbook_final$lon[logbook_final$year >= 2010 & logbook_final$year <= 2017],
-       logbook_final$lat[logbook_final$year >= 2010 & logbook_final$year <= 2017],
+points(logbooks_final$lon[logbooks_final$year >= 2010 & logbooks_final$year <= 2017],
+       logbooks_final$lat[logbooks_final$year >= 2010 & logbooks_final$year <= 2017],
        pch = ".",
        col = 'purple')
 contour( unique(bathy.dat$lon),
-        sort(unique(bathy.dat$lat)),
-        bathy.mat,
-        levels = c(-10, -200),
-        labcex = 0.7,
-        add = T,
-        col = 'black',
-        labels = NULL,
-        lwd = 2)
+         sort(unique(bathy.dat$lat)),
+         bathy.mat,
+         levels = c(-10, -200),
+         labcex = 0.7,
+         add = T,
+         col = 'black',
+         labels = NULL,
+         lwd = 2)
+
+########################################################################################################################
+###########Fish Tickets#################################################################################################
+# Match fish ticket species numbers to species codes in logbooks_corrected
+combined <- logbook_lon_filtered
+match_id <- match(fish_tickets$TICKET,
+                  combined$TICKET)
+fish_tickets$lon <- combined$lon[match_id]
+fish_tickets$lat <- combined$lat[match_id]
+fish_tickets$depth <- combined$depth.new[match_id]
+fish_tickets$lat[is.na(fish_tickets$lat)] <- 0
+tickets_corrected <- fish_tickets[!(fish_tickets$lat == 0), ]
+
+species_index <-
+        read.csv("/Users/howar/Documents/Oregon State/Thesis/Logbook Data/Logbook/species-code_index.csv",
+                header = T)
+match_id <- match(tickets_corrected$SP_CODE,
+                  species_index$?..ODFW)
+tickets_corrected$PACFIN <- species_index$PACFIN[match_id]
+tickets_corrected$scientific_name <- species_index$scientific_name[match_id]
+tickets_corrected$common_name <- species_index$common_name[match_id]
+tickets_corrected$code <- species_index$code[match_id]
+
+# Filter out non-FMP species
+FMP_tickets <-
+        tickets_corrected[!(tickets_corrected$code == "non-FMP"), ]
+save(FMP_tickets, file  = "fish_tickets_final")
+# Match vessels to their license numbers
+
+
+
