@@ -144,13 +144,12 @@ species_plot <- function(lower_yr, upper_yr) {
 }
 
 # Make four panel map
-windows(width=28,height=18)
-par(mfrow=c(1,4))
+windows(width = 28, height = 18)
+par(mfrow = c(1, 4))
 species_plot(1980, 1989)
 species_plot(1990, 1999)
 species_plot(2000, 2009)
 species_plot(2010, 2017)
-
 
 ###############################################################################################################
 # Filter out trawls still on land (identified through maps of each decade)
