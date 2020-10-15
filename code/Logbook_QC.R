@@ -314,31 +314,24 @@ save(logbooks_final, file = "../data/ODFW_data/logbooks_corrected")
 
 ########################################################################################################################
 ### Fish Tickets ----
-# Match fish ticket species numbers to species codes ----
-combined <- logbook_lon_filtered
+# Match fish ticket species numbers to species codes and filter using logbooks ----
 match_id <- match(fish_tickets$TICKET,
-                  combined$TICKET)
-fish_tickets$lon <- combined$lon[match_id]
-fish_tickets$lat <- combined$lat[match_id]
-fish_tickets$depth <- combined$depth.new[match_id]
-fish_tickets$lat[is.na(fish_tickets$lat)] <- 0
-tickets_corrected <- fish_tickets[!(fish_tickets$lat == 0), ]
+                  logbooks_final$TICKET)
+fish_tickets$lon <- logbooks_final$lon[match_id]
+fish_tickets$lat <- logbooks_final$lat[match_id]
+fish_tickets$depth <- logbooks_final$depth.new[match_id]
+tickets_filtered <- fish_tickets[!is.na(fish_tickets$lat), ]
 
-species_index <-
-        read.csv("/Users/howar/Documents/Oregon State/Thesis/Logbook Data/Logbook/species-code_index.csv",
+########################################################################################################################
+species_index <- read.csv("../data/ODFW_data/species-code_index.csv",
                 header = T)
-match_id <- match(tickets_corrected$SP_CODE,
-                  species_index$?..ODFW)
-tickets_corrected$PACFIN <- species_index$PACFIN[match_id]
-tickets_corrected$scientific_name <- species_index$scientific_name[match_id]
-tickets_corrected$common_name <- species_index$common_name[match_id]
-tickets_corrected$code <- species_index$code[match_id]
+match_id <- match(tickets_filtered$SP_CODE,
+                  species_index$ODFW)
+tickets_filtered$PACFIN <- species_index$PACFIN[match_id]
+tickets_filtered$scientific_name <- species_index$scientific_name[match_id]
+tickets_filtered$common_name <- species_index$common_name[match_id]
+tickets_filtered$code <- species_index$code[match_id]
 
 # Filter out non-FMP species
-FMP_tickets <-
-        tickets_corrected[!(tickets_corrected$code == "non-FMP"), ]
-save(FMP_tickets, file  = "fish_tickets_final")
-# Match vessels to their license numbers
-
-
-
+tickets_final <- tickets_filtered[!(tickets_filtered$code == "non-FMP"), ]
+save(tickets_final, file  = "fish_tickets_final")
