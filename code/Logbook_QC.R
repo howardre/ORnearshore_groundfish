@@ -11,19 +11,19 @@ load("../data/ODFW_data/logbooks")
 load("../data/ODFW_data/fish_tickets")
 load("../data/ODFW_data/vessel_data")
 
-log_location <- logbooks[-c(4, 5, 10, 17:20, 22, 23, 25:28, 30, 31, 33, 34, 38)]
+logbooks_reduced <- logbooks[-c(4, 5, 10, 17:20, 22, 23, 25:28, 30, 31, 33, 34, 38)]
 
-# log_location$lat <- ifelse(is.na(log_location$SET_LAT),
-#                           log_location$UP_LAT,log_location$SET_LAT)
-# log_location$lon <- ifelse(is.na(log_location$SET_LONG),
-                           # log_location$UP_LONG,log_location$SET_LONG)
+# logbooks_reduced$lat <- ifelse(is.na(logbooks_reduced$SET_LAT),
+#                           logbooks_reduced$UP_LAT,logbooks_reduced$SET_LAT)
+# logbooks_reduced$lon <- ifelse(is.na(logbooks_reduced$SET_LONG),
+                           # logbooks_reduced$UP_LONG,logbooks_reduced$SET_LONG)
 
-log_location$lat <- log_location$SET_LAT
-log_location$lon <- -abs((log_location$SET_LONG))
+logbooks_reduced$lat <- logbooks_reduced$SET_LAT
+logbooks_reduced$lon <- -abs((logbooks_reduced$SET_LONG))
 
 # Filter logbooks to depths shallower than 110 fathoms and within OR nearshore
 logbook_depth <-
-        filter(log_location,
+        filter(logbooks_reduced,
                lat >= 42.0000,
                lat <= 47.0000,
                lon <= -123.9,
