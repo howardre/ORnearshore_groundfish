@@ -64,11 +64,12 @@ logbooks_gear <- logbooks_gear[!is.na(logbooks_gear$GEAR), ]
 
 ##############################################################################################################
 # Create unique ID for each haul
-logbook_final$Trawl_ID <-
-        paste(logbook_final$TICKET, logbook_final$NTOW, sep = ".")
-#logbook_final$Trawl_ID <- as.numeric(as.factor(logbook_final$Trawl_ID))
-logbook_final$Trawl_ID[is.na(logbook_final$Trawl_ID)] <- 0
-logbook_final <- logbook_final[!(logbook_final$Trawl_ID == 0), ]
+logbooks_gear$Trawl_ID <-paste(logbooks_gear$TICKET,
+                              logbooks_gear$NTOW,
+                              sep = ".")
+#logbooks_gear$Trawl_ID <- as.numeric(as.factor(logbooks_gear$Trawl_ID))
+logbooks_gear$Trawl_ID[is.na(logbooks_gear$Trawl_ID)] <- 0
+logbook_final <- logbooks_gear[!(logbooks_gear$Trawl_ID == 0), ]
 
 # Reshape to get a species column for each haul
 logbook_select <-
