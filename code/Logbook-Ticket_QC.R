@@ -119,8 +119,8 @@ bathy.mat<-matrix(bathy.dat$depth, nrow = length(unique(bathy.dat$lon)),
 tow_plot <- function(lower_yr, upper_yr) {
         plot(1, 1, xlim = range(species_subset$lon, na.rm = TRUE) + c(-.5, .2),
                 ylim = range(species_subset$lat, na.rm = TRUE) + c(-.2, .2),
-                ylab = "latitude Â°N",
-                xlab = "longitude Â°W",
+                ylab = "latitude °N",
+                xlab = "longitude °W",
                 main = paste(lower_yr, 's', sep = ""))
         map("worldHires",
             fill = T,
