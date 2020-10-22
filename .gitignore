@@ -8,6 +8,8 @@
 # User-specific files
 .Ruserdata
 /ODFW_data
+/manuscripts
+/final_figs
 
 # Example code in package build process
 *-Ex.R
