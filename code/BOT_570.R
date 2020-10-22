@@ -1,108 +1,136 @@
+# Title: NMS Matrices
+# This creates two matrices, with annual requiring a subset
+# Date created: 10/22/2020
+
+# Load libraries ----
 library(dplyr)
 library(fossil)
 
-setwd('/Users/howar/Documents/Oregon State/Thesis/Data visualization')
-load("trawl_data")
-setwd("C:/Users/howar/Documents/Oregon State/Thesis/Data analysis")
-load("triennial_filtered")
-load("annual_filtered")
+# Load data
+setwd('C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
+options(scipen=999)
+trawl_data <- read.delim("../data/NMFS_data/trawl_data.txt")
+triennial_filtered <- read.delim("../data/NMFS_data/triennial_filtered.txt")
+annual_filtered <- read.delim("../data/NMFS_data/annual_filtered.txt")
 
+# Annual Survey matrices ----
+# Remove the rows with NA's in the environmental variable columns
+annual_trawl <- filter(trawl_data, project != "Groundfish Triennial Shelf Survey")
+annual_trawl <- annual_trawl[!is.na(annual_trawl$bottom_temp), ]
+annual_trawl <- annual_trawl[!is.na(annual_trawl$PDO), ]
+annual_trawl <- annual_trawl[!is.na(annual_trawl$NPGO), ]
+annual_trawl <- annual_trawl[!is.na(annual_trawl$julian), ]
+annual_trawl <- annual_trawl[complete.cases(annual_trawl), ]
 
-# This creates two matrices, with annual requiring a subset
+# Can create a subsetted matrix if necessary
+# set.seed(1)
+# trawl <- annual_trawl %>% group_by(year) %>% sample_n(65)
+trawl_filter <-  c(unique(annual_trawl$trawl_id)) # Create a way to filter out the trawls with missing data
 
-#--------------------########Annual########-------------------------------------
+# Combine datasets
+annual_filtered <- filter(annual_filtered, trawl_id %in% trawl_filter) # Filter out the trawls missing environmental data
+match_id <- match(annual_filtered$trawl_id, annual_trawl$trawl_id)
+annual_filtered$PDO <- annual_trawl$PDO[match_id]
+annual_filtered$NPGO <- annual_trawl$NPGO[match_id]
+annual_filtered$julian <- annual_trawl$julian[match_id]
+annual_filtered$bottom_temp <- annual_trawl$bottom_temp[match_id]
 
-# Create stratified random sample of annual trawl data to get stations
-annual_trawl <- filter(trawl_data,project !="Groundfish Triennial Shelf Survey")
-annual_trawl <- annual_trawl[!is.na(annual_trawl$bottom_temp),]
-annual_trawl <- annual_trawl[!is.na(annual_trawl$PDO),]
-annual_trawl <- annual_trawl[!is.na(annual_trawl$NPGO),]
-annual_trawl <- annual_trawl[!is.na(annual_trawl$julian),]
-annual_trawl <- annual_trawl[complete.cases(annual_trawl),]
-trawl <- annual_trawl
-#set.seed(1)
-#trawl <- annual_trawl%>% group_by(year) %>% sample_n(65)
-trawl_filter <- c(unique(trawl$trawl_id))
+# Remove unselected samples
+annual_subset <- annual_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22)]
+annual_subset <- annual_subset[complete.cases(annual_subset),]
 
-#combine datasets
-annual_filter <- filter(annual_filter, trawl_id %in% trawl_filter)
-match_id<-match(annual_filter$trawl_id,trawl$trawl_id)
-annual_filter$PDO<-trawl$PDO[match_id]
-annual_filter$NPGO<-trawl$NPGO[match_id]
-annual_filter$julian<-trawl$julian[match_id]
-annual_filter$bottom_temp<-trawl$bottom_temp[match_id]
+# Make matrices ----
+# Species
+annual_subset <- as.data.frame(annual_subset[order(annual_subset$trawl_id),])
+annual_matrix <- create.matrix(annual_subset,
+                               tax.name = "common_name",
+                               locality = "trawl_id",
+                               time.col = NULL,
+                               time = NULL,
+                               abund = T,
+                               abund.col = "lncpue_n")
+species_matrix_annual <- as.data.frame(t(annual_matrix))
 
+# Environmental matrix
+env_filter_annual <- c(unique(annual_subset$trawl_id))
+annual_trawl <- filter(annual_trawl, trawl_id %in% env_filter_annual)
+annual_env <- select(annual_trawl,
+                     trawl_id,
+                     bottom_temp,
+                     PDO,
+                     NPGO,
+                     depth_m,
+                     latitude,
+                     year,
+                     julian)
+env_matrix_annual <- annual_env[complete.cases(annual_env),]
+env_matrix_annual <- as.data.frame(env_matrix_annual)
+rownames(env_matrix_annual) <- env_matrix_annual[, 1]
+env_matrix_annual <- env_matrix_annual[, -1]
 
-#remove unselected samples
-subset <- annual_filter[c(1,5,6,12,14,16,19,20,21,22)]
-subset <- subset[complete.cases(subset),]
+# Save as .csv and .R files
+save(species_matrix_annual, file = "species_matrix_a")
+write.csv(species_matrix_annual, 'species_matrix_a.csv')
+save(env_matrix_annual, file = "env_matrix_a")
+write.csv(env_matrix_annual, 'env_matrix_a.csv')
 
-#make matrices
-#species
-subset <- as.data.frame(subset[order(subset$trawl_id),])
-annual_matrix <- create.matrix(subset, tax.name = "common_name",
-                               locality = "trawl_id", time.col = NULL, time = NULL,
-                               abund = T, abund.col = "lncpue_n")
-annual_matrix <- as.data.frame(annual_matrix)
-annual_mat <- t(annual_matrix)
-species_matrix <- as.data.frame(annual_mat)
+# Triennial Survey matrices ----
+# Remove the rows with NA's in the environmental variable columns
+triennial_trawl <- filter(trawl_data, project != "Groundfish Slope and Shelf Combination Survey")
+triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$bottom_temp), ]
+triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$PDO), ]
+triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$NPGO), ]
+triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$julian), ]
+triennial_trawl <- triennial_trawl[complete.cases(triennial_trawl), ]
 
-#environmental
-env_filter <- c(unique(subset$trawl_id))
-trawl <- filter(trawl, trawl_id %in% env_filter)
-annual_env <- select(trawl, trawl_id, bottom_temp, PDO, NPGO, depth_m, latitude, year, julian)
-env_matrix <- annual_env[complete.cases(annual_env),]
-env_matrix <- as.data.frame(env_matrix)
-rownames(env_matrix) <- env_matrix[,1]
-env_matrix <- env_matrix[,-1]
+# Can create a subsetted matrix if necessary
+# set.seed(1)
+# trawl <- triennial_trawl %>% group_by(year) %>% sample_n(65)
+trawl_filter <-  c(unique(triennial_trawl$trawl_id)) # Create a way to filter out the trawls with missing data
 
-#save as csv
-save(species_matrix, file = "species_matrix_a")
-write.csv(species_matrix, 'species_matrix_a.csv')
-save(env_matrix, file = "env_matrix_a")
-write.csv(env_matrix, 'env_matrix_a.csv')
+# Combine datasets
+triennial_filtered <- filter(triennial_filtered, trawl_id %in% trawl_filter) # Filter out the trawls missing environmental data
+match_id <- match(triennial_filtered$trawl_id, triennial_trawl$trawl_id)
+triennial_filtered$PDO <- triennial_trawl$PDO[match_id]
+triennial_filtered$NPGO <- triennial_trawl$NPGO[match_id]
+triennial_filtered$julian <- triennial_trawl$julian[match_id]
+triennial_filtered$bottom_temp <- triennial_trawl$bottom_temp[match_id]
 
-#--------------------#############Triennial############----------------------------
+# Remove unselected samples
+triennial_subset <- triennial_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22)]
+triennial_subset <- triennial_subset[complete.cases(triennial_subset),]
 
-# Create stratified random sample of triennial trawl data to get stations
-triennial_trawl <- filter(trawl_data,project !="Groundfish Slope and Shelf Combination Survey")
-triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$bottom_temp),]
-triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$PDO),]
-triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$NPGO),]
-triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$julian),]
+# Make matrices ----
+# Species
+triennial_subset <- as.data.frame(triennial_subset[order(triennial_subset$trawl_id),])
+triennial_matrix <- create.matrix(triennial_subset,
+                               tax.name = "common_name",
+                               locality = "trawl_id",
+                               time.col = NULL,
+                               time = NULL,
+                               abund = T,
+                               abund.col = "lncpue_n")
+species_matrix_triennial <- as.data.frame(t(triennial_matrix))
 
-#combine datasets
-match_id<-match(triennial_filter$trawl_id,triennial_trawl$trawl_id)
-triennial_filter$PDO<-triennial_trawl$PDO[match_id]
-triennial_filter$NPGO<-triennial_trawl$NPGO[match_id]
-triennial_filter$julian<-triennial_trawl$julian[match_id]
-triennial_filter$bottom_temp<-triennial_trawl$bottom_temp[match_id]
+# Environmental matrix
+env_filter_triennial <- c(unique(triennial_subset$trawl_id))
+triennial_trawl <- filter(triennial_trawl, trawl_id %in% env_filter_triennial)
+triennial_env <- select(triennial_trawl,
+                     trawl_id,
+                     bottom_temp,
+                     PDO,
+                     NPGO,
+                     depth_m,
+                     latitude,
+                     year,
+                     julian)
+env_matrix_triennial <- triennial_env[complete.cases(triennial_env),]
+env_matrix_triennial <- as.data.frame(env_matrix_triennial)
+rownames(env_matrix_triennial) <- env_matrix_triennial[, 1]
+env_matrix_triennial <- env_matrix_triennial[, -1]
 
-#remove unselected samples
-subset <- triennial_filter[c(1,5,6,12,14,16,19,20,21,22)]
-subset <- subset[complete.cases(subset),]
-
-#make matrices
-#species
-subset <- as.data.frame(subset[order(subset$trawl_id),])
-triennial_matrix <- create.matrix(subset, tax.name = "common_name",
-                               locality = "trawl_id", time.col = NULL, time = NULL,
-                               abund = T, abund.col = "lncpue_n")
-triennial_matrix <- as.data.frame(triennial_matrix)
-triennial_mat <- t(triennial_matrix)
-species_matrix <- as.data.frame(triennial_mat)
-
-#environmental
-env_filter <- c(unique(subset$trawl_id))
-triennial_trawl <- filter(triennial_trawl, trawl_id %in% env_filter)
-triennial_env <- select(triennial_trawl, trawl_id, bottom_temp, PDO, NPGO, depth_m, latitude, year, julian)
-env_matrix <- na.omit(triennial_env)
-env_matrix <- as.data.frame(env_matrix)
-rownames(env_matrix) <- env_matrix[,1]
-env_matrix <- env_matrix[,-1]
-
-#save as csv
-save(species_matrix, file = "species_matrix_t")
-write.csv(species_matrix, 'species_matrix_t.csv')
-save(env_matrix, file = "env_matrix_t")
-write.csv(env_matrix, 'env_matrix_t.csv')
+# Save as .csv and .R files
+save(species_matrix_triennial, file = "species_matrix_t")
+write.csv(species_matrix_triennial, 'species_matrix_t.csv')
+save(env_matrix_triennial, file = "env_matrix_t")
+write.csv(env_matrix_triennial, 'env_matrix_t.csv')
