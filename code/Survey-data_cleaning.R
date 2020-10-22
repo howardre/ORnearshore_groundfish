@@ -1,3 +1,8 @@
+# Title: NMFS Groundfish Survey Data Cleaning
+# Purpose: Filter and prepare survey data for use in analyses
+# Date created: 10/22/2020
+
+# Load libraries ----
 library(dplyr)
 library(tibble)
 library(ggplot2)
@@ -7,63 +12,85 @@ library(data.table)
 library(zoo)
 library(lubridate)
 
-setwd('/Users/howar/Documents/Oregon State/Thesis/Data visualization')
-load('PDO')
-NPGO <- read.csv("NPGO.csv")
+# Load data
+setwd('C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
+load('../data/Environmental_data/PDO')
+NPGO <- read.csv("../data/Environmental_data/NPGO.csv")
+species_data <- read.csv("../data/NMFS_data/species_data_raw.csv", na.strings = c("", NA))
+scientific_name_id <- read.csv("../data/NMFS_data/Scientific_id.csv", header = T)
+species_pacfin <- read.csv("../data/NMFS_data/Fish_class.csv", header = T)
+trawl_data <- read.csv("../data/NMFS_data/trawl_characteristics.csv", header = T)
 
-#renames blank spaces to NA
-spp_depth_1 <- read.csv("~/Oregon State/Thesis/Data visualization/spp.total.csv", na.strings = c("", NA))
-
-#limited to less than 200m depth
-spp_depth <- filter(spp_depth_1, depth_m <= 200.0)
+# Limit to less than 200 m depth
+species_depth <- filter(species_data, depth_m <= 200.0)
 
 #removed certain columns, add classification (if wanted)
-spp_select <- select(spp_depth, common_name, date_yyyymmdd, depth_m, latitude_dd, longitude_dd, performance, scientific_name, total_catch_numbers, total_catch_wt_kg, cpue_numbers_per_ha_der, cpue_kg_per_ha_der, year, trawl_id )
+species_limited <- select(species_depth,
+                          common_name,
+                          date_yyyymmdd,
+                          depth_m,
+                          latitude_dd,
+                          longitude_dd,
+                          performance,
+                          scientific_name,
+                          total_catch_numbers,
+                          total_catch_wt_kg,
+                          cpue_numbers_per_ha_der,
+                          cpue_kg_per_ha_der,
+                          year,
+                          trawl_id )
 
-#removes unidentified spp
-spp_named <- spp_depth[!is.na(spp_select$scientific_name),]
+# Remove unidentified species
+species_identified <- species_limited[!is.na(species_limited$scientific_name), ]
 
-#narrow to Oregon coast
-#narrow to about ~200m isobath
-spp_OR1 <- filter(spp_named, latitude_dd >= 41.0000, latitude_dd <= 48.0000)
+# Remove extraneous surveys
+# Limit to Oregon fishing grounds
+unique(species_oregon$project)
+species_oregon <- filter(species_identified,
+                         latitude_dd >= 41.0000,
+                         latitude_dd <= 48.0000,
+                         project != "Groundfish Slope Survey",
+                         project != "Hypoxia Study",
+                         project != "Groundfish Shelf Survey",
+                         project != "Triennial Shelf Groundfish Survey: Canada",
+                         project != "Fishing Power Comparison Study",
+                         project != "Opportunistic Bottom Sample",
+                         project != "Fishing Gear Experiment",
+                         project != "Santa Barbara Basin Study",
+                         project != "Video Study",
+                         project != "Nonstandard Sampling",
+                         project != "Opportunistic Bottom Sampling",
+                         project != "AFSC/RACE Slope Survey",
+                         project != "Fishing Power Comparative Study",
+                         program != "AFSC/RACE Triennial Shelf Survey (by NWFSC/FRAM)",
+                         scientific_name != "Merluccius productus",
+                         performance != "Unsatisfactory")
 
-#remove hypoxia, slope, and video survey and hake (shelf survey = 2001, shelf & slope combo = post-2003 annual)
-unique(spp_OR1$project)
-spp_OR <- filter(spp_OR1,  project != "Groundfish Slope Survey",
-                 project != "Hypoxia Study",
-                 project != "Groundfish Shelf Survey",
-                 project != "Triennial Shelf Groundfish Survey: Canada",
-                 project != "Fishing Power Comparison Study",
-                 project != "Opportunistic Bottom Sample",
-                 project != "Fishing Gear Experiment",
-                 project != "Santa Barbara Basin Study",
-                 project != "Video Study",
-                 project != "Nonstandard Sampling",
-                 project != "Opportunistic Bottom Sampling",
-                 project != "AFSC/RACE Slope Survey",
-                 project != "Fishing Power Comparative Study",
-                 program != "AFSC/RACE Triennial Shelf Survey (by NWFSC/FRAM)",
-                 scientific_name != "Merluccius productus",
-                 performance != "Unsatisfactory")
+# Log + 1 of CPUE weight and number
+species_oregon$lncpue <- log(species_oregon$cpue_kg_per_ha_der + 1)
+species_oregon$lncpue_n <- log(species_oregon$cpue_numbers_per_ha_der + 1)
 
-#log+1 of cpue weight and number
-spp_OR$lncpue<-log(spp_OR$cpue_kg_per_ha_der + 1)
-spp_OR$lncpue_n <- log(spp_OR$cpue_numbers_per_ha_der + 1)
-
-#create separate fish and invertebrate datasets, keep only fish
-Scientific_id <- read.csv("~/Oregon State/Thesis/Data visualization/Scientific_id.csv", header = T)
-combined <- sort(union(levels(spp_OR$scientific_name), levels(Scientific_id$scientific_name)))
-OR_labeled <- left_join(mutate(spp_OR, scientific_name=factor(scientific_name, levels=combined)),
-                        mutate(Scientific_id, scientific_name=factor
-                               (scientific_name, levels = combined)))
-OR_fish1 <- filter(OR_labeled, ID=='fish')
+# Create separate fish and invertebrate datasets, keep only fish
+combined <- sort(union(levels(species_oregon$scientific_name),
+                       levels(scientific_name_id$scientific_name)))
+OR_labeled <- left_join(mutate(spp_OR,
+                               scientific_name=factor(scientific_name,
+                                                      levels=combined)),
+                        mutate(scientific_name_id,
+                               scientific_name=factor(scientific_name,
+                                                      levels = combined)))
+OR_fish1 <- filter(OR_labeled, ID == 'fish')
 OR_fish1$ID <- NULL
-fish_pacfin <- read.csv("~/Oregon State/Thesis/Data visualization/Fish_class.csv", header = T)
-combined1 <- sort(union(levels(OR_fish1$scientific_name), levels(fish_pacfin$scientific_name)))
-OR_fish <- left_join(mutate(OR_fish1, scientific_name=factor(scientific_name, levels=combined1)),
-                        mutate(fish_pacfin, scientific_name=factor
-                               (scientific_name, levels = combined1)))
-OR_fish$cpue_kg_per_ha_der[is.na(OR_fish$cpue_kg_per_ha_der)]<-0
+
+combined1 <- sort(union(levels(OR_fish1$scientific_name),
+                        levels(fish_pacfin$scientific_name)))
+OR_fish <- left_join(mutate(OR_fish1,
+                            scientific_name = factor(scientific_name,
+                                                     levels=combined1)),
+                     mutate(fish_pacfin,
+                            scientific_name = factor(scientific_name,
+                                                     levels = combined1)))
+OR_fish$cpue_kg_per_ha_der[is.na(OR_fish$cpue_kg_per_ha_der)] <- 0
 
 #rename columns
 names(OR_fish)[names(OR_fish)=="cpue_kg_per_ha_der"] <- "cpue_kg"
@@ -73,15 +100,15 @@ names(OR_fish)[names(OR_fish)=="longitude_dd"] <- "longitude"
 names(OR_fish)[names(OR_fish)=="pacfin_spid"] <- "pacfin"
 
 # remove unnecessary columns
-OR_fish <- OR_fish[-c(1,9,10,11,14,15,17,18,19,22,23,25,28,31)]
+OR_fish <- OR_fish[-c(1, 9, 10, 11, 14, 15, 17, 18, 19, 22, 23, 25, 28, 31)]
 
-#save to text file
+# Save to text file
 save(OR_fish, file = "OR_fish")
-write.table(OR_fish,"OR_fish.txt",sep="\t",row.names=FALSE)
+write.table(OR_fish, "OR_fish.txt",sep="\t", row.names=FALSE)
 
 #Clean up trawl dataset
-trawl_dat <- read.csv("~/Oregon State/Thesis/Data visualization/trawl_characteristics.csv")
-trawl_data_lat <- filter(trawl_dat, latitude_dd >= 41.0000, latitude_dd <= 48.0000, 
+
+trawl_data_lat <- filter(trawl_dat, latitude_dd >= 41.0000, latitude_dd <= 48.0000,
                          project != "Groundfish Slope Survey",
                          project != "Hypoxia Study",
                          project != "Groundfish Shelf Survey",
@@ -143,7 +170,7 @@ barplot(sort(sp.cpue, decreasing = T)[1:10])
 sc.name <- unique(spp_OR$scientific_name)
 length(sc.name)
 write.table(sc.name,'sc_name.txt')
-#df = 
+#df =
 
 match.id <- match(id, spp_name)
 classification <- id[match.id]
