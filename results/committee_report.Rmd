@@ -16,8 +16,8 @@ library(dplyr)
 library(plyr)
 
 setwd('/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
-read.delim('../data/NMFS_data/trawl_data.txt')
-read.delim('../data/NMFS_data/OR_fish.txt')
+trawl_data <- read.delim('../data/NMFS_data/trawl_data.txt')
+OR_fish <- read.delim('../data/NMFS_data/OR_fish.txt')
 load('../data/bathy.dat')
 load('../data/bathy.mat')
 ```
@@ -30,7 +30,7 @@ subset_species <- function(species, catch, tows){
   match_id <- match(tows$trawl_id, OR_subset$trawl_id)
   tows$lncpue <- OR_subset$lncpue_n[match_id]
   tows$lncpue[is.na(tows$lncpue)] <- 0
-  selected_species <- select(tows, julian, year, lncpue, latitude, longitude)
+  selected_species <- select(tows, julian, year, lncpue, latitude, longitude, bottom_temp, depth_m)
   selected_species <- na.omit(selected_species)
   selected_species$pres <- 1 * (selected_species$lncpue > 0)
   return(selected_species)
@@ -47,12 +47,55 @@ petrale_subset <- subset_species("Eopsetta jordani", OR_fish, trawl_data)
 sablefish_subset <- subset_species("Anoplopoma fimbria", OR_fish, trawl_data)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+I'm also working on improving the quality of the thesis figures.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+gam<-gam(lncpue~s(year, k = 5)+s(longitude,latitude) + s(depth_m) + s(julian, k = 5) + 
+             s(bottom_temp, k = 5),data=rex_subset[rex_subset$lncpue>0,])
+plot(gam,
+  pages = 0,
+  select = 1,
+  shade = T,
+  main = "Year",
+  xlab = "",
+  ylab = "",
+  seWithMean = T,
+  scale = 0,
+  cex.axis = 1.5,
+  cex.main = 2)
+plot(gam,
+  pages = 0,
+  select = 3,
+  shade = T,
+  main = "Depth",
+  xlab = "",
+  ylab = "",
+  seWithMean = T,
+  scale = 0,
+  cex.axis = 1.5,
+  cex.main = 2)
+plot(gam,
+  pages = 0,
+  select = 4,
+  shade = T,
+  main = "Day of Year",
+  xlab = "",
+  ylab = "",
+  seWithMean = T,
+  scale = 0,
+  cex.axis = 1.5,
+  cex.main = 2)
+plot(gam,
+  pages = 0,
+  select = 5,
+  shade = T,
+  main = "Temperature",
+  xlab = "",
+  ylab = "",
+  seWithMean = T,
+  scale = 0,
+  cex.axis = 1.5,
+  cex.main = 2)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
