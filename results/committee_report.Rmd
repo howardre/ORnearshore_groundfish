@@ -1,0 +1,58 @@
+---
+title: "Committee Report"
+author: "Rebecca Howard"
+date: "10/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(maps)
+library(mapdata)
+library(fields)
+library(plotfunctions)
+library(mgcv)
+library(dplyr)
+library(plyr)
+
+setwd('/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
+read.delim('../data/NMFS_data/trawl_data.txt')
+read.delim('../data/NMFS_data/OR_fish.txt')
+load('../data/bathy.dat')
+load('../data/bathy.mat')
+```
+
+To prepare the figures for the manuscript submission, I've been finding ways to speed up my old code
+I first did this with creating species subsets, by writing a function to do it for me
+```{r}
+subset_species <- function(species, catch, tows){
+  OR_subset <- catch[catch$scientific_name == species, ]
+  match_id <- match(tows$trawl_id, OR_subset$trawl_id)
+  tows$lncpue <- OR_subset$lncpue_n[match_id]
+  tows$lncpue[is.na(tows$lncpue)] <- 0
+  selected_species <- select(tows, julian, year, lncpue, latitude, longitude)
+  selected_species <- na.omit(selected_species)
+  selected_species$pres <- 1 * (selected_species$lncpue > 0)
+  return(selected_species)
+}
+
+# Eight species of interest
+arrowtooth_subset <- subset_species("Atheresthes stomias", OR_fish, trawl_data)
+english_subset <- subset_species("Parophrys vetulus", OR_fish, trawl_data)
+sanddab_subset <- subset_species("Citharichthys sordidus", OR_fish, trawl_data)
+dover_subset <- subset_species("Microstomus pacificus", OR_fish, trawl_data)
+rex_subset <- subset_species("Glyptocephalus zachirus", OR_fish, trawl_data)
+lingcod_subset <- subset_species("Ophiodon elongatus", OR_fish, trawl_data)
+petrale_subset <- subset_species("Eopsetta jordani", OR_fish, trawl_data)
+sablefish_subset <- subset_species("Anoplopoma fimbria", OR_fish, trawl_data)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
