@@ -19,4 +19,4 @@ Climate indices used are also available
 
 ### The effects of climate, oceanography, and habitat on the distribution and abundance of northern California Current continental shelf groundfishes
 #### Non-metric multidimensional scaling (NMS)
-![Survey ordinations](/final_figs/annual_ord_final.jpg){:height = "50%" width = "50%"}
+![Survey ordinations|50%](/final_figs/annual_ord_final.jpg)
