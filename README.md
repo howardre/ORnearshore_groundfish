@@ -19,5 +19,15 @@ Climate indices used are also available
 
 ### The effects of climate, oceanography, and habitat on the distribution and abundance of northern California Current continental shelf groundfishes
 #### Non-metric multidimensional scaling (NMS)
-![Survey ordinations|1038x919,20%](/final_figs/annual_ord_final.jpg)
+NMS was used to investigate changes in community composition over time
+- Code can 
 
+#### Generalized additive models (GAM)
+##### Stationary formulation
+
+
+##### Nonstationary formulation/threshold GAM (TGAM)
+
+
+### Utility of combining fishery-independent and fishery-dependent data for spatiotemporal analyses in Oregon's groundfish fishery
+This section is a work-in-progress and uses the confidential ODFW data
