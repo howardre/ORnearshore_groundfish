@@ -32,7 +32,7 @@ lingcod_subset <- subset_species("Ophiodon elongatus", OR_fish, trawl_data)
 petrale_subset <- subset_species("Eopsetta jordani", OR_fish, trawl_data)
 sablefish_subset <- subset_species("Anoplopoma fimbria", OR_fish, trawl_data)
 
-# Find thresholds for all 8 species
+# Find thresholds for all 8 species ----
 years <- sort(unique(arrowtooth_subset$year))[4:22]
 arrowtooth_tgam <- get_tgam(arrowtooth_subset, years)
 english_tgam <- get_tgam(english_subset, years)
@@ -43,7 +43,35 @@ lingcod_tgam <- get_tgam(lingcod_subset, years)
 petrale_tgam <- get_tgam(petrale_subset, years)
 sablefish_tgam <- get_tgam(sablefish_subset, years)
 
-# Plot AIC for all species
+# View summary statistics for reference [[1]] and final [[2]] TGAMs ----
+summary(arrowtooth_tgam[[1]])
+summary(arrowtooth_tgam[[2]])
+summary(english_tgam[[1]])
+summary(english_tgam[[2]])
+summary(sanddab_tgam[[1]])
+summary(sanddab_tgam[[2]])
+summary(dover_tgam[[1]])
+summary(dover_tgam[[2]])
+summary(rex_tgam[[1]])
+summary(rex_tgam[[2]])
+summary(lingcod_tgam[[1]])
+summary(lingcod_tgam[[2]])
+summary(petrale_tgam[[1]])
+summary(petrale_tgam[[2]])
+summary(sablefish_tgam[[1]])
+summary(sablefish_tgam[[2]])
+
+# Save the results ----
+save(arrowtooth_tgam, file = "../results/TGAM/arrowtooth_flounder/arrowtooth_tgam.RData")
+save(english_tgam, file = "../results/TGAM/english_sole/english_tgam.RData")
+save(sanddab_tgam, file = "../results/TGAM/pacific_sanddab/sanddab_tgam.RData")
+save(dover_tgam, file = "../results/TGAM/dover_sole/dover_tgam.RData")
+save(rex_tgam, file = "../results/TGAM/rex_sole/rex_tgam.RData")
+save(lingcod_tgam, file = "../results/TGAM/lingcod/lingcod_tgam.RData")
+save(petrale_tgam, file = "../results/TGAM/petrale_sole/petrale_tgam.RData")
+save(sablefish_tgam, file = "../results/TGAM/sablefish/sablefish_tgam.RData")
+
+# Plot AIC for all species ----
 windows()
 par(family = "serif")
 plot_AIC(arrowtooth_tgam, years)
@@ -54,3 +82,4 @@ plot_AIC(rex_tgam, years)
 plot_AIC(lingcod_tgam, years)
 plot_AIC(petrale_tgam, years)
 plot_AIC(sablefish_tgam, years)
+
