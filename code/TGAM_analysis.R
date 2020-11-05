@@ -83,3 +83,62 @@ plot_AIC(lingcod_tgam, years)
 plot_AIC(petrale_tgam, years)
 plot_AIC(sablefish_tgam, years)
 
+# Validate the results ----
+nlat = 40#determine resolution of grid
+nlon = 30
+latd = seq(41, 48, length.out = nlat)
+lond = seq(-125, -123.9, length.out = nlon)
+
+species_subset_before <- expand.grid(latd, lond)
+names(species_subset_before) <- c("latitude", "longitude")
+species_subset_before$year <- 2010
+species_subset_before$julian <- 180
+species_subset_before$thr <- "before"
+
+#Calculate distance of each grid point to closest 'positive observation'
+species_subset_before$dist <- NA
+for (k in 1:nrow(species_subset_before)) {
+  dist <-
+    distance.function(
+      species_subset_before$latitude[k],
+      species_subset_before$longitude[k],
+      species_subset$latitude,
+      species_subset$longitude
+    )
+  species_subset_before$dist[k] <- min(dist)
+}
+
+pred <-
+  predict(gam.real,
+          newdata = species_subset_before,
+          se.fit = TRUE,
+          type = 'response')
+pred.mean <- pred[[1]]
+pred.se <- pred[[2]]
+pred.mean[species_subset_before$dist > 10000] <- NA
+pred.se[species_subset_before$dist > 10000] <- NA
+species_subset_after <- expand.grid(latd, lond)
+names(species_subset_after) <- c("latitude", "longitude")
+species_subset_after$year <- 2012
+species_subset_after$julian <- 180
+species_subset_after$thr <- "after"
+pred.1 <-
+  predict(gam.real,
+          newdata = species_subset_after,
+          se.fit = TRUE,
+          type = 'response')
+pred.mean.1 <- pred.1[[1]]
+pred.se.1 <- pred.1[[2]]
+pred.mean.1[species_subset_before$dist > 10000] <- NA
+pred.se.1[species_subset_before$dist > 10000] <- NA
+pred.mean.up <- pred.mean + 1.645 * pred.se
+pred.mean.down <- pred.mean - 1.645 * pred.se
+pred.mean.up.1 <- pred.mean.1 + 1.645 * pred.se.1
+pred.mean.down.1 <- pred.mean.1 - 1.645 * pred.se.1
+
+# gives an index, then plot the true and false
+significant.low <- pred.mean.up.1 < pred.mean.down
+significant.high <- pred.mean.down.1 > pred.mean.up
+
+sum(1 * significant.low)
+sum(1 * significant.high)
