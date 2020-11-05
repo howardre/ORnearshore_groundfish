@@ -35,13 +35,21 @@ sablefish_subset <- subset_species("Anoplopoma fimbria", OR_fish, trawl_data)
 # Find thresholds for all 8 species ----
 years <- sort(unique(arrowtooth_subset$year))[4:22]
 arrowtooth_tgam <- get_tgam(arrowtooth_subset, years)
+arrowtooth_subset$thr <-  ifelse(arrowtooth_subset$year <= arrowtooth_tgam[[3]], 'before', 'after')
 english_tgam <- get_tgam(english_subset, years)
+english_subset$thr <-  ifelse(english_subset$year <= english_tgam[[3]], 'before', 'after')
 sanddab_tgam <- get_tgam(sanddab_subset, years)
+sanddab_subset$thr <-  ifelse(sanddab_subset$year <= sanddab_tgam[[3]], 'before', 'after')
 dover_tgam <- get_tgam_woyear(dover_subset, years)
+dover_subset$thr <-  ifelse(dover_subset$year <= dover_tgam[[3]], 'before', 'after')
 rex_tgam <- get_tgam_woyear(rex_subset, years)
+rex_subset$thr <-  ifelse(rex_subset$year <= rex_tgam[[3]], 'before', 'after')
 lingcod_tgam <- get_tgam(lingcod_subset, years)
+lingcod_subset$thr <-  ifelse(lingcod_subset$year <= lingcod_tgam[[3]], 'before', 'after')
 petrale_tgam <- get_tgam(petrale_subset, years)
+petrale_subset$thr <-  ifelse(petrale_subset$year <= petrale_tgam[[3]], 'before', 'after')
 sablefish_tgam <- get_tgam(sablefish_subset, years)
+sablefish_subset$thr <-  ifelse(sablefish_subset$year <= sablefish_tgam[[3]], 'before', 'after')
 
 # View summary statistics for reference [[1]] and final [[2]] TGAMs ----
 summary(arrowtooth_tgam[[1]])
@@ -81,64 +89,80 @@ plot_AIC(dover_tgam, years)
 plot_AIC(rex_tgam, years)
 plot_AIC(lingcod_tgam, years)
 plot_AIC(petrale_tgam, years)
-plot_AIC(sablefish_tgam, years)
+plot_AIC(sablefish_tgam, years) # need to figure out how to select different threshold year
 
 # Validate the results ----
-nlat = 40#determine resolution of grid
-nlon = 30
-latd = seq(41, 48, length.out = nlat)
-lond = seq(-125, -123.9, length.out = nlon)
-
-species_subset_before <- expand.grid(latd, lond)
-names(species_subset_before) <- c("latitude", "longitude")
-species_subset_before$year <- 2010
-species_subset_before$julian <- 180
-species_subset_before$thr <- "before"
-
-#Calculate distance of each grid point to closest 'positive observation'
-species_subset_before$dist <- NA
-for (k in 1:nrow(species_subset_before)) {
-  dist <-
-    distance.function(
-      species_subset_before$latitude[k],
-      species_subset_before$longitude[k],
-      species_subset$latitude,
-      species_subset$longitude
-    )
-  species_subset_before$dist[k] <- min(dist)
+# Calculate distance of each grid point to closest 'positive observation'
+# Gives an index, then plot the true and false to get areas of sigificant increase or decrease
+tgam_prediction <- function(tgam, df) {
+  nlat = 40 #determine the resolution of the grid
+  nlon = 30
+  latd = seq(41, 48, length.out = nlat)
+  lond = seq(-125,-123.9, length.out = nlon)
+  subset_before <- expand.grid(latd, lond)
+  names(subset_before) <- c("latitude", "longitude")
+  subset_before$year <- 2010 # change depending on species
+  subset_before$julian <- 180
+  subset_before$thr <- "before"
+  subset_before$dist <- NA
+  for (k in 1:nrow(subset_before)) {
+    dist <- distance_function(
+      subset_before$latitude[k],
+      subset_before$longitude[k],
+      df$latitude,
+      df$longitude)
+    subset_before$dist[k] <- min(dist)
+  }
+  before_prediction <- predict(tgam[[2]],
+                               newdata = subset_before,
+                               se.fit = TRUE,
+                               type = 'response')
+  pred_mean_before <- before_prediction[[1]]
+  pred_se_before <- before_prediction[[2]]
+  pred_mean_before[subset_before$dist > 10000] <- NA
+  pred_se_before[subset_before$dist > 10000] <- NA
+  subset_after <- expand.grid(latd, lond)
+  names(subset_after) <- c("latitude", "longitude")
+  subset_after$year <- 2015
+  subset_after$julian <- 180
+  subset_after$thr <- "after"
+  after_prediction <- predict(tgam[[2]],
+                               newdata = subset_after,
+                               se.fit = TRUE,
+                               type = 'response')
+  pred_mean_after <- after_prediction[[1]]
+  pred_se_after <- after_prediction[[2]]
+  pred_mean_after[subset_before$dist > 10000] <- NA
+  pred_se_after[subset_before$dist > 10000] <- NA
+  pred_mean_up_before <- pred_mean_before + 1.645 * pred_se_before
+  pred_mean_down_before <- pred_mean_before - 1.645 * pred_se_before
+  pred_mean_up_after <- pred_mean_after + 1.645 * pred_se_after
+  pred_mean_down_after <- pred_mean_after - 1.645 * pred_se_after
+  significant_low <- pred_mean_up_after < pred_mean_down_before
+  significant_high <- pred_mean_down_after > pred_mean_up_before
+  return_list <- data.frame(significant_high, significant_low)
 }
+arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_subset)
+english_CI <- tgam_prediction(english_tgam, english_subset)
+sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_subset)
+dover_CI <- tgam_prediction(dover_tgam, dover_subset)
+rex_CI <- tgam_prediction(rex_tgam, rex_subset)
+lingcod_CI <- tgam_prediction(lingcod_tgam, lingcod_subset)
+petrale_CI <- tgam_prediction(petrale_tgam, petrale_subset)
+sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_subset)
 
-pred <-
-  predict(gam.real,
-          newdata = species_subset_before,
-          se.fit = TRUE,
-          type = 'response')
-pred.mean <- pred[[1]]
-pred.se <- pred[[2]]
-pred.mean[species_subset_before$dist > 10000] <- NA
-pred.se[species_subset_before$dist > 10000] <- NA
-species_subset_after <- expand.grid(latd, lond)
-names(species_subset_after) <- c("latitude", "longitude")
-species_subset_after$year <- 2012
-species_subset_after$julian <- 180
-species_subset_after$thr <- "after"
-pred.1 <-
-  predict(gam.real,
-          newdata = species_subset_after,
-          se.fit = TRUE,
-          type = 'response')
-pred.mean.1 <- pred.1[[1]]
-pred.se.1 <- pred.1[[2]]
-pred.mean.1[species_subset_before$dist > 10000] <- NA
-pred.se.1[species_subset_before$dist > 10000] <- NA
-pred.mean.up <- pred.mean + 1.645 * pred.se
-pred.mean.down <- pred.mean - 1.645 * pred.se
-pred.mean.up.1 <- pred.mean.1 + 1.645 * pred.se.1
-pred.mean.down.1 <- pred.mean.1 - 1.645 * pred.se.1
+# Can check the results, will likely get NA
+sum(1 * arrowtooth_CI$significant_low)
+sum(1 * arrowtooth_CI$significant_high)
 
-# gives an index, then plot the true and false
-significant.low <- pred.mean.up.1 < pred.mean.down
-significant.high <- pred.mean.down.1 > pred.mean.up
-
-sum(1 * significant.low)
-sum(1 * significant.high)
+# Make maps of the significant increases and decreases
+windows(width=7, height = 15)
+myvis.gam(gam.real,view=c('longitude','latitude'), too.far = 0.025, plot.type='contour',color='jet',
+          type='response', cond=list(thr='after'),main = 'Post-2007', contour.col = "gray35",
+          xlim = range(subdata$longitude,na.rm=TRUE)+c(-0.5,1), ylim=range(subdata$latitude,na.rm=TRUE)+c(-0.5,0.5),
+          cex.lab = 1.5,cex.axis = 1.5,cex.main = 2,xlab=expression(paste("Longitude ("^0,'W)')), ylab=expression(paste("Latitude ("^0,'N)')))
+contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=-seq(200,200,by=200),
+        labcex=0.8,add=T,col='black', labels = NULL, lwd = 1.95)
+points(subdata_after$longitude[significant.low], subdata_after$latitude[significant.low], pch = 8, cex = 0.5)
+points(subdata_after$longitude[significant.high], subdata_after$latitude[significant.high], pch = 16, cex = 0.7)
+map('worldHires',add=T,col='peachpuff3',fill=T)
