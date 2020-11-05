@@ -40,11 +40,11 @@ get_aic_woyear <- function(df, yr) {
                      s(julian),
                    data = df,
                    family = binomial)$aic
-  return_list <- list(aic_year, yr)
+  return_list <- data.frame(aic_year, yr)
 }
 
 # Returns AIC difference, best year, best TGAM and Reference GAM ----
-get_tgam_woyear <- function(df) {
+get_tgam_woyear <- function(df, years) {
   ref_gam <- gam(pres ~ s(julian) +
                    s(longitude, latitude),
                  data = df,
