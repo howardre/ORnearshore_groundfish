@@ -46,32 +46,11 @@ sablefish_tgam <- get_tgam(sablefish_subset, years)
 # Plot AIC for all species
 windows()
 par(family = "serif")
-plot(
-  years,
-  arrowtooth_tgam[[5]], # need y axis to be the AIC range for all GAMs
-  type = 'b',
-  xlab = 'Year',
-  ylab = 'AIC',
-  main = "Arrowtooth Flounder",
-  cex.main = 1.4,
-  cex.lab = 1.2,
-  cex.axis = 1.2
-)
-abline(v = arrowtooth_tgam[[3]], lty = 2)
-text(2003, 3465, 'Before', cex = 1.2)
-text(2011, 3465, 'After', cex = 1.2)
-abline(h = AIC(arrowtooth_tgam[[1]]), lty = 2)
-
-plot_AIC <- function(tgam, years) {
-  plot(years,
-       tgam[[5]], # need y axis to be the AIC range for all GAMs
-       type = 'b',
-       xlab = 'Year',
-       ylab = 'AIC',
-       main = deparse(substitute(tgam)),
-       cex.main = 1.4,
-       cex.lab = 1.2,
-       cex.axis = 1.2)
-  abline(v = tgam[[3]], lty = 2)
-  abline(h = AIC(tgam[[1]]), lty = 2)
-}
+plot_AIC(arrowtooth_tgam, years)
+plot_AIC(english_tgam, years)
+plot_AIC(sanddab_tgam, years)
+plot_AIC(dover_tgam, years)
+plot_AIC(rex_tgam, years)
+plot_AIC(lingcod_tgam, years)
+plot_AIC(petrale_tgam, years)
+plot_AIC(sablefish_tgam, years)
