@@ -13,13 +13,13 @@ library(dplyr)
 setwd("/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code")
 trawl_data <- read.delim("../data/NMFS_data/trawl_data.txt", header = T)
 OR_fish <- read.delim("../data/NMFS_data/OR_fish.txt", header = T)
-load("../data/bathy.dat")
-load("../data/bathy.mat")
+bathy_dat <- load("../data/bathy.dat")
+bathy_mat <- load("../data/bathy.mat")
 source("functions/distance_function.R")
 source("functions/vis_gam_COLORS.R")
 source("functions/subset_species.R")
 source("functions/TGAM_selection.R")
-jet_colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+jet_colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
 
 # Subset the data to contain only species of interest ----
 # Eight species of interest
@@ -94,14 +94,14 @@ plot_AIC(sablefish_tgam, years) # need to figure out how to select different thr
 # Validate the results ----
 # Calculate distance of each grid point to closest 'positive observation'
 # Gives an index, then plot the true and false to get areas of sigificant increase or decrease
-tgam_prediction <- function(tgam, df) {
+subset_distances <- function(tgam, df) {
   nlat = 40 #determine the resolution of the grid
   nlon = 30
   latd = seq(41, 48, length.out = nlat)
   lond = seq(-125,-123.9, length.out = nlon)
   subset_before <- expand.grid(latd, lond)
   names(subset_before) <- c("latitude", "longitude")
-  subset_before$year <- 2010 # change depending on species
+  subset_before$year <- 1983 # change depending on species
   subset_before$julian <- 180
   subset_before$thr <- "before"
   subset_before$dist <- NA
@@ -113,36 +113,42 @@ tgam_prediction <- function(tgam, df) {
       df$longitude)
     subset_before$dist[k] <- min(dist)
   }
-  before_prediction <- predict(tgam[[2]],
-                               newdata = subset_before,
-                               se.fit = TRUE,
-                               type = 'response')
-  pred_mean_before <- before_prediction[[1]]
-  pred_se_before <- before_prediction[[2]]
-  pred_mean_before[subset_before$dist > 10000] <- NA
-  pred_se_before[subset_before$dist > 10000] <- NA
-  subset_after <- expand.grid(latd, lond)
-  names(subset_after) <- c("latitude", "longitude")
-  subset_after$year <- 2015
-  subset_after$julian <- 180
-  subset_after$thr <- "after"
-  after_prediction <- predict(tgam[[2]],
-                               newdata = subset_after,
-                               se.fit = TRUE,
-                               type = 'response')
-  pred_mean_after <- after_prediction[[1]]
-  pred_se_after <- after_prediction[[2]]
-  pred_mean_after[subset_before$dist > 10000] <- NA
-  pred_se_after[subset_before$dist > 10000] <- NA
-  pred_mean_up_before <- pred_mean_before + 1.645 * pred_se_before
-  pred_mean_down_before <- pred_mean_before - 1.645 * pred_se_before
-  pred_mean_up_after <- pred_mean_after + 1.645 * pred_se_after
-  pred_mean_down_after <- pred_mean_after - 1.645 * pred_se_after
-  significant_low <- pred_mean_up_after < pred_mean_down_before
-  significant_high <- pred_mean_down_after > pred_mean_up_before
-  return_list <- data.frame(significant_high, significant_low)
+  return(subset_before)
 }
-arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_subset)
+
+tgam_prediction <- function(tgam, subset_before) {
+    predict(tgam[[2]],
+            newdata = subset_before,
+            se.fit = TRUE,
+            type = 'response')
+    pred_mean_before <- before_prediction[[1]]
+    pred_se_before <- before_prediction[[2]]
+    pred_mean_before[subset_before$dist > 10000] <- NA
+    pred_se_before[subset_before$dist > 10000] <- NA
+    subset_after <- expand.grid(latd, lond)
+    names(subset_after) <- c("latitude", "longitude")
+    subset_after$year <- 2015
+    subset_after$julian <- 180
+    subset_after$thr <- "after"
+    after_prediction <- predict(tgam[[2]],
+                                newdata = subset_after,
+                                se.fit = TRUE,
+                                type = 'response')
+    pred_mean_after <- after_prediction[[1]]
+    pred_se_after <- after_prediction[[2]]
+    pred_mean_after[subset_before$dist > 10000] <- NA
+    pred_se_after[subset_before$dist > 10000] <- NA
+    pred_mean_up_before <- pred_mean_before + 1.645 * pred_se_before
+    pred_mean_down_before <- pred_mean_before - 1.645 * pred_se_before
+    pred_mean_up_after <- pred_mean_after + 1.645 * pred_se_after
+    pred_mean_down_after <- pred_mean_after - 1.645 * pred_se_after
+    significant_low <- pred_mean_up_after < pred_mean_down_before
+    significant_high <- pred_mean_down_after > pred_mean_up_before
+    return(list(significant_high, significant_low))
+  }
+
+arrowtooth_dist <- subset_distances(arrowtooth_tgam, arrowtooth_subset)
+arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_dist)
 english_CI <- tgam_prediction(english_tgam, english_subset)
 sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_subset)
 dover_CI <- tgam_prediction(dover_tgam, dover_subset)
@@ -152,17 +158,49 @@ petrale_CI <- tgam_prediction(petrale_tgam, petrale_subset)
 sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_subset)
 
 # Can check the results, will likely get NA
-sum(1 * arrowtooth_CI$significant_low)
-sum(1 * arrowtooth_CI$significant_high)
+sum(1 * arrowtooth_CI[[2]])
+sum(1 * arrowtooth_CI[[1]])
 
 # Make maps of the significant increases and decreases
-windows(width=7, height = 15)
-myvis.gam(gam.real,view=c('longitude','latitude'), too.far = 0.025, plot.type='contour',color='jet',
-          type='response', cond=list(thr='after'),main = 'Post-2007', contour.col = "gray35",
-          xlim = range(subdata$longitude,na.rm=TRUE)+c(-0.5,1), ylim=range(subdata$latitude,na.rm=TRUE)+c(-0.5,0.5),
-          cex.lab = 1.5,cex.axis = 1.5,cex.main = 2,xlab=expression(paste("Longitude ("^0,'W)')), ylab=expression(paste("Latitude ("^0,'N)')))
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=-seq(200,200,by=200),
-        labcex=0.8,add=T,col='black', labels = NULL, lwd = 1.95)
-points(subdata_after$longitude[significant.low], subdata_after$latitude[significant.low], pch = 8, cex = 0.5)
-points(subdata_after$longitude[significant.high], subdata_after$latitude[significant.high], pch = 16, cex = 0.7)
-map('worldHires',add=T,col='peachpuff3',fill=T)
+windows(width = 7, height = 15)
+validation_map <- function(df, tgam, conf_int, subset_before, bathy.dat, bathy.mat) {
+  significant_high <- conf_int[[1]]
+  significant_low <- conf_int[[2]]
+  myvis_gam(tgam[[2]],
+            view = c('longitude', 'latitude'),
+            too.far = 0.025,
+            plot.type = 'contour',
+            color = 'jet',
+            type = 'response',
+            cond = list(thr = 'after'),
+            contour.col = "gray35",
+            xlim = range(df$longitude, na.rm = TRUE) + c(-0.5, 1),
+            ylim = range(df$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+            cex.lab = 1.5,
+            cex.axis = 1.5,
+            cex.main = 2,
+            xlab = "Longitude °W",
+            ylab = "Latitude °N",
+            main = deparse(substitute(conf_int)))
+  contour(unique(bathy.dat$lon),
+          sort(unique(bathy.dat$lat)),
+          bathy.mat,
+          levels = -seq(200, 200, by = 200),
+          labcex = 0.8,
+          add = T,
+          col = 'black',
+          labels = NULL,
+          lwd = 1.95)
+  points(subset_before$longitude[significant_low],
+         subset_before$latitude[significant_low],
+         pch = 8,
+         cex = 0.5)
+  points(subset_before$longitude[significant_high],
+         subset_before$latitude[significant_high],
+         pch = 16,
+         cex = 0.7)
+  maps::map('worldHires',
+      add = T,
+      col = 'peachpuff3',
+      fill = T)
+}
