@@ -910,3 +910,61 @@ mtext("Petrale Sole",
       outer = T,
       cex = 2.5)
 dev.off()
+
+# Sablefish ----
+# ***Validate the results ----
+windows(width = 7, height = 15)
+validation_map(sablefish_subset, sablefish_tgam, sablefish_CI, sablefish_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# sablefish_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
+# sablefish_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+# sablefish_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+
+# Can use the data_check() function to see if there are appropriate number of data points in a polygon
+# Subset data to only pick up those that are inside the polygon for real data
+sablefish_s_increase <- polygon_subset(sablefish_subset, sablefish_poly_s)
+
+# Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(sablefish_subset, sablefish_s_increase, sablefish_poly_s)
+
+# Plot prediction grid
+windows(width = 7, height = 15)
+prediction_map(sablefish_dist, sablefish_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+sablefish_south <- polygon_subset(sablefish_dist, sablefish_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+sablefish_s_avg <- avg_pres_change(sablefish_s_increase)
+
+# Calculate difference before and after the threshold year for the predictions
+sablefish_s_pred <- sum(sablefish_south$diff) / nrow(sablefish_south)
+
+# ***Create the final maps ----
+# Calculate difference before and after
+sablefish_dist$mean_after <- sablefish_CI[[3]]$fit
+sablefish_dist$mean_before <- sablefish_CI[[4]]$fit
+sablefish_dist$diff <-  sablefish_dist$mean_after - sablefish_dist$mean_before
+sablefish_dist$diff[is.na(sablefish_dist$diff)] <- 0
+sablefish_dist$diff[sablefish_dist$dist > 10000] <- NA
+
+pdf("../results/TGAM/sablefish/sablefish_threshold.pdf",
+    width = 17,
+    height = 12)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(sablefish_subset, sablefish_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(sablefish_subset, sablefish_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(sablefish_subset, sablefish_dist, bathy.dat, bathy.mat)
+mtext("Sablefish",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
