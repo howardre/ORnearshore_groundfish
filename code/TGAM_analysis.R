@@ -512,7 +512,7 @@ english_south <- polygon_subset(english_dist, english_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
 english_c_avg <- avg_pres_change(english_c_decrease)
-english_s_avg <- avg_pres_change(english_s_decrease)
+english_s_avg <- avg_pres_change(english_s_increase)
 
 # Calculate difference before and after the threshold year for the predictions
 english_c_pred <- sum(english_central$diff) / nrow(english_central)
@@ -551,34 +551,42 @@ dev.off()
 windows(width = 7, height = 15)
 validation_map(sanddab_subset, sanddab_tgam, sanddab_CI, sanddab_dist, bathy.dat, bathy.mat)
 # savePol = locator(40, type = "o")
+# sanddab_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
 # sanddab_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
-# sanddab_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+# sanddab_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern decrease
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
+sanddab_n_decrease <- polygon_subset(sanddab_subset, sanddab_poly_n)
 sanddab_c_decrease <- polygon_subset(sanddab_subset, sanddab_poly_c)
-sanddab_s_increase <- polygon_subset(sanddab_subset, sanddab_poly_s)
+sanddab_s_decrease <- polygon_subset(sanddab_subset, sanddab_poly_s)
 
 # Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(sanddab_subset, sanddab_n_decrease, sanddab_poly_n)
+
 windows(width = 7, height = 15)
 polygon_map_check(sanddab_subset, sanddab_c_decrease, sanddab_poly_c)
 
 windows(width = 7, height = 15)
-polygon_map_check(sanddab_subset, sanddab_s_increase, sanddab_poly_s)
+polygon_map_check(sanddab_subset, sanddab_s_decrease, sanddab_poly_s)
 
 # Plot prediction grid
 windows(width = 7, height = 15)
 prediction_map(sanddab_dist, sanddab_CI)
 
 # Subset data to only pick up those that are inside the polygon for real data
+sanddab_north <- polygon_subset(sanddab_dist, sanddab_poly_n)
 sanddab_central <- polygon_subset(sanddab_dist, sanddab_poly_c)
 sanddab_south <- polygon_subset(sanddab_dist, sanddab_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
+sanddab_n_avg <- avg_pres_change(sanddab_n_decrease)
 sanddab_c_avg <- avg_pres_change(sanddab_c_decrease)
 sanddab_s_avg <- avg_pres_change(sanddab_s_decrease)
 
 # Calculate difference before and after the threshold year for the predictions
+sanddab_n_pred <- sum(sanddab_north$diff) / nrow(sanddab_north)
 sanddab_c_pred <- sum(sanddab_central$diff) / nrow(sanddab_central)
 sanddab_s_pred <- sum(sanddab_south$diff) / nrow(sanddab_south)
 
