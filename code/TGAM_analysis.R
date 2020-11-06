@@ -617,3 +617,83 @@ mtext("Pacific Sanddab",
       outer = T,
       cex = 2.5)
 dev.off()
+
+# Dover Sole ----
+# ***Validate the results ----
+windows(width = 7, height = 15)
+validation_map(dover_subset, dover_tgam, dover_CI, dover_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# dover_poly_n1 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 1
+# dover_poly_n2 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 2
+# dover_poly_c1 = data.frame(x = savePol$x, y = savePol$y) # central increase
+# dover_poly_c2 = data.frame(x = savePol$x, y = savePol$y) # central increase
+# dover_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+# dover_poly_n <- rbind(dover_poly_n1, dover_poly_n2) # merge two northern polygons
+# dover_poly_c <- rbind(dover_poly_c1, dover_poly_c2) # merge two northern polygons
+
+# Can use the data_check() function to see if there are appropriate number of data points in a polygon
+# Subset data to only pick up those that are inside the polygon for real data
+dover_n_increase1 <- polygon_subset(dover_subset, dover_poly_n1)
+dover_n_increase2 <- polygon_subset(dover_subset, dover_poly_n2)
+dover_c_increase1 <- polygon_subset(dover_subset, dover_poly_c1)
+dover_c_increase2 <- polygon_subset(dover_subset, dover_poly_c2)
+dover_s_increase <- polygon_subset(dover_subset, dover_poly_s)
+dover_n_increase <- rbind(dover_n_increase1, dover_n_increase2)
+dover_c_increase <- rbind(dover_c_increase1, dover_c_increase2)
+
+# Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(dover_subset, dover_n_increase, dover_poly_n)
+
+windows(width = 7, height = 15)
+polygon_map_check(dover_subset, dover_c_increase, dover_poly_c)
+
+windows(width = 7, height = 15)
+polygon_map_check(dover_subset, dover_s_increase, dover_poly_s)
+
+# Plot prediction grid
+windows(width = 7, height = 15)
+prediction_map(dover_dist, dover_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+dover_north <- polygon_subset(dover_dist, dover_poly_n)
+dover_central <- polygon_subset(dover_dist, dover_poly_c)
+dover_south <- polygon_subset(dover_dist, dover_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+dover_n_avg <- avg_pres_change(dover_n_increase)
+dover_c_avg <- avg_pres_change(dover_c_increase)
+dover_s_avg <- avg_pres_change(dover_s_increase)
+
+# Calculate difference before and after the threshold year for the predictions
+dover_n_pred <- sum(dover_north$diff) / nrow(dover_north)
+dover_c_pred <- sum(dover_central$diff) / nrow(dover_central)
+dover_s_pred <- sum(dover_south$diff) / nrow(dover_south)
+
+# ***Create the final maps ----
+# Calculate difference before and after
+dover_dist$mean_after <- dover_CI[[3]]$fit
+dover_dist$mean_before <- dover_CI[[4]]$fit
+dover_dist$diff <-  dover_dist$mean_after - dover_dist$mean_before
+dover_dist$diff[is.na(dover_dist$diff)] <- 0
+dover_dist$diff[dover_dist$dist > 10000] <- NA
+
+pdf("../results/TGAM/dover_sole/dover_threshold.pdf",
+    width = 17,
+    height = 12)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(dover_subset, dover_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(dover_subset, dover_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(dover_subset, dover_dist, bathy.dat, bathy.mat)
+mtext("Dover Sole",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
