@@ -95,13 +95,13 @@ plot_AIC(sablefish_tgam, years) # need to figure out how to select different thr
 # Calculate distance of each grid point to closest 'positive observation'
 # Gives an index, then plot the true and false to get areas of sigificant increase or decrease
 subset_distances <- function(tgam, df) {
-  nlat = 40 #determine the resolution of the grid
+  nlat = 40 # determine the resolution of the grid
   nlon = 30
   latd = seq(41, 48, length.out = nlat)
   lond = seq(-125,-123.9, length.out = nlon)
   subset_before <- expand.grid(latd, lond)
   names(subset_before) <- c("latitude", "longitude")
-  subset_before$year <- 1983 # change depending on species
+  subset_before$year <- 2003 # change depending on species
   subset_before$julian <- 180
   subset_before$thr <- "before"
   subset_before$dist <- NA
@@ -117,10 +117,10 @@ subset_distances <- function(tgam, df) {
 }
 
 tgam_prediction <- function(tgam, subset_before) {
-    predict(tgam[[2]],
-            newdata = subset_before,
-            se.fit = TRUE,
-            type = 'response')
+    before_prediction <- predict(tgam[[2]],
+                                 newdata = subset_before,
+                                 se.fit = TRUE,
+                                 type = 'response')
     pred_mean_before <- before_prediction[[1]]
     pred_se_before <- before_prediction[[2]]
     pred_mean_before[subset_before$dist > 10000] <- NA
@@ -144,17 +144,24 @@ tgam_prediction <- function(tgam, subset_before) {
     pred_mean_down_after <- pred_mean_after - 1.645 * pred_se_after
     significant_low <- pred_mean_up_after < pred_mean_down_before
     significant_high <- pred_mean_down_after > pred_mean_up_before
-    return(list(significant_high, significant_low))
+    return(list(significant_high, significant_low, before_prediction, after_prediction))
   }
 
 arrowtooth_dist <- subset_distances(arrowtooth_tgam, arrowtooth_subset)
 arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_dist)
+english_dist <- subset_distances(english_tgam, english_subset)
 english_CI <- tgam_prediction(english_tgam, english_subset)
+sanddab_dist <- subset_distances(sanddab_tgam, sanddab_subset)
 sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_subset)
+dover_dist <- subset_distances(dover_tgam, dover_subset)
 dover_CI <- tgam_prediction(dover_tgam, dover_subset)
+rex_dist <- subset_distances(rex_tgam, rex_subset)
 rex_CI <- tgam_prediction(rex_tgam, rex_subset)
+lingcod_dist <- subset_distances(lingcod_tgam, lingcod_subset)
 lingcod_CI <- tgam_prediction(lingcod_tgam, lingcod_subset)
+petrale_dist <- subset_distances(petrale_tgam, petrale_subset)
 petrale_CI <- tgam_prediction(petrale_tgam, petrale_subset)
+sablefish_dist <- subset_distances(sablefish_tgam, sablefish_subset)
 sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_subset)
 
 # Can check the results, will likely get NA
@@ -162,8 +169,8 @@ sum(1 * arrowtooth_CI[[2]])
 sum(1 * arrowtooth_CI[[1]])
 
 # Make maps of the significant increases and decreases
-windows(width = 7, height = 15)
-validation_map <- function(df, tgam, conf_int, subset_before, bathy.dat, bathy.mat) {
+# Polygons drawn manually to calculate differences in the real data based on the predictions
+validation_map <- function(df, tgam, conf_int, species_dist, bathy.dat, bathy.mat){
   significant_high <- conf_int[[1]]
   significant_low <- conf_int[[2]]
   myvis_gam(tgam[[2]],
@@ -191,16 +198,153 @@ validation_map <- function(df, tgam, conf_int, subset_before, bathy.dat, bathy.m
           col = 'black',
           labels = NULL,
           lwd = 1.95)
-  points(subset_before$longitude[significant_low],
-         subset_before$latitude[significant_low],
+  points(species_subset$longitude[significant_low],
+         species_subset$latitude[significant_low],
          pch = 8,
          cex = 0.5)
-  points(subset_before$longitude[significant_high],
-         subset_before$latitude[significant_high],
+  points(species_subset$longitude[significant_high],
+         species_subset$latitude[significant_high],
          pch = 16,
          cex = 0.7)
   maps::map('worldHires',
-      add = T,
-      col = 'peachpuff3',
-      fill = T)
+            add = T,
+            col = 'peachpuff3',
+            fill = T)
 }
+
+# Arrowtooth Flounder ----
+windows(width = 7, height = 15)
+validation_map(arrowtooth_subset, arrowtooth_tgam, arrowtooth_CI, arrowtooth_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# arrowtooth_poly_n1 = data.frame(x = savePol$x, y = savePol$y) # northern portion of decrease part 1
+# arrowtooth_poly_n2 = data.frame(x = savePol$x, y = savePol$y) # northern portion of decrease part 2
+# arrowtooth_poly_c = data.frame(x = savePol$x, y = savePol$y) # central
+# arrowtooth_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern
+# arrowtooth_poly_n <- rbind(arrowtooth_poly_n1, arrowtooth_poly_n2)
+
+# Can use this index to check if there are an appropriate number of data points in a polygon
+data_check <- function(species_subset, polygon){
+  in.chull(species_subset$longitude,
+           species_subset$latitude,
+           polygon$x,
+           polygon$y)
+}
+
+# Subset data to only pick up those that are inside the polygon for real data
+polygon_subset <- function(species_subset, polygon){
+  polygon_differences <- species_subset[in.chull(species_subset$longitude,
+                                                 species_subset$latitude,
+                                                 polygon$x,
+                                                 polygon$y), ]
+  return(polygon_differences)
+}
+
+arrowtooth_n_decrease1 <- polygon_subset(arrowtooth_subset, arrowtooth_poly_n1)
+arrowtooth_n_decrease2 <- polygon_subset(arrowtooth_subset, arrowtooth_poly_n2)
+arrowtooth_c_decrease <- polygon_subset(arrowtooth_subset, arrowtooth_poly_c)
+arrowtooth_s_decrease <- polygon_subset(arrowtooth_subset, arrowtooth_poly_s)
+arrowtooth_n_decrease <- rbind(arrowtooth_n_decrease1, arrowtooth_n_decrease2)
+
+# Add the subset of data to the map to check if polygon is in right spot
+polygon_map_check <- function(species_subset, difference, polygon){
+  plot(species_subset$longitude,
+       species_subset$latitude,
+       pch = 16,
+       ylim = range(species_subset$latitude),
+       xlim = range(species_subset$longitude))
+  points(difference$longitude,
+         difference$latitude,
+         col = 'red')
+  polygon(polygon$x, polygon$y)
+  maps::map('worldHires',
+            add = T,
+            col = 'peachpuff3',
+            fill = T)
+}
+
+windows(width = 7, height = 15)
+polygon_map_check(arrowtooth_subset, arrowtooth_n_decrease1, arrowtooth_poly_n1)
+
+windows(width = 7, height = 15)
+polygon_map_check(arrowtooth_subset, arrowtooth_n_decrease2, arrowtooth_poly_n2)
+
+windows(width = 7, height = 15)
+polygon_map_check(arrowtooth_subset, arrowtooth_c_decrease, arrowtooth_poly_c)
+
+windows(width = 7, height = 15)
+polygon_map_check(arrowtooth_subset, arrowtooth_s_decrease, arrowtooth_poly_s)
+
+# Subset data to only pick up those that are inside the polygon for predictions
+arrowtooth_dist$mean_after <- arrowtooth_CI[[3]]$fit
+arrowtooth_dist$mean_before <- arrowtooth_CI[[4]]$fit
+arrowtooth_dist$diff <-  arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
+arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
+
+# Plot prediction grid
+prediction_map <- function(species_dist, species_CI){
+  nlat = 40
+  nlon = 30
+  latd = seq(41, 48, length.out = nlat)
+  lond = seq(-125,-123.9, length.out = nlon)
+  image.plot(
+    lond, latd,
+    t(matrix(species_dist$diff,
+             nrow = length(latd),
+             ncol = length(lond),
+             byrow = T)),
+    col = tim.colors(100),
+    ylab = "",
+    xlab = "",
+    xlim = range(species_dist$longitude),
+    ylim = range(species_dist$latitude),
+    main = 'Predictions',
+    cex.main = 1.5,
+    cex.lab = 1.4,
+    cex.axis = 1.4)
+  points(species_CI$longitude[significant_low],
+         species_CI$latitude[significant_low],
+         pch = 8,
+         cex = 0.5)
+  points(species_CI$longitude[significant_high],
+         species_CI$latitude[significant_high],
+         pch = 16,
+         cex = 0.7)
+  maps::map('worldHires',
+            add = T,
+            col = 'grey',
+            fill = T)
+}
+windows(width = 7, height = 15)
+prediction_map(arrowtooth_dist, arrowtooth_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+polygon_pred <- function(species_dist, polygon){
+  species_distr[in.chull(
+    species_dist$longitude,
+    species_dist$latitude,
+    polygon$x,
+    polygon$y), ]
+}
+
+arrowtooth_north <- polygon_subset(arrowtooth_dist, arrowtooth_poly_n)
+arrowtooth_central <- polygon_subset(arrowtooth_dist, arrowtooth_poly_c)
+arrowtooth_south <- polygon_subset(arrowtooth_dist, arrowtooth_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+avg_pres_change <- function(difference){
+  before <- difference[difference$thr == 'before', ]
+  after <- difference[difference$thr == 'after',]
+  average <- sum(after$pres == 1) / nrow(after) -
+    (sum(before$pres == 1) / nrow(before))
+  return(average)
+}
+
+arrowtooth_n_avg <- avg_pres_change(arrowtooth_n_decrease)
+arrowtooth_c_avg <- avg_pres_change(arrowtooth_c_decrease)
+arrowtooth_s_avg <- avg_pres_change(arrowtooth_s_decrease)
+
+# Calculate difference before and after the threshold year for the predictions
+arrowtooth_n_pred <- sum(arrowtooth_north$diff) / nrow(arrowtooth_north)
+arrowtooth_c_pred <- sum(arrowtooth_central$diff) / nrow(arrowtooth_central)
+arrowtooth_s_pred <- sum(arrowtooth_south$diff) / nrow(arrowtooth_south)
+
