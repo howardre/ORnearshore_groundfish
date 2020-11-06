@@ -697,3 +697,216 @@ mtext("Dover Sole",
       outer = T,
       cex = 2.5)
 dev.off()
+
+# Rex Sole ----
+# ***Validate the results ----
+windows(width = 7, height = 15)
+validation_map(rex_subset, rex_tgam, rex_CI, rex_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# rex_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern increase
+# rex_poly_c = data.frame(x = savePol$x, y = savePol$y) # central increase
+# rex_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+
+# Can use the data_check() function to see if there are appropriate number of data points in a polygon
+# Subset data to only pick up those that are inside the polygon for real data
+rex_n_increase <- polygon_subset(rex_subset, rex_poly_n)
+rex_c_increase <- polygon_subset(rex_subset, rex_poly_c)
+rex_s_increase <- polygon_subset(rex_subset, rex_poly_s)
+
+# Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(rex_subset, rex_n_increase, rex_poly_n)
+
+windows(width = 7, height = 15)
+polygon_map_check(rex_subset, rex_c_increase, rex_poly_c)
+
+windows(width = 7, height = 15)
+polygon_map_check(rex_subset, rex_s_increase, rex_poly_s)
+
+# Plot prediction grid
+windows(width = 7, height = 15)
+prediction_map(rex_dist, rex_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+rex_north <- polygon_subset(rex_dist, rex_poly_n)
+rex_central <- polygon_subset(rex_dist, rex_poly_c)
+rex_south <- polygon_subset(rex_dist, rex_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+rex_n_avg <- avg_pres_change(rex_n_increase)
+rex_c_avg <- avg_pres_change(rex_c_increase)
+rex_s_avg <- avg_pres_change(rex_s_increase)
+
+# Calculate difference before and after the threshold year for the predictions
+rex_n_pred <- sum(rex_north$diff) / nrow(rex_north)
+rex_c_pred <- sum(rex_central$diff) / nrow(rex_central)
+rex_s_pred <- sum(rex_south$diff) / nrow(rex_south)
+
+# ***Create the final maps ----
+# Calculate difference before and after
+rex_dist$mean_after <- rex_CI[[3]]$fit
+rex_dist$mean_before <- rex_CI[[4]]$fit
+rex_dist$diff <-  rex_dist$mean_after - rex_dist$mean_before
+rex_dist$diff[is.na(rex_dist$diff)] <- 0
+rex_dist$diff[rex_dist$dist > 10000] <- NA
+
+pdf("../results/TGAM/rex_sole/rex_threshold.pdf",
+    width = 17,
+    height = 12)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(rex_subset, rex_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(rex_subset, rex_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(rex_subset, rex_dist, bathy.dat, bathy.mat)
+mtext("Rex Sole",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
+
+
+# Lingcod ----
+# ***Validate the results ----
+windows(width = 7, height = 15)
+validation_map(lingcod_subset, lingcod_tgam, lingcod_CI, lingcod_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# lingcod_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
+# lingcod_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+# lingcod_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+
+# Can use the data_check() function to see if there are appropriate number of data points in a polygon
+# Subset data to only pick up those that are inside the polygon for real data
+lingcod_n_decrease <- polygon_subset(lingcod_subset, lingcod_poly_n)
+lingcod_c_decrease <- polygon_subset(lingcod_subset, lingcod_poly_c)
+lingcod_s_increase <- polygon_subset(lingcod_subset, lingcod_poly_s)
+
+# Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(lingcod_subset, lingcod_n_decrease, lingcod_poly_n)
+
+windows(width = 7, height = 15)
+polygon_map_check(lingcod_subset, lingcod_c_decrease, lingcod_poly_c)
+
+windows(width = 7, height = 15)
+polygon_map_check(lingcod_subset, lingcod_s_increase, lingcod_poly_s)
+
+# Plot prediction grid
+windows(width = 7, height = 15)
+prediction_map(lingcod_dist, lingcod_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+lingcod_north <- polygon_subset(lingcod_dist, lingcod_poly_n)
+lingcod_central <- polygon_subset(lingcod_dist, lingcod_poly_c)
+lingcod_south <- polygon_subset(lingcod_dist, lingcod_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+lingcod_n_avg <- avg_pres_change(lingcod_n_decrease)
+lingcod_c_avg <- avg_pres_change(lingcod_c_decrease)
+lingcod_s_avg <- avg_pres_change(lingcod_s_increase)
+
+# Calculate difference before and after the threshold year for the predictions
+lingcod_n_pred <- sum(lingcod_north$diff) / nrow(lingcod_north)
+lingcod_c_pred <- sum(lingcod_central$diff) / nrow(lingcod_central)
+lingcod_s_pred <- sum(lingcod_south$diff) / nrow(lingcod_south)
+
+# ***Create the final maps ----
+# Calculate difference before and after
+lingcod_dist$mean_after <- lingcod_CI[[3]]$fit
+lingcod_dist$mean_before <- lingcod_CI[[4]]$fit
+lingcod_dist$diff <-  lingcod_dist$mean_after - lingcod_dist$mean_before
+lingcod_dist$diff[is.na(lingcod_dist$diff)] <- 0
+lingcod_dist$diff[lingcod_dist$dist > 10000] <- NA
+
+pdf("../results/TGAM/lingcod/lingcod_threshold.pdf",
+    width = 17,
+    height = 12)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(lingcod_subset, lingcod_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(lingcod_subset, lingcod_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(lingcod_subset, lingcod_dist, bathy.dat, bathy.mat)
+mtext("Lingcod",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
+
+# Petrale Sole ----
+# ***Validate the results ----
+windows(width = 7, height = 15)
+validation_map(petrale_subset, petrale_tgam, petrale_CI, petrale_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# petrale_poly_c = data.frame(x = savePol$x, y = savePol$y) # southern decrease
+# petrale_poly_s1 = data.frame(x = savePol$x, y = savePol$y) # southern decrease
+# petrale_poly_s2 = data.frame(x = savePol$x, y = savePol$y) # southern decrease
+# petrale_poly_s <- rbind(petrale_poly_s1, petrale_poly_s2) # merge two southern polygons
+
+# Can use the data_check() function to see if there are appropriate number of data points in a polygon
+# Subset data to only pick up those that are inside the polygon for real data
+petrale_c_decrease <- polygon_subset(petrale_subset, petrale_poly_c)
+petrale_s_decrease1 <- polygon_subset(petrale_subset, petrale_poly_s1)
+petrale_s_decrease2 <- polygon_subset(petrale_subset, petrale_poly_s2)
+petrale_s_decrease <- rbind(petrale_s_decrease1, petrale_s_decrease2)
+
+# Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(petrale_subset, petrale_c_decrease, petrale_poly_c)
+
+windows(width = 7, height = 15)
+polygon_map_check(petrale_subset, petrale_s_decrease, petrale_poly_s)
+
+# Plot prediction grid
+windows(width = 7, height = 15)
+prediction_map(petrale_dist, petrale_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+petrale_central <- polygon_subset(petrale_dist, petrale_poly_c)
+petrale_south <- polygon_subset(petrale_dist, petrale_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+petrale_c_avg <- avg_pres_change(petrale_c_decrease)
+petrale_s_avg <- avg_pres_change(petrale_s_decrease)
+
+# Calculate difference before and after the threshold year for the predictions
+petrale_c_pred <- sum(petrale_central$diff) / nrow(petrale_central)
+petrale_s_pred <- sum(petrale_south$diff) / nrow(petrale_south)
+
+# ***Create the final maps ----
+# Calculate difference before and after
+petrale_dist$mean_after <- petrale_CI[[3]]$fit
+petrale_dist$mean_before <- petrale_CI[[4]]$fit
+petrale_dist$diff <-  petrale_dist$mean_after - petrale_dist$mean_before
+petrale_dist$diff[is.na(petrale_dist$diff)] <- 0
+petrale_dist$diff[petrale_dist$dist > 10000] <- NA
+
+pdf("../results/TGAM/petrale_sole/petrale_threshold.pdf",
+    width = 17,
+    height = 12)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(petrale_subset, petrale_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(petrale_subset, petrale_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(petrale_subset, petrale_dist, bathy.dat, bathy.mat)
+mtext("Petrale Sole",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
