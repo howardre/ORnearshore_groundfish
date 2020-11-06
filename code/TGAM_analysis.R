@@ -169,7 +169,7 @@ sum(1 * arrowtooth_CI[[1]])
 
 # Make maps of the significant increases and decreases
 # Polygons drawn manually to calculate differences in the real data based on the predictions
-validation_map <- function(df, tgam, conf_int, species_dist, bathy.dat, bathy.mat){
+validation_map <- function(species_subset, tgam, conf_int, species_dist, bathy.dat, bathy.mat){
   significant_high <- conf_int[[1]]
   significant_low <- conf_int[[2]]
   myvis_gam(tgam[[2]],
@@ -180,8 +180,8 @@ validation_map <- function(df, tgam, conf_int, species_dist, bathy.dat, bathy.ma
             type = 'response',
             cond = list(thr = 'after'),
             contour.col = "gray35",
-            xlim = range(df$longitude, na.rm = TRUE) + c(-0.5, 1),
-            ylim = range(df$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+            xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.5, 1),
+            ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
             cex.lab = 1.5,
             cex.axis = 1.5,
             cex.main = 2,
@@ -197,12 +197,12 @@ validation_map <- function(df, tgam, conf_int, species_dist, bathy.dat, bathy.ma
           col = 'black',
           labels = NULL,
           lwd = 1.95)
-  points(species_subset$longitude[significant_low],
-         species_subset$latitude[significant_low],
+  points(species_dist$longitude[significant_low],
+         species_dist$latitude[significant_low],
          pch = 8,
          cex = 0.5)
-  points(species_subset$longitude[significant_high],
-         species_subset$latitude[significant_high],
+  points(species_dist$longitude[significant_high],
+         species_dist$latitude[significant_high],
          pch = 16,
          cex = 0.7)
   maps::map('worldHires',
@@ -212,6 +212,7 @@ validation_map <- function(df, tgam, conf_int, species_dist, bathy.dat, bathy.ma
 }
 
 # Arrowtooth Flounder ----
+# ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(arrowtooth_subset, arrowtooth_tgam, arrowtooth_CI, arrowtooth_dist, bathy.dat, bathy.mat)
 # savePol = locator(40, type = "o")
@@ -272,12 +273,6 @@ polygon_map_check(arrowtooth_subset, arrowtooth_c_decrease, arrowtooth_poly_c)
 
 windows(width = 7, height = 15)
 polygon_map_check(arrowtooth_subset, arrowtooth_s_decrease, arrowtooth_poly_s)
-
-# Subset data to only pick up those that are inside the polygon for predictions
-arrowtooth_dist$mean_after <- arrowtooth_CI[[3]]$fit
-arrowtooth_dist$mean_before <- arrowtooth_CI[[4]]$fit
-arrowtooth_dist$diff <-  arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
-arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
 
 # Plot prediction grid
 prediction_map <- function(species_dist, species_CI){
@@ -347,7 +342,14 @@ arrowtooth_n_pred <- sum(arrowtooth_north$diff) / nrow(arrowtooth_north)
 arrowtooth_c_pred <- sum(arrowtooth_central$diff) / nrow(arrowtooth_central)
 arrowtooth_s_pred <- sum(arrowtooth_south$diff) / nrow(arrowtooth_south)
 
-# Create final map
+# ***Create the final maps ----
+# Calculate difference before and after
+arrowtooth_dist$mean_after <- arrowtooth_CI[[3]]$fit
+arrowtooth_dist$mean_before <- arrowtooth_CI[[4]]$fit
+arrowtooth_dist$diff <-  arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
+arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
+arrowtooth_dist$diff[arrowtooth_dist$dist>10000] <- NA
+
 tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.mat){
   myvis_gam(tgam[[2]],
             view = c('longitude', 'latitude'),
@@ -389,11 +391,11 @@ tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.ma
             col = 'peachpuff3',
             fill = T)
   points(-124.0535,44.6368, pch=20)
-  text(-124.0535,44.6368,"Newport", adj=c(0,1.2))
+  text(-124.0535,44.6368,"Newport", adj=c(0,1.2), cex = 2)
   points(-123.8313,46.1879, pch=20)
-  text(-123.88028,46.13361,"Astoria", adj=c(0,1.2))
+  text(-123.88028,46.13361,"Astoria", adj=c(0,1.2), cex = 2)
   points(-124.3,43.3, pch=20)
-  text(-124.3,43.3,"Charleston", adj=c(0,1.2))
+  text(-124.3,43.3,"Charleston", adj=c(0,1.2), cex = 2)
 }
 pred_map <- function(species_subset, species_dist, bathy.dat, bathy.mat){
   nlat = 40
@@ -408,8 +410,8 @@ pred_map <- function(species_subset, species_dist, bathy.dat, bathy.mat){
         col = jet.colors(100),
         ylab = expression(paste("Latitude (" ^ 0, 'N)')),
         xlab = expression(paste("Longitude (" ^ 0, 'W)')),
-        xlim = range(subdata$longitude, na.rm = TRUE) + c(-0.5, 1),
-        ylim = range(subdata$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+        xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.5, 1),
+        ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
         main = 'Predicted Change',
         cex.main = 2.4,
         cex.lab = 2,
@@ -435,7 +437,12 @@ pred_map <- function(species_subset, species_dist, bathy.dat, bathy.mat){
             add = T,
             col = 'peachpuff3',
             fill = T)
-
+  points(-124.0535,44.6368, pch=20)
+  text(-124.0535,44.6368,"Newport", adj=c(0,1.2), cex = 2)
+  points(-123.8313,46.1879, pch=20)
+  text(-123.88028,46.13361,"Astoria", adj=c(0,1.2), cex = 2)
+  points(-124.3,43.3, pch=20)
+  text(-124.3,43.3,"Charleston", adj=c(0,1.2), cex = 2)
   image.plot(legend.only = T,
              zlim = c(0, 1),
              col = jet.colors(100),
@@ -455,17 +462,18 @@ pred_map <- function(species_subset, species_dist, bathy.dat, bathy.mat){
          inset = c(0.03, 0.19))
   }
 
-pdf("arrowtooth_threshold.pdf",
+pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
     width = 17,
     height = 12)
-windows()
-par(mfrow = c(1, 3),
-    family = 'serif',
-    mar = c(4, 5, 3, .2) + .1)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
 jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
 tgam_map(arrowtooth_subset, arrowtooth_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
 tgam_map(arrowtooth_subset, arrowtooth_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet_colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
                                  "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
 pred_map(arrowtooth_subset, arrowtooth_dist, bathy.dat, bathy.mat)
 mtext("Arrowtooth Flounder",
@@ -473,3 +481,5 @@ mtext("Arrowtooth Flounder",
       outer = T,
       cex = 2.5)
 dev.off()
+
+# English Sole ----
