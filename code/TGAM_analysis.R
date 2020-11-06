@@ -90,7 +90,7 @@ plot_AIC(lingcod_tgam, years)
 plot_AIC(petrale_tgam, years)
 plot_AIC(sablefish_tgam, years) # need to figure out how to select different threshold year
 
-# Validate the results ----
+# Validate the results and map the final product ----
 # Calculate distance of each grid point to closest 'positive observation'
 # Gives an index, then plot the true and false to get areas of sigificant increase or decrease
 subset_distances <- function(tgam, df) {
@@ -348,7 +348,7 @@ arrowtooth_dist$mean_after <- arrowtooth_CI[[3]]$fit
 arrowtooth_dist$mean_before <- arrowtooth_CI[[4]]$fit
 arrowtooth_dist$diff <-  arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
 arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
-arrowtooth_dist$diff[arrowtooth_dist$dist>10000] <- NA
+arrowtooth_dist$diff[arrowtooth_dist$dist > 10000] <- NA
 
 tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.mat){
   myvis_gam(tgam[[2]],
@@ -483,3 +483,129 @@ mtext("Arrowtooth Flounder",
 dev.off()
 
 # English Sole ----
+# ***Validate the results ----
+windows(width = 7, height = 15)
+validation_map(english_subset, english_tgam, english_CI, english_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# english_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+# english_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+
+# Can use the data_check() function to see if there are appropriate number of data points in a polygon
+# Subset data to only pick up those that are inside the polygon for real data
+english_c_decrease <- polygon_subset(english_subset, english_poly_c)
+english_s_increase <- polygon_subset(english_subset, english_poly_s)
+
+# Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(english_subset, english_c_decrease, english_poly_c)
+
+windows(width = 7, height = 15)
+polygon_map_check(english_subset, english_s_increase, english_poly_s)
+
+# Plot prediction grid
+windows(width = 7, height = 15)
+prediction_map(english_dist, english_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+english_central <- polygon_subset(english_dist, english_poly_c)
+english_south <- polygon_subset(english_dist, english_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+english_c_avg <- avg_pres_change(english_c_decrease)
+english_s_avg <- avg_pres_change(english_s_decrease)
+
+# Calculate difference before and after the threshold year for the predictions
+english_c_pred <- sum(english_central$diff) / nrow(english_central)
+english_s_pred <- sum(english_south$diff) / nrow(english_south)
+
+# ***Create the final maps ----
+# Calculate difference before and after
+english_dist$mean_after <- english_CI[[3]]$fit
+english_dist$mean_before <- english_CI[[4]]$fit
+english_dist$diff <-  english_dist$mean_after - english_dist$mean_before
+english_dist$diff[is.na(english_dist$diff)] <- 0
+english_dist$diff[english_dist$dist > 10000] <- NA
+
+pdf("../results/TGAM/english_sole/english_threshold.pdf",
+    width = 17,
+    height = 12)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(english_subset, english_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(english_subset, english_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(english_subset, english_dist, bathy.dat, bathy.mat)
+mtext("English Sole",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
+
+# Pacific Sanddab ----
+# ***Validate the results ----
+windows(width = 7, height = 15)
+validation_map(sanddab_subset, sanddab_tgam, sanddab_CI, sanddab_dist, bathy.dat, bathy.mat)
+# savePol = locator(40, type = "o")
+# sanddab_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+# sanddab_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+
+# Can use the data_check() function to see if there are appropriate number of data points in a polygon
+# Subset data to only pick up those that are inside the polygon for real data
+sanddab_c_decrease <- polygon_subset(sanddab_subset, sanddab_poly_c)
+sanddab_s_increase <- polygon_subset(sanddab_subset, sanddab_poly_s)
+
+# Add the subset of data to the map to check if polygon is in right spot
+windows(width = 7, height = 15)
+polygon_map_check(sanddab_subset, sanddab_c_decrease, sanddab_poly_c)
+
+windows(width = 7, height = 15)
+polygon_map_check(sanddab_subset, sanddab_s_increase, sanddab_poly_s)
+
+# Plot prediction grid
+windows(width = 7, height = 15)
+prediction_map(sanddab_dist, sanddab_CI)
+
+# Subset data to only pick up those that are inside the polygon for real data
+sanddab_central <- polygon_subset(sanddab_dist, sanddab_poly_c)
+sanddab_south <- polygon_subset(sanddab_dist, sanddab_poly_s)
+
+# Calculate difference before and after the threshold year in the real data
+sanddab_c_avg <- avg_pres_change(sanddab_c_decrease)
+sanddab_s_avg <- avg_pres_change(sanddab_s_decrease)
+
+# Calculate difference before and after the threshold year for the predictions
+sanddab_c_pred <- sum(sanddab_central$diff) / nrow(sanddab_central)
+sanddab_s_pred <- sum(sanddab_south$diff) / nrow(sanddab_south)
+
+# ***Create the final maps ----
+# Calculate difference before and after
+sanddab_dist$mean_after <- sanddab_CI[[3]]$fit
+sanddab_dist$mean_before <- sanddab_CI[[4]]$fit
+sanddab_dist$diff <-  sanddab_dist$mean_after - sanddab_dist$mean_before
+sanddab_dist$diff[is.na(sanddab_dist$diff)] <- 0
+sanddab_dist$diff[sanddab_dist$dist > 10000] <- NA
+
+pdf("../results/TGAM/pacific_sanddab/sanddab_threshold.pdf",
+    width = 17,
+    height = 12)
+par(
+  mfrow = c(1, 3),
+  family = 'serif',
+  mar = c(4, 5, 3, 0.2) + 0.1,
+  oma = c(1.5, 2, 4, 2))
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(sanddab_subset, sanddab_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(sanddab_subset, sanddab_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(sanddab_subset, sanddab_dist, bathy.dat, bathy.mat)
+mtext("Pacific Sanddab",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
