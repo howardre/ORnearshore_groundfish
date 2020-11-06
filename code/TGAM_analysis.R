@@ -19,7 +19,6 @@ source("functions/distance_function.R")
 source("functions/vis_gam_COLORS.R")
 source("functions/subset_species.R")
 source("functions/TGAM_selection.R")
-jet_colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
 
 # Subset the data to contain only species of interest ----
 # Eight species of interest
@@ -348,3 +347,129 @@ arrowtooth_n_pred <- sum(arrowtooth_north$diff) / nrow(arrowtooth_north)
 arrowtooth_c_pred <- sum(arrowtooth_central$diff) / nrow(arrowtooth_central)
 arrowtooth_s_pred <- sum(arrowtooth_south$diff) / nrow(arrowtooth_south)
 
+# Create final map
+tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.mat){
+  myvis_gam(tgam[[2]],
+            view = c('longitude', 'latitude'),
+            too.far = 0.025,
+            plot.type = 'contour',
+            color = 'jet',
+            type = 'response',
+            cond = list(thr = threshold),
+            main = title,
+            contour.col = "gray35",
+            xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.5, 1),
+            ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+            cex.lab = 2,
+            cex.axis = 2,
+            cex.main = 2.4,
+            xlab = "Longitude °W",
+            ylab = "Latitude °N")
+  contour(unique(bathy.dat$lon),
+          sort(unique(bathy.dat$lat)),
+          bathy.mat,
+          levels = -seq(200, 200, by = 200),
+          labcex = 0.8,
+          add = T,
+          col = 'black',
+          labels = NULL,
+          lwd = 1.95)
+  symbols(species_subset$longitude[species_subset$pres > 0 &
+                                     species_subset$thr == threshold],
+          species_subset$latitude[species_subset$pres > 0 &
+                                    species_subset$thr == threshold],
+  circles = species_subset$pres[species_subset$pres > 0 &
+                                  species_subset$thr == threshold],
+  inches = 0.035,
+  add = T,
+  bg = alpha('gray', 0.4),
+  fg = alpha('gray', 0.4))
+  maps::map('worldHires',
+            add = T,
+            col = 'peachpuff3',
+            fill = T)
+  points(-124.0535,44.6368, pch=20)
+  text(-124.0535,44.6368,"Newport", adj=c(0,1.2))
+  points(-123.8313,46.1879, pch=20)
+  text(-123.88028,46.13361,"Astoria", adj=c(0,1.2))
+  points(-124.3,43.3, pch=20)
+  text(-124.3,43.3,"Charleston", adj=c(0,1.2))
+}
+pred_map <- function(species_subset, species_dist, bathy.dat, bathy.mat){
+  nlat = 40
+  nlon = 30
+  latd = seq(41, 48, length.out = nlat)
+  lond = seq(-125,-123.9, length.out = nlon)
+  image(lond, latd,
+        t(matrix(species_dist$diff,
+                 nrow = length(latd),
+                 ncol = length(lond),
+        byrow = F)),
+        col = jet.colors(100),
+        ylab = expression(paste("Latitude (" ^ 0, 'N)')),
+        xlab = expression(paste("Longitude (" ^ 0, 'W)')),
+        xlim = range(subdata$longitude, na.rm = TRUE) + c(-0.5, 1),
+        ylim = range(subdata$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+        main = 'Predicted Change',
+        cex.main = 2.4,
+        cex.lab = 2,
+        cex.axis = 2)
+  contour(unique(bathy.dat$lon),
+          sort(unique(bathy.dat$lat)),
+          bathy.mat,
+          levels = -seq(200, 200, by = 200),
+          labcex = 0.8,
+          add = T,
+          col = 'black',
+          labels = NULL,
+          lwd = 1.95)
+  points(species_dist$longitude[significant_low],
+         species_dist$latitude[significant_low],
+         pch = 2,
+         cex = 0.9)
+  points(species_dist$longitude[significant_high],
+         species_dist$latitude[significant_high],
+         pch = 16,
+         cex = 0.9)
+  maps::map('worldHires',
+            add = T,
+            col = 'peachpuff3',
+            fill = T)
+
+  image.plot(legend.only = T,
+             zlim = c(0, 1),
+             col = jet.colors(100),
+             legend.shrink = 0.2,
+             smallplot = c(.16, .18, .06, .21),
+             legend.cex = 1.5,
+             legend.lab = "change",
+             axis.args = list(cex.axis = 1.5),
+             legend.width = 1,
+             legend.line = 3)
+  legend("bottomleft",
+         legend = c("Decrease", "Increase"),
+         pch = c(2, 16),
+         bty = "n",
+         pt.cex = 2,
+         cex = 1.9,
+         inset = c(0.03, 0.19))
+  }
+
+pdf("arrowtooth_threshold.pdf",
+    width = 17,
+    height = 12)
+windows()
+par(mfrow = c(1, 3),
+    family = 'serif',
+    mar = c(4, 5, 3, .2) + .1)
+jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(arrowtooth_subset, arrowtooth_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
+tgam_map(arrowtooth_subset, arrowtooth_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
+jet_colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
+                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
+pred_map(arrowtooth_subset, arrowtooth_dist, bathy.dat, bathy.mat)
+mtext("Arrowtooth Flounder",
+      line = 1,
+      outer = T,
+      cex = 2.5)
+dev.off()
