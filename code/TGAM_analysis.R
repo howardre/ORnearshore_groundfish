@@ -8,6 +8,9 @@ library(itsadug)
 library(fields)
 library(sgeostat)
 library(dplyr)
+library(maps)
+library(mapdata)
+library(purrr)
 
 # Load data and necessary functions ----
 setwd("/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code")
