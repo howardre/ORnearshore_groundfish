@@ -81,6 +81,10 @@ gam_check <- function(gam){
   par(mfrow = c(2, 2))
   gam.check(gam[[2]])
 } # Use to check residuals
+gam_plot <- function(gam){
+  windows()
+  plot(gam[[2]], pages = 1, scale = 0)
+  } # View the plots
 pa_GAMs <- function(species_subset){
   julian_gam <-  gam(pres ~ factor(year) + s(longitude, latitude) + s(julian),
                      family = binomial,
@@ -93,31 +97,6 @@ pa_GAMs <- function(species_subset){
                                          function(x) min(gam_list[[x]]$aic)))]]
   return_list <- list(gam_list, best_gam)
 } # Create the p/a GAMs (2)
-
-# ***Arrowtooth Flounder ----
-arrowtooth_annualpa <- pa_GAMs(arrowtooth_annual) # annual
-summary(arrowtooth_annualpa[[2]]) # view the best model
-summary(arrowtooth_annualpa[[1]]) # view all models
-gam_check(arrowtooth_annualpa)
-arrowtooth_triennialpa <- pa_GAMs(arrowtooth_triennial) # triennial
-
-
-english_annualpa <- pa_GAMs(english_annual)
-english_triennialpa <- pa_GAMs(english_triennial)
-lingcod_annualpa <- pa_GAMs(lingcod_annual)
-lingcod_triennialpa <- pa_GAMs(lingcod_triennial)
-dover_annualpa <- pa_GAMs(dover_annual)
-dover_triennialpa <- pa_GAMs(dover_triennial)
-rex_annualpa <- pa_GAMs(rex_annual)
-rex_triennialpa <- pa_GAMs(rex_triennial)
-petrale_annualpa <- pa_GAMs(petrale_annual)
-petrale_triennialpa <- pa_GAMs(petrale_triennial)
-sablefish_annualpa <- pa_GAMs(sablefish_annual)
-sablefish_triennialpa <- pa_GAMs(sablefish_triennial)
-sanddab_annualpa <- pa_GAMs(sanddab_annual)
-sanddab_triennialpa <- pa_GAMs(sanddab_triennial)
-
-# Make plot with best model
 paGAM_map <- function(gam, species_subset){
   windows(width = 4, height = 8)
   vis.gam(gam[[2]],
@@ -137,13 +116,151 @@ paGAM_map <- function(gam, species_subset){
             add = T,
             col = 'antiquewhite4',
             fill = T)
-  } # Use to make a map of the predictions
-paGAM_map(arrowtooth_annualpa, arrowtooth_annual)
+} # Use to map the model predictions
 
+# ***Arrowtooth Flounder ----
+# Annual
+arrowtooth_annualpa <- pa_GAMs(arrowtooth_annual)
+summary(arrowtooth_annualpa[[2]]) # view the best model
+gam_check(arrowtooth_annualpa)
+gam_plot(arrowtooth_annualpa)
+
+# Triennial
+arrowtooth_triennialpa <- pa_GAMs(arrowtooth_triennial)
+summary(arrowtooth_triennialpa[[2]]) # view the best model
+gam_check(arrowtooth_triennialpa)
 windows()
-plot(arrowtooth_annualpa[[2]], pages = 1, scale = 0) # View the plots
+plot(arrowtooth_triennialpa[[2]], pages = 1, scale = 0) # View the plots
 
-# GAM on CPUE
+# Make plot with best models
+paGAM_map(arrowtooth_annualpa, arrowtooth_annual)
+paGAM_map(arrowtooth_triennialpa, arrowtooth_triennial)
+
+# ***Dover Sole ----
+# Annual
+dover_annualpa <- pa_GAMs(dover_annual)
+summary(dover_annualpa[[2]]) # view the best model
+gam_check(dover_annualpa)
+gam_plot(dover_annualpa)
+
+# Triennial
+dover_triennialpa <- pa_GAMs(dover_triennial)
+summary(dover_triennialpa[[2]]) # view the best model
+gam_check(dover_triennialpa)
+windows()
+plot(dover_triennialpa[[2]], pages = 1, scale = 0) # View the plots
+
+# Make plot with best models
+paGAM_map(dover_annualpa, dover_annual)
+paGAM_map(dover_triennialpa, dover_triennial)
+# ***English Sole ----
+# Annual
+english_annualpa <- pa_GAMs(english_annual)
+summary(english_annualpa[[2]]) # view the best model
+gam_check(english_annualpa)
+gam_plot(english_annualpa)
+
+# Triennial
+english_triennialpa <- pa_GAMs(english_triennial)
+summary(english_triennialpa[[2]]) # view the best model
+gam_check(english_triennialpa)
+windows()
+plot(english_triennialpa[[2]], pages = 1, scale = 0) # View the plots
+
+# Make plot with best models
+paGAM_map(english_annualpa, english_annual)
+paGAM_map(english_triennialpa, english_triennial)
+
+# ***Lingcod ----
+# Annual
+lingcod_annualpa <- pa_GAMs(lingcod_annual)
+summary(lingcod_annualpa[[2]]) # view the best model
+gam_check(lingcod_annualpa)
+gam_plot(lingcod_annualpa)
+
+# Triennial
+lingcod_triennialpa <- pa_GAMs(lingcod_triennial)
+summary(lingcod_triennialpa[[2]]) # view the best model
+gam_check(lingcod_triennialpa)
+windows()
+plot(lingcod_triennialpa[[2]], pages = 1, scale = 0) # View the plots
+
+# Make plot with best models
+paGAM_map(lingcod_annualpa, lingcod_annual)
+paGAM_map(lingcod_triennialpa, lingcod_triennial)
+
+
+# ***Pacific Sanddab ----
+# Annual
+sanddab_annualpa <- pa_GAMs(sanddab_annual)
+summary(sanddab_annualpa[[2]]) # view the best model
+gam_check(sanddab_annualpa)
+gam_plot(sanddab_annualpa)
+
+# Triennial
+sanddab_triennialpa <- pa_GAMs(sanddab_triennial)
+summary(sanddab_triennialpa[[2]]) # view the best model
+gam_check(sanddab_triennialpa)
+windows()
+plot(sanddab_triennialpa[[2]], pages = 1, scale = 0) # View the plots
+
+# Make plot with best models
+paGAM_map(sanddab_annualpa, sanddab_annual)
+paGAM_map(sanddab_triennialpa, sanddab_triennial)
+
+# ***Petrale Sole ----
+# Annual
+petrale_annualpa <- pa_GAMs(petrale_annual)
+summary(petrale_annualpa[[2]]) # view the best model
+gam_check(petrale_annualpa)
+gam_plot(petrale_annualpa)
+
+# Triennial
+petrale_triennialpa <- pa_GAMs(petrale_triennial)
+summary(petrale_triennialpa[[2]]) # view the best model
+gam_check(petrale_triennialpa)
+windows()
+plot(petrale_triennialpa[[2]], pages = 1, scale = 0) # View the plots
+
+# Make plot with best models
+paGAM_map(petrale_annualpa, petrale_annual)
+paGAM_map(petrale_triennialpa, petrale_triennial)
+# ***Rex Sole ----
+# Annual
+rex_annualpa <- pa_GAMs(rex_annual)
+summary(rex_annualpa[[2]]) # view the best model
+gam_check(rex_annualpa)
+gam_plot(rex_annualpa)
+
+# Triennial
+rex_triennialpa <- pa_GAMs(rex_triennial)
+summary(rex_triennialpa[[2]]) # view the best model
+gam_check(rex_triennialpa)
+windows()
+plot(rex_triennialpa[[2]], pages = 1, scale = 0) # View the plots
+
+# Make plot with best models
+paGAM_map(rex_annualpa, rex_annual)
+paGAM_map(rex_triennialpa, rex_triennial)
+# ***Sablefish ----
+# Annual
+sablefish_annualpa <- pa_GAMs(sablefish_annual)
+summary(sablefish_annualpa[[2]]) # view the best model
+gam_check(sablefish_annualpa)
+gam_plot(sablefish_annualpa)
+
+# Triennial
+sablefish_triennialpa <- pa_GAMs(sablefish_triennial)
+summary(sablefish_triennialpa[[2]]) # view the best model
+gam_check(sablefish_triennialpa)
+windows()
+plot(sablefish_triennialpa[[2]], pages = 1, scale = 0) # View the plots
+
+# Make plot with best models
+paGAM_map(sablefish_annualpa, sablefish_annual)
+paGAM_map(sablefish_triennialpa, sablefish_triennial)
+
+# GAM on CPUE ----
 cpue_GAMs <- function(species_subset){
   year_gam <- gam(lncpue ~ s(year, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
                   data = species_subset[species_subset$lncpue > 0,])
@@ -164,10 +281,9 @@ cpue_GAMs <- function(species_subset){
   best_gam <- gam_list[[which.min(sapply(1:length(gam_list),
                                          function(x) min(gam_list[[x]]$aic)))]] # would like to also select by AIC
   return_list <- list(gam_list, best_gam)
-}
+} # need to figure out how to add GCV selection criteria
 cpueGAM_arrow_a <- cpue_GAMs(arrowtooth_annual)
 summary(cpueGAM_arrow_a[[2]]) # view the best model
-summary(cpueGAM_arrow_a[[1]]) # view all 6 models
 gam_check(cpueGAM_arrow_a)
 
 windows()
