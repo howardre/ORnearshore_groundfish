@@ -42,7 +42,7 @@ lingcod_triennial <- subset_species("Ophiodon elongatus", triennial, triennial_t
 petrale_triennial <- subset_species("Eopsetta jordani", triennial, triennial_trawl)
 sablefish_triennial <- subset_species("Anoplopoma fimbria", triennial, triennial_trawl)
 
-# Investigate the data
+# Investigate the data ----
 # Properties of CPUE data
 CPUE_hist <- function(species_subset){
   windows()
@@ -72,10 +72,15 @@ CPUE_hist(petrale_triennial)
 CPUE_hist(sablefish_triennial)
 CPUE_hist(sanddab_triennial)
 
-# Variable selection: look at p value, plots, and ultimately AIC and GCV once you remove variable (generalized cross variation)
+# Variable selection: look at p value, plots, and ultimately AIC and GCV once you remove variable
 # GCV: expresses error that model does once you use it for prediction
 # AIC: is likelihood of model divided by number of parameters
-# GAM on presence/absence
+# GAM on presence/absence ----
+gam_check <- function(gam){
+  windows()
+  par(mfrow = c(2, 2))
+  gam.check(gam[[2]])
+} # Use to check residuals
 pa_GAMs <- function(species_subset){
   julian_gam <-  gam(pres ~ factor(year) + s(longitude, latitude) + s(julian),
                      family = binomial,
@@ -87,12 +92,16 @@ pa_GAMs <- function(species_subset){
   best_gam <- gam_list[[which.min(sapply(1:length(gam_list),
                                          function(x) min(gam_list[[x]]$aic)))]]
   return_list <- list(gam_list, best_gam)
-}
+} # Create the p/a GAMs (2)
 
-arrowtooth_annualpa <- pa_GAMs(arrowtooth_annual)
+# ***Arrowtooth Flounder ----
+arrowtooth_annualpa <- pa_GAMs(arrowtooth_annual) # annual
 summary(arrowtooth_annualpa[[2]]) # view the best model
 summary(arrowtooth_annualpa[[1]]) # view all models
-arrowtooth_triennialpa <- pa_GAMs(arrowtooth_triennial)
+gam_check(arrowtooth_annualpa)
+arrowtooth_triennialpa <- pa_GAMs(arrowtooth_triennial) # triennial
+
+
 english_annualpa <- pa_GAMs(english_annual)
 english_triennialpa <- pa_GAMs(english_triennial)
 lingcod_annualpa <- pa_GAMs(lingcod_annual)
@@ -108,36 +117,58 @@ sablefish_triennialpa <- pa_GAMs(sablefish_triennial)
 sanddab_annualpa <- pa_GAMs(sanddab_annual)
 sanddab_triennialpa <- pa_GAMs(sanddab_triennial)
 
-gam.2 <- gam(lncpue ~ s(year, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
-             data = species_subset[species_subset$lncpue > 0, ])
-summary(gam.12)
-AIC(gam.12)
-
 # Make plot with best model
-windows(width = 4, height = 8)
-#change too.far to a lower value to get better extrapolation
-vis.gam(
-  gam.1,
-  view = c('longitude', 'latitude'),
-  too.far = 0.03,
-  plot.type = 'contour',
-  color = 'topo',
-  type = 'response',
-  main = paste("Annual Presence - Absence GAM")
-)
-symbols(
-  subset_arrowtooth_a$longitude[subset_arrowtooth_a$arrowtooth_flounder >
-                                  0],
-  subset_arrowtooth_a$latitude[subset_arrowtooth_a$arrowtooth_flounder >
-                                 0],
-  #circles=subset_arrowtooth_a$arrowtooth_flounder[subset_arrowtooth_a$arrowtooth_flounder>0],
-  inches = 0.05,
-  add = T,
-  bg = alpha('purple', 0.2)
-)
-map('worldHires',
-    add = T,
-    col = 'antiquewhite4',
-    fill = T)
+paGAM_map <- function(gam, species_subset){
+  windows(width = 4, height = 8)
+  vis.gam(gam[[2]],
+          view = c('longitude', 'latitude'),
+          too.far = 0.03, # can change to get better extrapolation
+          plot.type = 'contour',
+          color = 'topo',
+          type = 'response',
+          main = paste("Presence - Absence GAM"))
+  symbols(species_subset$longitude[species_subset$lncpue > 0],
+          species_subset$latitude[species_subset$lncpue > 0],
+          circles = species_subset$lncpue[species_subset$lncpue > 0],
+          inches = 0.05,
+          add = T,
+          bg = alpha('purple', 0.2))
+  maps::map('worldHires',
+            add = T,
+            col = 'antiquewhite4',
+            fill = T)
+  } # Use to make a map of the predictions
+paGAM_map(arrowtooth_annualpa, arrowtooth_annual)
+
 windows()
-plot(gam.1, pages = 1, scale = 0)
+plot(arrowtooth_annualpa[[2]], pages = 1, scale = 0) # View the plots
+
+# GAM on CPUE
+cpue_GAMs <- function(species_subset){
+  year_gam <- gam(lncpue ~ s(year, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
+                  data = species_subset[species_subset$lncpue > 0,])
+  yeartemp_gam <-  gam(lncpue ~ s(year, k = 5) + s(longitude, latitude) + s(depth_m) +
+                         s(julian, k = 5) + s(bottom_temp, k = 5),
+                       data = species_subset[species_subset$lncpue > 0,])
+  PDO_gam <- gam(lncpue ~ s(PDO, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
+                  data = species_subset[species_subset$lncpue > 0,])
+  PDOtemp_gam <-  gam(lncpue ~ s(PDO, k = 5) + s(longitude, latitude) + s(depth_m) +
+                         s(julian, k = 5) + s(bottom_temp, k = 5),
+                       data = species_subset[species_subset$lncpue > 0,])
+  NPGO_gam <- gam(lncpue ~ s(NPGO, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
+                  data = species_subset[species_subset$lncpue > 0,])
+  NPGOtemp_gam <-  gam(lncpue ~ s(NPGO, k = 5) + s(longitude, latitude) + s(depth_m) +
+                         s(julian, k = 5) + s(bottom_temp, k = 5),
+                       data = species_subset[species_subset$lncpue > 0,])
+  gam_list <- list(year_gam, yeartemp_gam, PDOtemp_gam, PDO_gam, NPGO_gam, NPGOtemp_gam)
+  best_gam <- gam_list[[which.min(sapply(1:length(gam_list),
+                                         function(x) min(gam_list[[x]]$aic)))]] # would like to also select by AIC
+  return_list <- list(gam_list, best_gam)
+}
+cpueGAM_arrow_a <- cpue_GAMs(arrowtooth_annual)
+summary(cpueGAM_arrow_a[[2]]) # view the best model
+summary(cpueGAM_arrow_a[[1]]) # view all 6 models
+gam_check(cpueGAM_arrow_a)
+
+windows()
+plot(cpueGAM_arrow_a[[2]], )
