@@ -72,7 +72,7 @@ CPUE_hist(petrale_triennial)
 CPUE_hist(sablefish_triennial)
 CPUE_hist(sanddab_triennial)
 
-# variable selection look at p value, plots, and ultimately AIC and GCV once you remove variable (generalized cross variation)
+# Variable selection: look at p value, plots, and ultimately AIC and GCV once you remove variable (generalized cross variation)
 # GCV: expresses error that model does once you use it for prediction
 # AIC: is likelihood of model divided by number of parameters
 # GAM on presence/absence
@@ -84,19 +84,32 @@ pa_GAMs <- function(species_subset){
                        family = binomial,
                        data = species_subset)
   gam_list <- list(julian_gam, wojulian_gam)
-
   best_gam <- gam_list[[which.min(sapply(1:length(gam_list),
-                                           function(x) min(gam_list[[x]]$aic)))]]
+                                         function(x) min(gam_list[[x]]$aic)))]]
   return_list <- list(gam_list, best_gam)
 }
 
 arrowtooth_annualpa <- pa_GAMs(arrowtooth_annual)
 summary(arrowtooth_annualpa[[2]]) # view the best model
+summary(arrowtooth_annualpa[[1]]) # view all models
+arrowtooth_triennialpa <- pa_GAMs(arrowtooth_triennial)
+english_annualpa <- pa_GAMs(english_annual)
+english_triennialpa <- pa_GAMs(english_triennial)
+lingcod_annualpa <- pa_GAMs(lingcod_annual)
+lingcod_triennialpa <- pa_GAMs(lingcod_triennial)
+dover_annualpa <- pa_GAMs(dover_annual)
+dover_triennialpa <- pa_GAMs(dover_triennial)
+rex_annualpa <- pa_GAMs(rex_annual)
+rex_triennialpa <- pa_GAMs(rex_triennial)
+petrale_annualpa <- pa_GAMs(petrale_annual)
+petrale_triennialpa <- pa_GAMs(petrale_triennial)
+sablefish_annualpa <- pa_GAMs(sablefish_annual)
+sablefish_triennialpa <- pa_GAMs(sablefish_triennial)
+sanddab_annualpa <- pa_GAMs(sanddab_annual)
+sanddab_triennialpa <- pa_GAMs(sanddab_triennial)
 
-gam.2 <-
-  gam(
-    arrowtooth_flounder ~ s(year, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
-    data = subset_arrowtooth_a[subset_arrowtooth_a$arrowtooth_flounder > 0, ])
+gam.2 <- gam(lncpue ~ s(year, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
+             data = species_subset[species_subset$lncpue > 0, ])
 summary(gam.12)
 AIC(gam.12)
 
