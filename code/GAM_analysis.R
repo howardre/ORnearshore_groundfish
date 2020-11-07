@@ -23,24 +23,24 @@ source("functions/subset_species.R")
 # Subset the data to contain only species of interest for each survey ----
 # Eight species of interest
 # Annual subsets
-arrowtooth_annual <- subset_species("Atheresthes stomias", annual, annual_trawl)
-english_annual <- subset_species("Parophrys vetulus", annual, annual_trawl)
-sanddab_annual <- subset_species("Citharichthys sordidus", annual, annual_trawl)
-dover_annual <- subset_species("Microstomus pacificus", annual, annual_trawl)
-rex_annual <- subset_species("Glyptocephalus zachirus", annual, annual_trawl)
-lingcod_annual <- subset_species("Ophiodon elongatus", annual, annual_trawl)
-petrale_annual <- subset_species("Eopsetta jordani", annual, annual_trawl)
-sablefish_annual <- subset_species("Anoplopoma fimbria", annual, annual_trawl)
+arrowtooth_annual <- subset_species_temp("Atheresthes stomias", annual, annual_trawl)
+english_annual <- subset_species_temp("Parophrys vetulus", annual, annual_trawl)
+sanddab_annual <- subset_species_temp("Citharichthys sordidus", annual, annual_trawl)
+dover_annual <- subset_species_temp("Microstomus pacificus", annual, annual_trawl)
+rex_annual <- subset_species_temp("Glyptocephalus zachirus", annual, annual_trawl)
+lingcod_annual <- subset_species_temp("Ophiodon elongatus", annual, annual_trawl)
+petrale_annual <- subset_species_temp("Eopsetta jordani", annual, annual_trawl)
+sablefish_annual <- subset_species_temp("Anoplopoma fimbria", annual, annual_trawl)
 
 # Triennial subsets
-arrowtooth_triennial <- subset_species("Atheresthes stomias", triennial, triennial_trawl)
-english_triennial <- subset_species("Parophrys vetulus", triennial, triennial_trawl)
-sanddab_triennial <- subset_species("Citharichthys sordidus", triennial, triennial_trawl)
-dover_triennial <- subset_species("Microstomus pacificus", triennial, triennial_trawl)
-rex_triennial <- subset_species("Glyptocephalus zachirus", triennial, triennial_trawl)
-lingcod_triennial <- subset_species("Ophiodon elongatus", triennial, triennial_trawl)
-petrale_triennial <- subset_species("Eopsetta jordani", triennial, triennial_trawl)
-sablefish_triennial <- subset_species("Anoplopoma fimbria", triennial, triennial_trawl)
+arrowtooth_triennial <- subset_species_temp("Atheresthes stomias", triennial, triennial_trawl)
+english_triennial <- subset_species_temp("Parophrys vetulus", triennial, triennial_trawl)
+sanddab_triennial <- subset_species_temp("Citharichthys sordidus", triennial, triennial_trawl)
+dover_triennial <- subset_species_temp("Microstomus pacificus", triennial, triennial_trawl)
+rex_triennial <- subset_species_temp("Glyptocephalus zachirus", triennial, triennial_trawl)
+lingcod_triennial <- subset_species_temp("Ophiodon elongatus", triennial, triennial_trawl)
+petrale_triennial <- subset_species_temp("Eopsetta jordani", triennial, triennial_trawl)
+sablefish_triennial <- subset_species_temp("Anoplopoma fimbria", triennial, triennial_trawl)
 
 # Investigate the data ----
 # Properties of CPUE data
@@ -282,9 +282,140 @@ cpue_GAMs <- function(species_subset){
                                          function(x) min(gam_list[[x]]$aic)))]] # would like to also select by AIC
   return_list <- list(gam_list, best_gam)
 } # need to figure out how to add GCV selection criteria
+plot_variable <- function(gam, covariate, species_name){
+  plot(gam[[2]],
+       pages = 0,
+       select = covariate, # 1 = year/PDO/NPGO, 2 = lat/lon, 3 = depth, 4 = julian, 5 = temp
+       shade = T,
+       xlab = "",
+       ylab = "",
+       main = species_name,
+       seWithMean = T,
+       scale = 0,
+       cex.axis = 1.5,
+       cex.main = 2)
+}
+
+# ***Arrowtooth Flounder ----
+# Annual
 cpueGAM_arrow_a <- cpue_GAMs(arrowtooth_annual)
 summary(cpueGAM_arrow_a[[2]]) # view the best model
 gam_check(cpueGAM_arrow_a)
+gam_plot(cpueGAM_arrow_a)
+arrow_a_depth <- plot_variable(cpueGAM_arrow_a, 3, "Arrowtooth Flounder")
+arrow_a_temp <- plot_variable(cpueGAM_arrow_a, 5, "Arrowtooth Flounder")
+# Triennial
+cpueGAM_arrow_t <- cpue_GAMs(arrowtooth_triennial)
+summary(cpueGAM_arrow_t[[2]]) # view the best model
+gam_check(cpueGAM_arrow_t)
+gam_plot(cpueGAM_arrow_t)
+arrow_t_depth <- plot_variable(cpueGAM_arrow_t, 3, "Arrowtooth Flounder")
+arrow_t_temp <- plot_variable(cpueGAM_arrow_t, 5, "Arrowtooth Flounder")
 
-windows()
-plot(cpueGAM_arrow_a[[2]], )
+# ***Dover Sole ----
+# Annual
+cpueGAM_dover_a <- cpue_GAMs(dover_annual)
+summary(cpueGAM_dover_a[[2]]) # view the best model
+gam_check(cpueGAM_dover_a)
+gam_plot(cpueGAM_dover_a)
+dover_a_depth <- plot_variable(cpueGAM_dover_a, 3, "Dover Sole")
+dover_a_temp <- plot_variable(cpueGAM_dover_a, 5, "Dover Sole")
+# Triennial
+cpueGAM_dover_t <- cpue_GAMs(dover_triennial)
+summary(cpueGAM_dover_t[[2]]) # view the best model
+gam_check(cpueGAM_dover_t)
+gam_plot(cpueGAM_dover_t)
+dover_t_depth <- plot_variable(cpueGAM_dover_t, 3, "Dover Sole")
+
+# ***English Sole ----
+# Annual
+cpueGAM_english_a <- cpue_GAMs(english_annual)
+summary(cpueGAM_english_a[[2]]) # view the best model
+gam_check(cpueGAM_english_a)
+gam_plot(cpueGAM_english_a)
+english_a_depth <- plot_variable(cpueGAM_english_a, 3, "English Sole")
+# Triennial
+cpueGAM_english_t <- cpue_GAMs(english_triennial)
+summary(cpueGAM_english_t[[2]]) # view the best model
+gam_check(cpueGAM_english_t)
+gam_plot(cpueGAM_english_t)
+english_t_depth <- plot_variable(cpueGAM_english_t, 3, "English Sole")
+english_t_temp <- plot_variable(cpueGAM_english_t, 5, "English Sole")
+
+# ***Lingcod ----
+# Annual
+cpueGAM_lingcod_a <- cpue_GAMs(lingcod_annual)
+summary(cpueGAM_lingcod_a[[2]]) # view the best model
+gam_check(cpueGAM_lingcod_a)
+gam_plot(cpueGAM_lingcod_a)
+lingcod_a_depth <- plot_variable(cpueGAM_lingcod_a, 3, "Lingcod")
+lingcod_a_temp <- plot_variable(cpueGAM_lingcod_a, 5, "Lingcod")
+# Triennial
+cpueGAM_lingcod_t <- cpue_GAMs(lingcod_triennial)
+summary(cpueGAM_lingcod_t[[2]]) # view the best model
+gam_check(cpueGAM_lingcod_t)
+gam_plot(cpueGAM_lingcod_t)
+lingcod_t_depth <- plot_variable(cpueGAM_lingcod_t, 3, "Lingcod")
+lingcod_t_temp <- plot_variable(cpueGAM_lingcod_t, 5, "Lingcod")
+
+# ***Pacific Sanddab ----
+# Annual
+cpueGAM_sanddab_a <- cpue_GAMs(sanddab_annual)
+summary(cpueGAM_sanddab_a[[2]]) # view the best model
+gam_check(cpueGAM_sanddab_a)
+gam_plot(cpueGAM_sanddab_a)
+sanddab_a_depth <- plot_variable(cpueGAM_sanddab_a, 3, "Pacific Sanddab")
+sanddab_a_temp <- plot_variable(cpueGAM_sanddab_a, 5, "Pacific Sanddab")
+# Triennial
+cpueGAM_sanddab_t <- cpue_GAMs(sanddab_triennial)
+summary(cpueGAM_sanddab_t[[2]]) # view the best model
+gam_check(cpueGAM_sanddab_t)
+gam_plot(cpueGAM_sanddab_t)
+sanddab_t_depth <- plot_variable(cpueGAM_sanddab_t, 3, "Pacific Sanddab")
+sanddab_t_temp <- plot_variable(cpueGAM_sanddab_t, 5, "Pacific Sanddab")
+
+# ***Petrale Sole ----
+# Annual
+cpueGAM_petrale_a <- cpue_GAMs(petrale_annual)
+summary(cpueGAM_petrale_a[[2]]) # view the best model
+gam_check(cpueGAM_petrale_a)
+gam_plot(cpueGAM_petrale_a)
+petrale_a_depth <- plot_variable(cpueGAM_petrale_a, 3, "Petrale Sole")
+# Triennial
+cpueGAM_petrale_t <- cpue_GAMs(petrale_triennial)
+summary(cpueGAM_petrale_t[[2]]) # view the best model
+gam_check(cpueGAM_petrale_t)
+gam_plot(cpueGAM_petrale_t)
+petrale_t_depth <- plot_variable(cpueGAM_petrale_t, 3, "Petrale Sole")
+
+# ***Rex Sole ----
+# Annual
+cpueGAM_rex_a <- cpue_GAMs(rex_annual)
+summary(cpueGAM_rex_a[[2]]) # view the best model
+gam_check(cpueGAM_rex_a)
+gam_plot(cpueGAM_rex_a)
+rex_a_depth <- plot_variable(cpueGAM_rex_a, 3, "Rex Sole")
+rex_a_temp <- plot_variable(cpueGAM_rex_a, 5, "Rex Sole")
+# Triennial
+cpueGAM_rex_t <- cpue_GAMs(rex_triennial)
+summary(cpueGAM_rex_t[[2]]) # view the best model
+gam_check(cpueGAM_rex_t)
+gam_plot(cpueGAM_rex_t)
+rex_t_depth <- plot_variable(cpueGAM_rex_t, 3, "Rex Sole")
+rex_t_temp <- plot_variable(cpueGAM_rex_t, 5, "Rex Sole")
+
+# ***Sablefish ----
+# Annual
+cpueGAM_sablefish_a <- cpue_GAMs(sablefish_annual)
+summary(cpueGAM_sablefish_a[[2]]) # view the best model
+gam_check(cpueGAM_sablefish_a)
+gam_plot(cpueGAM_sablefish_a)
+sablefish_a_depth <- plot_variable(cpueGAM_sablefish_a, 3, "Sablefish")
+sablefish_a_temp <- plot_variable(cpueGAM_sablefish_a, 5, "Sablefish")
+# Triennial
+cpueGAM_sablefish_t <- cpue_GAMs(sablefish_triennial)
+summary(cpueGAM_sablefish_t[[2]]) # view the best model
+gam_check(cpueGAM_sablefish_t)
+gam_plot(cpueGAM_sablefish_t)
+sablefish_t_depth <- plot_variable(cpueGAM_sablefish_t, 3, "Sablefish")
+sablefish_t_temp <- plot_variable(cpueGAM_sablefish_t, 5, "Sablefish")
