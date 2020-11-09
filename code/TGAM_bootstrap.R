@@ -7,6 +7,8 @@ library(mgcv)
 library(dplyr)
 library(purrr)
 library(sp)
+library(ggplot2)
+library(ggpubr)
 
 # Load data ----
 setwd('/Users/howar/Documents/Oregon State/Thesis/Data visualization')
@@ -38,7 +40,7 @@ sablefish_subset <- subset_species("Anoplopoma fimbria", OR_fish, trawl_data)
 
 # Set up number of iterations ----
 # Can use any subset if the same size
-nsim <- 200 # Can change but running this many GAMs takes a long time
+nsim <- 2 # Can change but running this many GAMs takes a long time
 nsamp <- round(0.8 * nrow(arrowtooth_subset)) # Select 80% of the data
 years <- sort(unique(arrowtooth_subset$year))[4:22] # Sort out the upper and lower quantiles
 # years <- years[1:2] # for testing
@@ -47,7 +49,7 @@ years <- sort(unique(arrowtooth_subset$year))[4:22] # Sort out the upper and low
 get_tgam_aic <- function(df, yr) {
   df$thr <- ifelse(df$year <= yr, 'before', 'after')
   aic_year <-  gam(
-      pres ~ factor(year) + s(longitude, latitude, by = factor(thr)) + s(julian), 
+      pres ~ factor(year) + s(longitude, latitude, by = factor(thr)) + s(julian),
       data = df,
       family = binomial)$aic
   return(aic_year)
@@ -61,8 +63,6 @@ get_aic_diff <- function(df) {
       data = samp,
       family = binomial)$aic
   tgam_all_aic <- rep(0, length(years))
-  # tgam_all_aic <- map_dbl(1:length(years), 
-  #                         ~ get_tgam_aic(samp, years[.]))
   tgam_all_aic <- map_dbl(years, ~get_tgam_aic(samp, .x))
   best_tgam_aic <- sort(tgam_all_aic)[1]
   diff <- ref_gam_aic - best_tgam_aic
@@ -73,7 +73,7 @@ get_aic_diff <- function(df) {
 get_tgam_aic2 <- function(df, yr) {
   df$thr <- ifelse(df$year <= yr, 'before', 'after')
   aic_year <-  gam(
-    pres ~ factor(thr) + s(julian)+ s(longitude, latitude, by = factor(thr)) - 1, 
+    pres ~ factor(thr) + s(julian)+ s(longitude, latitude, by = factor(thr)) - 1,
     data = df,
     family = binomial)$aic
   return(aic_year)
@@ -102,7 +102,7 @@ petrale_differences <- map_dbl(1:nsim, ~ get_aic_diff(petrale_subset))
 sablefish_differences <- map_dbl(1:nsim, ~ get_aic_diff(sablefish_subset))
 dover_differences <- map_dbl(1:nsim, ~ get_aic_diff2(dover_subset))
 rex_differences <- map_dbl(1:nsim, ~ get_aic_diff2(rex_subset))
-# Sys.time() # Check how long it takes to run 
+# Sys.time() # Check how long it takes to run
 plot(arrowtooth_differences) # Plot to see if there are any unusually large values
 
 
@@ -150,3 +150,44 @@ CI_half_width_sablefish <- 1.96 * sd(sablefish_differences) / sqrt(nsim)
 mean_sablefish_differences - CI_half_width_sablefish
 mean_sablefish_differences + CI_half_width_sablefish
 
+# Plot final boxplots
+boxplot_bootstrap_df <- data.frame(
+  dover = dover_differences,
+  arrowtooth = arrowtooth_differences,
+  english = english_differences,
+  rex = rex_differences,
+  lingcod = lingcod_differences,
+  sablefish = sablefish_differences,
+  sanddab = sanddab_differences,
+  petrale = petrale_differences
+)
+
+boxplot_bootstrap_df <- boxplot_bootstrap_df %>%
+  pivot_longer(cols = c(dover, arrowtooth, english, rex,
+                        lingcod, sablefish, sanddab, petrale),
+               names_to = "species",
+               values_to = "delta_AIC")
+
+windows()
+ggplot() +
+  geom_boxplot(data = boxplot_bootstrap_df,
+               aes(x = species, y = delta_AIC)) +
+  #geom_point(data = TGAM_bootstrap, aes(x = species, y = upper_CI)) +
+  #geom_point(data = TGAM_bootstrap, aes(x = species, y = lower_CI)) +
+  geom_hline(yintercept=0, color="red") +
+  xlab("Species") +
+  ylab("Change in AIC") +
+  ggtitle("Bootstrapped change in AIC between TGAM and GAM") +
+  theme_pubr(x.text.angle = 45, base_family = "serif") +
+  theme(plot.title = element_text(hjust = 0.5))
+  labs_pubr(base_family = "serif")
+
+
+# Test AIC functions
+get_tgam_aic <- function(df) {
+  samp <- sample_n(df, nsamp)
+  tgam_all_aic <- rep(0, length(years))
+  tgam_all_aic <- map_dbl(years, ~get_tgam_aic(samp, .x))
+  best_tgam_aic <- sort(tgam_all_aic)[1]
+  return(best_tgam_aic)
+}
