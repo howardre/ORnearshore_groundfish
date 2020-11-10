@@ -260,6 +260,7 @@ plot(sablefish_triennialpa[[2]], pages = 1, scale = 0) # View the plots
 paGAM_map(sablefish_annualpa, sablefish_annual)
 paGAM_map(sablefish_triennialpa, sablefish_triennial)
 
+
 # GAM on CPUE ----
 cpue_GAMs <- function(species_subset){
   year_gam <- gam(lncpue ~ s(year, k = 5) + s(longitude, latitude) + s(depth_m) + s(julian, k = 5),
