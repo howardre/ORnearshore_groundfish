@@ -77,13 +77,11 @@ final_env <- env_matrix_a[-env_matrix_a2,]
 practice <- as.data.frame(practice)
 mds_null <- isoMDS(practice,         # uses isoMDS engine
                    tol = 1e-7,
-                   trace = F,
-                   trymax = 999)
+                   trace = F)
 mds_1 <- metaMDS(practice,           # uses monoMDS engine
                  autotransform = F,
                  wascores = T,
-                 trace = F,
-                 trymax = 999)
+                 trace = F)
 stressplot(mds_null, annual_dis)
 
 # Visualize ordination
