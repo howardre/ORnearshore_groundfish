@@ -9,6 +9,7 @@ library(purrr)
 library(sp)
 library(ggplot2)
 library(ggpubr)
+library(tidyr)
 
 # Load data ----
 setwd('/Users/howar/Documents/Oregon State/Thesis/Data visualization')
@@ -40,10 +41,10 @@ sablefish_subset <- subset_species("Anoplopoma fimbria", OR_fish, trawl_data)
 
 # Set up number of iterations ----
 # Can use any subset if the same size
-nsim <- 2 # Can change but running this many GAMs takes a long time
-nsamp <- round(0.8 * nrow(arrowtooth_subset)) # Select 80% of the data
+nsim <- 200 # Can change but running this many GAMs takes a long time
 years <- sort(unique(arrowtooth_subset$year))[4:22] # Sort out the upper and lower quantiles
 # years <- years[1:2] # for testing
+ctrl <- list(nthreads = 6)
 
 # Go through each year to find the threshold year for sample ----
 get_tgam_aic <- function(df, yr) {
@@ -51,19 +52,21 @@ get_tgam_aic <- function(df, yr) {
   aic_year <-  gam(
       pres ~ factor(year) + s(longitude, latitude, by = factor(thr)) + s(julian),
       data = df,
+      control = ctrl,
       family = binomial)$aic
   return(aic_year)
 }
 
 # Returns AIC difference between TGAM and reference GAM for 1 simulation ----
 get_aic_diff <- function(df) {
-  samp <- sample_n(df, nsamp)
-  ref_gam_aic <- gam(
+  samp <- sample_frac(df, size = 1, replace = T)
+   ref_gam_aic <- gam(
       pres ~ factor(year) + s(julian) + s(longitude, latitude),
       data = samp,
+      control = ctrl,
       family = binomial)$aic
   tgam_all_aic <- rep(0, length(years))
-  tgam_all_aic <- map_dbl(years, ~get_tgam_aic(samp, .x))
+  tgam_all_aic <- future_map_dbl(years, ~get_tgam_aic(samp, .x))
   best_tgam_aic <- sort(tgam_all_aic)[1]
   diff <- ref_gam_aic - best_tgam_aic
   return(diff)
@@ -81,7 +84,7 @@ get_tgam_aic2 <- function(df, yr) {
 
 # Rex and Dover version, returns AIC difference between TGAM and reference GAM for 1 simulation ----
 get_aic_diff2 <- function(df) {
-  samp <- sample_n(df, nsamp)
+  samp <- sample_frac(df, size = 1, replace = T)
   ref_gam_aic <- gam(
     pres ~ s(julian) + s(longitude, latitude),
     data = samp,
@@ -94,7 +97,9 @@ get_aic_diff2 <- function(df) {
 }
 
 # Get all the difference in AIC values ----
+start_time <- Sys.time()
 arrowtooth_differences <- map_dbl(1:nsim, ~ get_aic_diff(arrowtooth_subset))
+end_time <- Sys.time()
 english_differences <- map_dbl(1:nsim, ~ get_aic_diff(english_subset))
 sanddab_differences <- map_dbl(1:nsim, ~ get_aic_diff(sanddab_subset))
 lingcod_differences <- map_dbl(1:nsim, ~ get_aic_diff(lingcod_subset))
@@ -105,15 +110,11 @@ rex_differences <- map_dbl(1:nsim, ~ get_aic_diff2(rex_subset))
 # Sys.time() # Check how long it takes to run
 plot(arrowtooth_differences) # Plot to see if there are any unusually large values
 
-
-
-
-
 # Calculate the confidence interval ----
-(mean_arrowtooth_differences <- mean(arrowtooth_differences))
+(median_arrowtooth_differences <- median(arrowtooth_differences))
 CI_half_width_arrowtooth <- 1.96 * sd(arrowtooth_differences) / sqrt(nsim)
-mean_arrowtooth_differences - CI_half_width_arrowtooth
-mean_arrowtooth_differences + CI_half_width_arrowtooth
+arrow_CI_lower <- median_arrowtooth_differences - CI_half_width_arrowtooth
+arrow_CI_upper <- median_arrowtooth_differences + CI_half_width_arrowtooth
 
 (mean_english_differences <- mean(english_differences))
 CI_half_width_english <- 1.96 * sd(english_differences) / sqrt(nsim)
@@ -168,26 +169,17 @@ boxplot_bootstrap_df <- boxplot_bootstrap_df %>%
                names_to = "species",
                values_to = "delta_AIC")
 
+# Plot boxplots with notches where 95% CI is
 windows()
 ggplot() +
   geom_boxplot(data = boxplot_bootstrap_df,
-               aes(x = species, y = delta_AIC)) +
+               aes(x = species, y = delta_AIC), notch = T) +
   #geom_point(data = TGAM_bootstrap, aes(x = species, y = upper_CI)) +
   #geom_point(data = TGAM_bootstrap, aes(x = species, y = lower_CI)) +
-  geom_hline(yintercept=0, color="red") +
+  geom_hline(yintercept = 0, color = "red") +
   xlab("Species") +
   ylab("Change in AIC") +
-  ggtitle("Bootstrapped change in AIC between TGAM and GAM") +
+  ggtitle("Resampled change in AIC between TGAM and GAM") +
   theme_pubr(x.text.angle = 45, base_family = "serif") +
   theme(plot.title = element_text(hjust = 0.5))
   labs_pubr(base_family = "serif")
-
-
-# Test AIC functions
-get_tgam_aic <- function(df) {
-  samp <- sample_n(df, nsamp)
-  tgam_all_aic <- rep(0, length(years))
-  tgam_all_aic <- map_dbl(years, ~get_tgam_aic(samp, .x))
-  best_tgam_aic <- sort(tgam_all_aic)[1]
-  return(best_tgam_aic)
-}
