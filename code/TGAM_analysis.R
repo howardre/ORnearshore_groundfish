@@ -97,14 +97,14 @@ plot_AIC(sablefish_tgam, years) # need to figure out how to select different thr
 # Validate the results and map the final product ----
 # Calculate distance of each grid point to closest 'positive observation'
 # Gives an index, then plot the true and false to get areas of sigificant increase or decrease
-subset_distances <- function(tgam, df) {
+subset_distances <- function(tgam, df, year) {
   nlat = 40 # determine the resolution of the grid
   nlon = 30
   latd = seq(41, 48, length.out = nlat)
-  lond = seq(-125,-123.9, length.out = nlon)
+  lond = seq(-125, -123.9, length.out = nlon)
   subset_before <- expand.grid(latd, lond)
   names(subset_before) <- c("latitude", "longitude")
-  subset_before$year <- 2003 # change depending on species
+  subset_before$year <- year # change depending on species
   subset_before$julian <- 180
   subset_before$thr <- "before"
   subset_before$dist <- NA
@@ -124,6 +124,10 @@ tgam_prediction <- function(tgam, subset_before) {
                                  newdata = subset_before,
                                  se.fit = TRUE,
                                  type = 'response')
+    nlat = 40 # determine the resolution of the grid
+    nlon = 30
+    latd = seq(41, 48, length.out = nlat)
+    lond = seq(-125,-123.9, length.out = nlon)
     pred_mean_before <- before_prediction[[1]]
     pred_se_before <- before_prediction[[2]]
     pred_mean_before[subset_before$dist > 10000] <- NA
@@ -150,21 +154,21 @@ tgam_prediction <- function(tgam, subset_before) {
     return(list(significant_high, significant_low, before_prediction, after_prediction))
   }
 
-arrowtooth_dist <- subset_distances(arrowtooth_tgam, arrowtooth_subset)
+arrowtooth_dist <- subset_distances(arrowtooth_tgam, arrowtooth_subset, 2001)
 arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_dist)
-english_dist <- subset_distances(english_tgam, english_subset)
+english_dist <- subset_distances(english_tgam, english_subset, 1986)
 english_CI <- tgam_prediction(english_tgam, english_subset)
-sanddab_dist <- subset_distances(sanddab_tgam, sanddab_subset)
+sanddab_dist <- subset_distances(sanddab_tgam, sanddab_subset, 1986)
 sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_subset)
-dover_dist <- subset_distances(dover_tgam, dover_subset)
+dover_dist <- subset_distances(dover_tgam, dover_subset, 1986)
 dover_CI <- tgam_prediction(dover_tgam, dover_subset)
-rex_dist <- subset_distances(rex_tgam, rex_subset)
+rex_dist <- subset_distances(rex_tgam, rex_subset, 1986)
 rex_CI <- tgam_prediction(rex_tgam, rex_subset)
-lingcod_dist <- subset_distances(lingcod_tgam, lingcod_subset)
+lingcod_dist <- subset_distances(lingcod_tgam, lingcod_subset, 2001)
 lingcod_CI <- tgam_prediction(lingcod_tgam, lingcod_subset)
-petrale_dist <- subset_distances(petrale_tgam, petrale_subset)
+petrale_dist <- subset_distances(petrale_tgam, petrale_subset, 2001)
 petrale_CI <- tgam_prediction(petrale_tgam, petrale_subset)
-sablefish_dist <- subset_distances(sablefish_tgam, sablefish_subset)
+sablefish_dist <- subset_distances(sablefish_tgam, sablefish_subset, 2001)
 sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_subset)
 
 # Can check the results, will likely get NA
@@ -350,7 +354,7 @@ arrowtooth_s_pred <- sum(arrowtooth_south$diff) / nrow(arrowtooth_south)
 # Calculate difference before and after
 arrowtooth_dist$mean_after <- arrowtooth_CI[[3]]$fit
 arrowtooth_dist$mean_before <- arrowtooth_CI[[4]]$fit
-arrowtooth_dist$diff <-  arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
+arrowtooth_dist$diff <- arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
 arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
 arrowtooth_dist$diff[arrowtooth_dist$dist > 10000] <- NA
 
@@ -394,18 +398,32 @@ tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.ma
             add = T,
             col = 'peachpuff3',
             fill = T)
-  points(-124.0535,44.6368, pch=20)
-  text(-124.0535,44.6368,"Newport", adj=c(0,1.2), cex = 2)
-  points(-123.8313,46.1879, pch=20)
-  text(-123.88028,46.13361,"Astoria", adj=c(0,1.2), cex = 2)
-  points(-124.3,43.3, pch=20)
-  text(-124.3,43.3,"Charleston", adj=c(0,1.2), cex = 2)
+  points(-124.0535, 44.6368, pch = 20)
+  text(-124.0535,
+       44.6368,
+       "Newport",
+       adj = c(0, 1.2),
+       cex = 2)
+  points(-123.8313, 46.1879, pch = 20)
+  text(-123.88028,
+       46.13361,
+       "Astoria",
+       adj = c(0, 1.2),
+       cex = 2)
+  points(-124.3, 43.3, pch = 20)
+  text(-124.3,
+       43.3,
+       "Charleston",
+       adj = c(0, 1.2),
+       cex = 2)
 }
-pred_map <- function(species_subset, species_dist, bathy.dat, bathy.mat){
+pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.mat){
   nlat = 40
   nlon = 30
   latd = seq(41, 48, length.out = nlat)
   lond = seq(-125,-123.9, length.out = nlon)
+  significant_high <- species_CI[[1]]
+  significant_low <- species_CI[[2]]
   image(lond, latd,
         t(matrix(species_dist$diff,
                  nrow = length(latd),
@@ -436,19 +454,31 @@ pred_map <- function(species_subset, species_dist, bathy.dat, bathy.mat){
   points(species_dist$longitude[significant_high],
          species_dist$latitude[significant_high],
          pch = 16,
-         cex = 0.9)
+         cex = 1.2)
   maps::map('worldHires',
             add = T,
             col = 'peachpuff3',
             fill = T)
-  points(-124.0535,44.6368, pch=20)
-  text(-124.0535,44.6368,"Newport", adj=c(0,1.2), cex = 2)
-  points(-123.8313,46.1879, pch=20)
-  text(-123.88028,46.13361,"Astoria", adj=c(0,1.2), cex = 2)
-  points(-124.3,43.3, pch=20)
-  text(-124.3,43.3,"Charleston", adj=c(0,1.2), cex = 2)
+  points(-124.0535, 44.6368, pch = 20)
+  text(-124.0535,
+       44.6368,
+       "Newport",
+       adj = c(0, 1.2),
+       cex = 2)
+  points(-123.8313, 46.1879, pch = 20)
+  text(-123.88028,
+       46.13361,
+       "Astoria",
+       adj = c(0, 1.2),
+       cex = 2)
+  points(-124.3, 43.3, pch = 20)
+  text(-124.3,
+       43.3,
+       "Charleston",
+       adj = c(0, 1.2),
+       cex = 2)
   image.plot(legend.only = T,
-             zlim = c(0, 1),
+             zlim = c(-1, 1),
              col = jet.colors(100),
              legend.shrink = 0.2,
              smallplot = c(.16, .18, .06, .21),
@@ -474,12 +504,31 @@ par(
   family = 'serif',
   mar = c(4, 5, 3, 0.2) + 0.1,
   oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(arrowtooth_subset, arrowtooth_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(arrowtooth_subset, arrowtooth_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(arrowtooth_subset, arrowtooth_dist, bathy.dat, bathy.mat)
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  arrowtooth_subset,
+  arrowtooth_tgam,
+  threshold = "before",
+  title = "Before 2007",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  arrowtooth_subset,
+  arrowtooth_tgam,
+  threshold = "after",
+  title = "After 2007",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#f7f7f7",
+                                 "#d1e5f0", "#92c5de", "#4393c3",  "#2166ac"), alpha = T) # Create new palette for predictions
+pred_map(arrowtooth_subset,
+         arrowtooth_dist,
+         arrowtooth_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("Arrowtooth Flounder",
       line = 1,
       outer = T,
