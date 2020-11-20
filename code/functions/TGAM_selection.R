@@ -1,9 +1,11 @@
 # Go through each year to find the threshold year for sample ----
 get_yr_aic <- function(df, yr) {
   df$thr <- ifelse(df$year <= yr, 'before', 'after')
+  ctrl <- list(nthreads = 6)
   aic_year <-  gam(pres ~ factor(year) +
                      s(longitude, latitude, by = factor(thr)) +
                      s(julian),
+                   control = ctrl,
                    data = df,
                    family = binomial)$aic
   return_list <- data.frame(aic_year, yr)
@@ -11,14 +13,16 @@ get_yr_aic <- function(df, yr) {
 
 # Returns AIC difference, best year, best TGAM and reference GAM ----
 get_tgam <- function(df, years) {
+  ctrl <- list(nthreads = 6)
   ref_gam <- gam(pres ~ factor(year) +
                    s(julian) +
                    s(longitude, latitude),
+                 control = ctrl,
                  data = df,
                  family = binomial)
   all_tgams <- data.frame(aic_year = rep(0, length(years)),
                           year = rep(0, length(years)))
-  all_tgams <- map(years, ~ get_yr_aic(df, .x))
+  all_tgams <- future_map(years, ~ get_yr_aic(df, .x))
   best_tgam <- all_tgams[[which.min(sapply(1:length(all_tgams),
                                            function(x) min(all_tgams[[x]]$aic_year)))]]
   diff <- ref_gam$aic - best_tgam$aic_year
@@ -26,18 +30,21 @@ get_tgam <- function(df, years) {
   final_tgam <-  gam(pres ~ factor(year) +
                           s(longitude, latitude, by = factor(thr)) +
                           s(julian),
-                        data = df,
-                        family = binomial)
+                     control = ctrl,
+                     data = df,
+                     family = binomial)
   all_aic <- sapply(all_tgams, function(x) {as.numeric(x[1])})
   return_list <- list(ref_gam, final_tgam, best_tgam$yr, diff, all_aic)
 }
 
 # Get
 get_aic_woyear <- function(df, yr) {
+  ctrl <- list(nthreads = 6)
   df$thr <- ifelse(df$year <= yr, 'before', 'after')
   aic_year <-  gam(pres ~ factor(thr) +
                      s(longitude, latitude, by = factor(thr)) +
                      s(julian),
+                   control = ctrl,
                    data = df,
                    family = binomial)$aic
   return_list <- data.frame(aic_year, yr)
@@ -45,13 +52,15 @@ get_aic_woyear <- function(df, yr) {
 
 # Returns AIC difference, best year, best TGAM and Reference GAM ----
 get_tgam_woyear <- function(df, years) {
+  ctrl <- list(nthreads = 6)
   ref_gam <- gam(pres ~ s(julian) +
                    s(longitude, latitude),
+                 control = ctrl,
                  data = df,
                  family = binomial)
   all_tgams <- data.frame(aic_year = rep(0, length(years)),
                           year = rep(0, length(years)))
-  all_tgams <- map(years, ~ get_aic_woyear(df, .x))
+  all_tgams <- future_map(years, ~ get_aic_woyear(df, .x))
   best_tgam <- all_tgams[[which.min(sapply(1:length(all_tgams),
                                            function(x) min(all_tgams[[x]]$aic_year)))]]
   diff <- ref_gam$aic - best_tgam$aic_year
@@ -59,6 +68,7 @@ get_tgam_woyear <- function(df, years) {
   final_tgam <-  gam(pres ~ factor(thr) +
                        s(longitude, latitude, by = factor(thr)) +
                        s(julian),
+                     control = ctrl,
                      data = df,
                      family = binomial)
   all_aic <- sapply(all_tgams, function(x) {as.numeric(x[1])})

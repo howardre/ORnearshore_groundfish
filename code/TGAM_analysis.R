@@ -12,6 +12,7 @@ library(maps)
 library(mapdata)
 library(purrr)
 library(mgcv)
+library(furrr)
 
 # Load data and necessary functions ----
 setwd("/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code")
@@ -157,19 +158,19 @@ tgam_prediction <- function(tgam, subset_before) {
 arrowtooth_dist <- subset_distances(arrowtooth_tgam, arrowtooth_subset, 2001)
 arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_dist)
 english_dist <- subset_distances(english_tgam, english_subset, 1986)
-english_CI <- tgam_prediction(english_tgam, english_subset)
+english_CI <- tgam_prediction(english_tgam, english_dist)
 sanddab_dist <- subset_distances(sanddab_tgam, sanddab_subset, 1986)
-sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_subset)
+sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_dist)
 dover_dist <- subset_distances(dover_tgam, dover_subset, 1986)
-dover_CI <- tgam_prediction(dover_tgam, dover_subset)
+dover_CI <- tgam_prediction(dover_tgam, dover_dist)
 rex_dist <- subset_distances(rex_tgam, rex_subset, 1986)
-rex_CI <- tgam_prediction(rex_tgam, rex_subset)
+rex_CI <- tgam_prediction(rex_tgam, rex_dist)
 lingcod_dist <- subset_distances(lingcod_tgam, lingcod_subset, 2001)
-lingcod_CI <- tgam_prediction(lingcod_tgam, lingcod_subset)
+lingcod_CI <- tgam_prediction(lingcod_tgam, lingcod_dist)
 petrale_dist <- subset_distances(petrale_tgam, petrale_subset, 2001)
-petrale_CI <- tgam_prediction(petrale_tgam, petrale_subset)
+petrale_CI <- tgam_prediction(petrale_tgam, petrale_dist)
 sablefish_dist <- subset_distances(sablefish_tgam, sablefish_subset, 2001)
-sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_subset)
+sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_dist)
 
 # Can check the results, will likely get NA
 sum(1 * arrowtooth_CI[[2]])
@@ -358,7 +359,7 @@ arrowtooth_dist$diff <- arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
 arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
 arrowtooth_dist$diff[arrowtooth_dist$dist > 10000] <- NA
 
-tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.mat){
+tgam_map <- function(species_subset, tgam, longitude, latitude, threshold, title, bathy.dat, bathy.mat){
   myvis_gam(tgam[[2]],
             view = c('longitude', 'latitude'),
             too.far = 0.025,
@@ -368,18 +369,18 @@ tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.ma
             cond = list(thr = threshold),
             main = title,
             contour.col = "gray35",
-            xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.5, 1),
+            xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.3, .8),
             ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
-            cex.lab = 2,
-            cex.axis = 2,
-            cex.main = 2.4,
-            xlab = "Longitude °W",
-            ylab = "Latitude °N")
+            cex.lab = 3.5,
+            cex.axis = 3,
+            cex.main = 3.4,
+            xlab = longitude,
+            ylab = latitude)
   contour(unique(bathy.dat$lon),
           sort(unique(bathy.dat$lat)),
           bathy.mat,
           levels = -seq(200, 200, by = 200),
-          labcex = 0.8,
+          labcex = 1.1,
           add = T,
           col = 'black',
           labels = NULL,
@@ -403,19 +404,29 @@ tgam_map <- function(species_subset, tgam, threshold, title, bathy.dat, bathy.ma
        44.6368,
        "Newport",
        adj = c(0, 1.2),
-       cex = 2)
+       cex = 3)
   points(-123.8313, 46.1879, pch = 20)
   text(-123.88028,
        46.13361,
        "Astoria",
        adj = c(0, 1.2),
-       cex = 2)
+       cex = 3)
   points(-124.3, 43.3, pch = 20)
   text(-124.3,
        43.3,
        "Charleston",
        adj = c(0, 1.2),
-       cex = 2)
+       cex = 3)
+  image.plot(legend.only = T,
+             zlim = c(0, 1),
+             col = jet.colors(100),
+             legend.shrink = 0.2,
+             smallplot = c(.2, .22, .1, .25),
+             legend.cex = 1.8,
+             legend.lab = "presence",
+             axis.args = list(cex.axis = 2),
+             legend.width = 1,
+             legend.line = 4)
 }
 pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.mat){
   nlat = 40
@@ -430,19 +441,19 @@ pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.
                  ncol = length(lond),
         byrow = F)),
         col = jet.colors(100),
-        ylab = expression(paste("Latitude (" ^ 0, 'N)')),
-        xlab = expression(paste("Longitude (" ^ 0, 'W)')),
-        xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.5, 1),
+        xlab = " ",
+        ylab = " ",
+        xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.3, .8),
         ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
         main = 'Predicted Change',
-        cex.main = 2.4,
-        cex.lab = 2,
-        cex.axis = 2)
+        cex.main = 3.4,
+        cex.lab = 3,
+        cex.axis = 3)
   contour(unique(bathy.dat$lon),
           sort(unique(bathy.dat$lat)),
           bathy.mat,
           levels = -seq(200, 200, by = 200),
-          labcex = 0.8,
+          labcex = 1.1,
           add = T,
           col = 'black',
           labels = NULL,
@@ -450,11 +461,11 @@ pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.
   points(species_dist$longitude[significant_low],
          species_dist$latitude[significant_low],
          pch = 2,
-         cex = 0.9)
+         cex = 1.1)
   points(species_dist$longitude[significant_high],
          species_dist$latitude[significant_high],
          pch = 16,
-         cex = 1.2)
+         cex = 1.4)
   maps::map('worldHires',
             add = T,
             col = 'peachpuff3',
@@ -464,36 +475,36 @@ pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.
        44.6368,
        "Newport",
        adj = c(0, 1.2),
-       cex = 2)
+       cex = 3)
   points(-123.8313, 46.1879, pch = 20)
   text(-123.88028,
        46.13361,
        "Astoria",
        adj = c(0, 1.2),
-       cex = 2)
+       cex = 3)
   points(-124.3, 43.3, pch = 20)
   text(-124.3,
        43.3,
        "Charleston",
        adj = c(0, 1.2),
-       cex = 2)
+       cex = 3)
   image.plot(legend.only = T,
              zlim = c(-1, 1),
              col = jet.colors(100),
              legend.shrink = 0.2,
-             smallplot = c(.16, .18, .06, .21),
-             legend.cex = 1.5,
+             smallplot = c(.2, .223, .1, .25),
+             legend.cex = 1.8,
              legend.lab = "change",
-             axis.args = list(cex.axis = 1.5),
+             axis.args = list(cex.axis = 2),
              legend.width = 1,
-             legend.line = 3)
+             legend.line = 5)
   legend("bottomleft",
          legend = c("Decrease", "Increase"),
          pch = c(2, 16),
          bty = "n",
-         pt.cex = 2,
-         cex = 1.9,
-         inset = c(0.03, 0.19))
+         pt.cex = 3,
+         cex = 2.4,
+         inset = c(0.01, 0.2))
   }
 
 pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
@@ -502,8 +513,9 @@ pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
-  oma = c(1.5, 2, 4, 2))
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
 jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
                                  "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
 tgam_map(
@@ -511,6 +523,8 @@ tgam_map(
   arrowtooth_tgam,
   threshold = "before",
   title = "Before 2007",
+  longitude = " ",
+  latitude = "Latitude °N",
   bathy.dat,
   bathy.mat
 )
@@ -519,6 +533,8 @@ tgam_map(
   arrowtooth_tgam,
   threshold = "after",
   title = "After 2007",
+  longitude = "Longitude °W",
+  latitude = " ",
   bathy.dat,
   bathy.mat
 )
@@ -530,9 +546,9 @@ pred_map(arrowtooth_subset,
          bathy.dat,
          bathy.mat)
 mtext("Arrowtooth Flounder",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
 
 # English Sole ----
@@ -585,7 +601,7 @@ pdf("../results/TGAM/english_sole/english_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
+  mar = c(6, 5, 5, 1) + 0.2,
   oma = c(1.5, 2, 4, 2))
 jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
 tgam_map(english_subset, english_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
