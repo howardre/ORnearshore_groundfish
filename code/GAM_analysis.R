@@ -19,6 +19,10 @@ load('../data/NMFS_data/triennial_tows')
 load("../data/bathy.dat")
 load("../data/bathy.mat")
 source("functions/subset_species.R")
+source("functions/vis_gam_COLORS.R")
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"))
+contour_col <- rgb(0, 0, 255, max = 255, alpha = 0, names = "white")
 
 # Subset the data to contain only species of interest for each survey ----
 # Eight species of interest
@@ -283,18 +287,48 @@ cpue_GAMs <- function(species_subset){
                                          function(x) min(gam_list[[x]]$aic)))]] # would like to also select by AIC
   return_list <- list(gam_list, best_gam)
 } # need to figure out how to add GCV selection criteria
-plot_variable <- function(gam, covariate, species_name){
+plot_variable <- function(gam, covariate, variable){
+  par(mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+      oma = c(1, 1, 1, 1),
+      mgp = c(5, 2, 0))
   plot(gam[[2]],
        pages = 0,
        select = covariate, # 1 = year/PDO/NPGO, 2 = lat/lon, 3 = depth, 4 = julian, 5 = temp
        shade = T,
-       xlab = "",
-       ylab = "",
-       main = species_name,
+       shade.col = "lemonchiffon3",
+       xlab = variable,
+       ylab = "Species Abundance Anomalies",
        seWithMean = T,
        scale = 0,
-       cex.axis = 1.5,
-       cex.main = 2)
+       cex.axis = 3,
+       cex.lab = 3,
+       family = "serif",
+       lwd = 2)
+}
+location_plot <- function(gam, species_subset) {
+  par(mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+      oma = c(1, 1, 1, 1),
+      mgp = c(5, 2, 0))
+  myvis_gam(
+    gam[[2]],
+    view = c('longitude', 'latitude'),
+    too.far = 0.03,
+    plot.type = 'contour',
+    contour.col = contour_col,
+    color = "jet" ,
+    type = 'response',
+    xlim = range(species_subset$longitude, na.rm = TRUE) + c(-.2, .6),
+    ylim = range(species_subset$latitude, na.rm = TRUE) + c(-.4, .5),
+    family = "serif",
+    xlab = "Longitude",
+    ylab = "Latitude",
+    main = " ",
+    cex.lab = 2,
+    cex.axis = 2)
+  maps::map('worldHires',
+            add = T,
+            col = 'antiquewhite4',
+            fill = T)
 }
 
 # ***Arrowtooth Flounder ----
@@ -303,15 +337,71 @@ cpueGAM_arrow_a <- cpue_GAMs(arrowtooth_annual)
 summary(cpueGAM_arrow_a[[2]]) # view the best model
 gam_check(cpueGAM_arrow_a)
 gam_plot(cpueGAM_arrow_a)
-arrow_a_depth <- plot_variable(cpueGAM_arrow_a, 3, "Arrowtooth Flounder")
-arrow_a_temp <- plot_variable(cpueGAM_arrow_a, 5, "Arrowtooth Flounder")
+# Year variable
+pdf("../results/GAM/arrowtooth_flounder/year_annual.pdf",
+    width = 12,
+    height = 12)
+arrow_a_year <- plot_variable(cpueGAM_arrow_a, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/arrowtooth_flounder/depth_annual.pdf",
+    width = 12,
+    height = 12)
+arrow_a_depth <- plot_variable(cpueGAM_arrow_a, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/arrowtooth_flounder/julian_annual.pdf",
+    width = 12,
+    height = 12)
+arrow_a_day <- plot_variable(cpueGAM_arrow_a, 4, "Day of Year")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/arrowtooth_flounder/temp_annual.pdf",
+    width = 12,
+    height = 12)
+arrow_a_temp <- plot_variable(cpueGAM_arrow_a, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/arrowtooth_flounder/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_arrow_a, arrowtooth_annual)
+dev.off()
+
 # Triennial
 cpueGAM_arrow_t <- cpue_GAMs(arrowtooth_triennial)
 summary(cpueGAM_arrow_t[[2]]) # view the best model
 gam_check(cpueGAM_arrow_t)
 gam_plot(cpueGAM_arrow_t)
-arrow_t_depth <- plot_variable(cpueGAM_arrow_t, 3, "Arrowtooth Flounder")
-arrow_t_temp <- plot_variable(cpueGAM_arrow_t, 5, "Arrowtooth Flounder")
+pdf("../results/GAM/arrowtooth_flounder/year_triennial.pdf",
+    width = 12,
+    height = 12)
+arrow_t_year <- plot_variable(cpueGAM_arrow_t, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/arrowtooth_flounder/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+arrow_t_depth <- plot_variable(cpueGAM_arrow_t, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/arrowtooth_flounder/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+arrow_t_day <- plot_variable(cpueGAM_arrow_t, 4, "Day of Year")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/arrowtooth_flounder/temp_triennial.pdf",
+    width = 12,
+    height = 12)
+arrow_t_temp <- plot_variable(cpueGAM_arrow_t, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/arrowtooth_flounder/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_arrow_t, arrowtooth_triennial)
+dev.off()
 
 # ***Dover Sole ----
 # Annual
@@ -319,14 +409,65 @@ cpueGAM_dover_a <- cpue_GAMs(dover_annual)
 summary(cpueGAM_dover_a[[2]]) # view the best model
 gam_check(cpueGAM_dover_a)
 gam_plot(cpueGAM_dover_a)
-dover_a_depth <- plot_variable(cpueGAM_dover_a, 3, "Dover Sole")
-dover_a_temp <- plot_variable(cpueGAM_dover_a, 5, "Dover Sole")
+# Year variable
+pdf("../results/GAM/dover_sole/year_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_year <- plot_variable(cpueGAM_dover_a, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/dover_sole/depth_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_depth <- plot_variable(cpueGAM_dover_a, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/dover_sole/julian_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_day <- plot_variable(cpueGAM_dover_a, 4, "Day of Year")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/dover_sole/temp_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(cpueGAM_dover_a, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/dover_sole/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_dover_a, dover_annual)
+dev.off()
+
 # Triennial
 cpueGAM_dover_t <- cpue_GAMs(dover_triennial)
 summary(cpueGAM_dover_t[[2]]) # view the best model
 gam_check(cpueGAM_dover_t)
 gam_plot(cpueGAM_dover_t)
-dover_t_depth <- plot_variable(cpueGAM_dover_t, 3, "Dover Sole")
+pdf("../results/GAM/dover_sole/year_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_t_year <- plot_variable(cpueGAM_dover_t, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/dover_sole/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_t_depth <- plot_variable(cpueGAM_dover_t, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/dover_sole/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_t_day <- plot_variable(cpueGAM_dover_t, 4, "Day of Year")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/dover_sole/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_dover_t, dover_triennial)
+dev.off()
 
 # ***English Sole ----
 # Annual
@@ -334,14 +475,66 @@ cpueGAM_english_a <- cpue_GAMs(english_annual)
 summary(cpueGAM_english_a[[2]]) # view the best model
 gam_check(cpueGAM_english_a)
 gam_plot(cpueGAM_english_a)
-english_a_depth <- plot_variable(cpueGAM_english_a, 3, "English Sole")
+# Year variable
+pdf("../results/GAM/english_sole/year_annual.pdf",
+    width = 12,
+    height = 12)
+english_a_year <- plot_variable(cpueGAM_english_a, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/english_sole/depth_annual.pdf",
+    width = 12,
+    height = 12)
+english_a_depth <- plot_variable(cpueGAM_english_a, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/english_sole/julian_annual.pdf",
+    width = 12,
+    height = 12)
+english_a_day <- plot_variable(cpueGAM_english_a, 4, "Day of Year")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/english_sole/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_english_a, english_annual)
+dev.off()
+
 # Triennial
 cpueGAM_english_t <- cpue_GAMs(english_triennial)
 summary(cpueGAM_english_t[[2]]) # view the best model
 gam_check(cpueGAM_english_t)
 gam_plot(cpueGAM_english_t)
-english_t_depth <- plot_variable(cpueGAM_english_t, 3, "English Sole")
-english_t_temp <- plot_variable(cpueGAM_english_t, 5, "English Sole")
+# Year variable
+pdf("../results/GAM/english_sole/year_triennial.pdf",
+    width = 12,
+    height = 12)
+english_t_year <- plot_variable(cpueGAM_english_t, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/english_sole/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+english_t_depth <- plot_variable(cpueGAM_english_t, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/english_sole/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+english_t_day <- plot_variable(cpueGAM_english_t, 4, "Day of Year")
+dev.off()
+# Temperature Variable
+pdf("../results/GAM/english_sole/temp_triennial.pdf",
+    width = 12,
+    height = 12)
+english_t_temp <- plot_variable(cpueGAM_english_t, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/english_sole/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_english_t, english_triennial)
+dev.off()
 
 # ***Lingcod ----
 # Annual
@@ -349,31 +542,72 @@ cpueGAM_lingcod_a <- cpue_GAMs(lingcod_annual)
 summary(cpueGAM_lingcod_a[[2]]) # view the best model
 gam_check(cpueGAM_lingcod_a)
 gam_plot(cpueGAM_lingcod_a)
-lingcod_a_depth <- plot_variable(cpueGAM_lingcod_a, 3, "Lingcod")
-lingcod_a_temp <- plot_variable(cpueGAM_lingcod_a, 5, "Lingcod")
+# Year variable
+pdf("../results/GAM/lingcod/year_annual.pdf",
+    width = 12,
+    height = 12)
+lingcod_a_year <- plot_variable(cpueGAM_lingcod_a, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/lingcod/depth_annual.pdf",
+    width = 12,
+    height = 12)
+lingcod_a_depth <- plot_variable(cpueGAM_lingcod_a, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/lingcod/julian_annual.pdf",
+    width = 12,
+    height = 12)
+lingcod_a_day <- plot_variable(cpueGAM_lingcod_a, 4, "Day of Year")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/lingcod/temp_annual.pdf",
+    width = 12,
+    height = 12)
+lingcod_a_temp <- plot_variable(cpueGAM_lingcod_a, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/lingcod/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_lingcod_a, lingcod_annual)
+dev.off()
+
 # Triennial
 cpueGAM_lingcod_t <- cpue_GAMs(lingcod_triennial)
 summary(cpueGAM_lingcod_t[[2]]) # view the best model
 gam_check(cpueGAM_lingcod_t)
 gam_plot(cpueGAM_lingcod_t)
-lingcod_t_depth <- plot_variable(cpueGAM_lingcod_t, 3, "Lingcod")
-lingcod_t_temp <- plot_variable(cpueGAM_lingcod_t, 5, "Lingcod")
-
-# ***Pacific Sanddab ----
-# Annual
-cpueGAM_sanddab_a <- cpue_GAMs(sanddab_annual)
-summary(cpueGAM_sanddab_a[[2]]) # view the best model
-gam_check(cpueGAM_sanddab_a)
-gam_plot(cpueGAM_sanddab_a)
-sanddab_a_depth <- plot_variable(cpueGAM_sanddab_a, 3, "Pacific Sanddab")
-sanddab_a_temp <- plot_variable(cpueGAM_sanddab_a, 5, "Pacific Sanddab")
-# Triennial
-cpueGAM_sanddab_t <- cpue_GAMs(sanddab_triennial)
-summary(cpueGAM_sanddab_t[[2]]) # view the best model
-gam_check(cpueGAM_sanddab_t)
-gam_plot(cpueGAM_sanddab_t)
-sanddab_t_depth <- plot_variable(cpueGAM_sanddab_t, 3, "Pacific Sanddab")
-sanddab_t_temp <- plot_variable(cpueGAM_sanddab_t, 5, "Pacific Sanddab")
+# NPGO variable
+pdf("../results/GAM/lingcod/NPGO_triennial.pdf",
+    width = 12,
+    height = 12)
+lingcod_t_npgo <- plot_variable(cpueGAM_lingcod_t, 1, "NPGO")
+dev.off()
+# Depth variable
+pdf("../results/GAM/lingcod/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+lingcod_t_depth <- plot_variable(cpueGAM_lingcod_t, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/lingcod/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+lingcod_t_day <- plot_variable(cpueGAM_lingcod_t, 4, "Day of Year")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/lingcod/temp_triennial.pdf",
+    width = 12,
+    height = 12)
+lingcod_t_temp <- plot_variable(cpueGAM_lingcod_t, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/lingcod/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_lingcod_t, lingcod_triennial)
+dev.off()
 
 # ***Petrale Sole ----
 # Annual
@@ -381,13 +615,60 @@ cpueGAM_petrale_a <- cpue_GAMs(petrale_annual)
 summary(cpueGAM_petrale_a[[2]]) # view the best model
 gam_check(cpueGAM_petrale_a)
 gam_plot(cpueGAM_petrale_a)
-petrale_a_depth <- plot_variable(cpueGAM_petrale_a, 3, "Petrale Sole")
+# Year variable
+pdf("../results/GAM/petrale_sole/year_annual.pdf",
+    width = 12,
+    height = 12)
+petrale_a_year <- plot_variable(cpueGAM_petrale_a, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/petrale_sole/depth_annual.pdf",
+    width = 12,
+    height = 12)
+petrale_a_depth <- plot_variable(cpueGAM_petrale_a, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/petrale_sole/julian_annual.pdf",
+    width = 12,
+    height = 12)
+petrale_a_day <- plot_variable(cpueGAM_petrale_a, 4, "Day of Year")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/petrale_sole/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_petrale_a, petrale_annual)
+dev.off()
+
 # Triennial
 cpueGAM_petrale_t <- cpue_GAMs(petrale_triennial)
 summary(cpueGAM_petrale_t[[2]]) # view the best model
 gam_check(cpueGAM_petrale_t)
 gam_plot(cpueGAM_petrale_t)
-petrale_t_depth <- plot_variable(cpueGAM_petrale_t, 3, "Petrale Sole")
+# Year variable
+pdf("../results/GAM/petrale_sole/year_triennial.pdf",
+    width = 12,
+    height = 12)
+petrale_t_year <- plot_variable(cpueGAM_petrale_t, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/petrale_sole/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+petrale_t_depth <- plot_variable(cpueGAM_petrale_t, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/petrale_sole/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+petrale_t_day <- plot_variable(cpueGAM_petrale_t, 4, "Day of Year")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/petrale_sole/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_petrale_t, petrale_triennial)
+dev.off()
 
 # ***Rex Sole ----
 # Annual
@@ -395,15 +676,72 @@ cpueGAM_rex_a <- cpue_GAMs(rex_annual)
 summary(cpueGAM_rex_a[[2]]) # view the best model
 gam_check(cpueGAM_rex_a)
 gam_plot(cpueGAM_rex_a)
-rex_a_depth <- plot_variable(cpueGAM_rex_a, 3, "Rex Sole")
-rex_a_temp <- plot_variable(cpueGAM_rex_a, 5, "Rex Sole")
+# Year variable
+pdf("../results/GAM/rex_sole/year_annual.pdf",
+    width = 12,
+    height = 12)
+rex_a_year <- plot_variable(cpueGAM_rex_a, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/rex_sole/depth_annual.pdf",
+    width = 12,
+    height = 12)
+rex_a_depth <- plot_variable(cpueGAM_rex_a, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/rex_sole/julian_annual.pdf",
+    width = 12,
+    height = 12)
+rex_a_day <- plot_variable(cpueGAM_rex_a, 4, "Day of Year")
+dev.off()
+# Temperature Variable
+pdf("../results/GAM/rex_sole/temp_annual.pdf",
+    width = 12,
+    height = 12)
+rex_a_temp <- plot_variable(cpueGAM_rex_a, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/rex_sole/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_rex_a, rex_annual)
+dev.off()
+
 # Triennial
 cpueGAM_rex_t <- cpue_GAMs(rex_triennial)
 summary(cpueGAM_rex_t[[2]]) # view the best model
 gam_check(cpueGAM_rex_t)
 gam_plot(cpueGAM_rex_t)
-rex_t_depth <- plot_variable(cpueGAM_rex_t, 3, "Rex Sole")
-rex_t_temp <- plot_variable(cpueGAM_rex_t, 5, "Rex Sole")
+# Year variable
+pdf("../results/GAM/rex_sole/year_triennial.pdf",
+    width = 12,
+    height = 12)
+rex_t_year <- plot_variable(cpueGAM_rex_t, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/rex_sole/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+rex_t_depth <- plot_variable(cpueGAM_rex_t, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/rex_sole/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+rex_t_day <- plot_variable(cpueGAM_rex_t, 4, "Day of Year")
+dev.off()
+# Temperature Variable
+pdf("../results/GAM/rex_sole/temp_triennial.pdf",
+    width = 12,
+    height = 12)
+rex_t_temp <- plot_variable(cpueGAM_rex_t, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/rex_sole/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_rex_t, rex_triennial)
+dev.off()
 
 # ***Sablefish ----
 # Annual
@@ -411,12 +749,69 @@ cpueGAM_sablefish_a <- cpue_GAMs(sablefish_annual)
 summary(cpueGAM_sablefish_a[[2]]) # view the best model
 gam_check(cpueGAM_sablefish_a)
 gam_plot(cpueGAM_sablefish_a)
-sablefish_a_depth <- plot_variable(cpueGAM_sablefish_a, 3, "Sablefish")
-sablefish_a_temp <- plot_variable(cpueGAM_sablefish_a, 5, "Sablefish")
+# Year variable
+pdf("../results/GAM/sablefish/year_annual.pdf",
+    width = 12,
+    height = 12)
+sablefish_a_year <- plot_variable(cpueGAM_sablefish_a, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/sablefish/depth_annual.pdf",
+    width = 12,
+    height = 12)
+sablefish_a_depth <- plot_variable(cpueGAM_sablefish_a, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/sablefish/julian_annual.pdf",
+    width = 12,
+    height = 12)
+sablefish_a_day <- plot_variable(cpueGAM_sablefish_a, 4, "Day of Year")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/sablefish/temp_annual.pdf",
+    width = 12,
+    height = 12)
+sablefish_a_temp <- plot_variable(cpueGAM_sablefish_a, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/sablefish/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_sablefish_a, sablefish_annual)
+dev.off()
+
 # Triennial
 cpueGAM_sablefish_t <- cpue_GAMs(sablefish_triennial)
 summary(cpueGAM_sablefish_t[[2]]) # view the best model
 gam_check(cpueGAM_sablefish_t)
 gam_plot(cpueGAM_sablefish_t)
-sablefish_t_depth <- plot_variable(cpueGAM_sablefish_t, 3, "Sablefish")
-sablefish_t_temp <- plot_variable(cpueGAM_sablefish_t, 5, "Sablefish")
+# Year variable
+pdf("../results/GAM/sablefish/year_triennial.pdf",
+    width = 12,
+    height = 12)
+sablefish_t_year <- plot_variable(cpueGAM_sablefish_t, 1, "Year")
+dev.off()
+# Depth variable
+pdf("../results/GAM/sablefish/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+sablefish_t_depth <- plot_variable(cpueGAM_sablefish_t, 3, "Depth (m)")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/sablefish/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+sablefish_t_day <- plot_variable(cpueGAM_sablefish_t, 4, "Day of Year")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/sablefish/temp_triennial.pdf",
+    width = 12,
+    height = 12)
+sablefish_t_temp <- plot_variable(cpueGAM_sablefish_t, 5, "Temperature (°C)")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/sablefish/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_sablefish_t, sablefish_triennial)
+dev.off()
