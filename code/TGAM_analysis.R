@@ -53,7 +53,14 @@ lingcod_subset$thr <-  ifelse(lingcod_subset$year <= lingcod_tgam[[3]], 'before'
 petrale_tgam <- get_tgam(petrale_subset, years)
 petrale_subset$thr <-  ifelse(petrale_subset$year <= petrale_tgam[[3]], 'before', 'after')
 sablefish_tgam <- get_tgam(sablefish_subset, years)
+sablefish_tgam[[3]] <- 2003
 sablefish_subset$thr <-  ifelse(sablefish_subset$year <= sablefish_tgam[[3]], 'before', 'after')
+sablefish_tgam[[2]] <- gam(pres ~ factor(year) +
+                        s(longitude, latitude, by = factor(thr)) +
+                        s(julian),
+                      data = sablefish_subset,
+                      family = binomial)
+
 
 # View summary statistics for reference [[1]] and final [[2]] TGAMs ----
 summary(arrowtooth_tgam[[1]])
@@ -120,12 +127,12 @@ subset_distances <- function(tgam, df, year) {
   return(subset_before)
 }
 
-tgam_prediction <- function(tgam, subset_before) {
+tgam_prediction <- function(tgam, subset_before, year) {
     before_prediction <- predict(tgam[[2]],
                                  newdata = subset_before,
                                  se.fit = TRUE,
                                  type = 'response')
-    nlat = 40 # determine the resolution of the grid
+    nlat = 40
     nlon = 30
     latd = seq(41, 48, length.out = nlat)
     lond = seq(-125,-123.9, length.out = nlon)
@@ -135,7 +142,7 @@ tgam_prediction <- function(tgam, subset_before) {
     pred_se_before[subset_before$dist > 10000] <- NA
     subset_after <- expand.grid(latd, lond)
     names(subset_after) <- c("latitude", "longitude")
-    subset_after$year <- 2015
+    subset_after$year <- year
     subset_after$julian <- 180
     subset_after$thr <- "after"
     after_prediction <- predict(tgam[[2]],
@@ -156,21 +163,21 @@ tgam_prediction <- function(tgam, subset_before) {
   }
 
 arrowtooth_dist <- subset_distances(arrowtooth_tgam, arrowtooth_subset, 2001)
-arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_dist)
+arrowtooth_CI <- tgam_prediction(arrowtooth_tgam, arrowtooth_dist, 2013)
 english_dist <- subset_distances(english_tgam, english_subset, 1986)
-english_CI <- tgam_prediction(english_tgam, english_dist)
+english_CI <- tgam_prediction(english_tgam, english_dist, 2008)
 sanddab_dist <- subset_distances(sanddab_tgam, sanddab_subset, 1986)
-sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_dist)
+sanddab_CI <- tgam_prediction(sanddab_tgam, sanddab_dist,2008)
 dover_dist <- subset_distances(dover_tgam, dover_subset, 1986)
-dover_CI <- tgam_prediction(dover_tgam, dover_dist)
+dover_CI <- tgam_prediction(dover_tgam, dover_dist, 2013)
 rex_dist <- subset_distances(rex_tgam, rex_subset, 1986)
-rex_CI <- tgam_prediction(rex_tgam, rex_dist)
+rex_CI <- tgam_prediction(rex_tgam, rex_dist, 2013)
 lingcod_dist <- subset_distances(lingcod_tgam, lingcod_subset, 2001)
-lingcod_CI <- tgam_prediction(lingcod_tgam, lingcod_dist)
+lingcod_CI <- tgam_prediction(lingcod_tgam, lingcod_dist, 2014)
 petrale_dist <- subset_distances(petrale_tgam, petrale_subset, 2001)
-petrale_CI <- tgam_prediction(petrale_tgam, petrale_dist)
-sablefish_dist <- subset_distances(sablefish_tgam, sablefish_subset, 2001)
-sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_dist)
+petrale_CI <- tgam_prediction(petrale_tgam, petrale_dist, 2014)
+sablefish_dist <- subset_distances(sablefish_tgam, sablefish_subset, 1995)
+sablefish_CI <- tgam_prediction(sablefish_tgam, sablefish_dist, 2013)
 
 # Can check the results, will likely get NA
 sum(1 * arrowtooth_CI[[2]])
@@ -218,6 +225,146 @@ validation_map <- function(species_subset, tgam, conf_int, species_dist, bathy.d
             add = T,
             col = 'peachpuff3',
             fill = T)
+}
+
+# Final map functions
+tgam_map <- function(species_subset, tgam, longitude, latitude, threshold, title, bathy.dat, bathy.mat){
+  myvis_gam(tgam[[2]],
+            view = c('longitude', 'latitude'),
+            too.far = 0.025,
+            plot.type = 'contour',
+            color = 'jet',
+            type = 'response',
+            cond = list(thr = threshold),
+            main = title,
+            contour.col = "gray35",
+            xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.3, .8),
+            ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+            cex.lab = 3.5,
+            cex.axis = 3,
+            cex.main = 3.4,
+            xlab = longitude,
+            ylab = latitude)
+  contour(unique(bathy.dat$lon),
+          sort(unique(bathy.dat$lat)),
+          bathy.mat,
+          levels = -seq(200, 200, by = 200),
+          labcex = 1.1,
+          add = T,
+          col = 'black',
+          labels = NULL,
+          lwd = 1.95)
+  maps::map('worldHires',
+            add = T,
+            col = 'peachpuff3',
+            fill = T)
+  points(-124.0535, 44.6368, pch = 20)
+  text(-124.0535,
+       44.6368,
+       "Newport",
+       adj = c(0, 1.2),
+       cex = 3)
+  points(-123.8313, 46.1879, pch = 20)
+  text(-123.88028,
+       46.13361,
+       "Astoria",
+       adj = c(0, 1.2),
+       cex = 3)
+  points(-124.3, 43.3, pch = 20)
+  text(-124.3,
+       43.3,
+       "Charleston",
+       adj = c(0, 1.2),
+       cex = 3)
+  image.plot(legend.only = T,
+             zlim = c(0, 1),
+             col = jet.colors(100),
+             legend.shrink = 0.2,
+             smallplot = c(.2, .22, .1, .25),
+             legend.cex = 1.8,
+             legend.lab = "presence",
+             axis.args = list(cex.axis = 2),
+             legend.width = 1,
+             legend.line = 4)
+}
+pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.mat){
+  nlat = 40
+  nlon = 30
+  latd = seq(41, 48, length.out = nlat)
+  lond = seq(-125,-123.9, length.out = nlon)
+  significant_high <- species_CI[[1]]
+  significant_low <- species_CI[[2]]
+  image(lond, latd,
+        t(matrix(species_dist$diff,
+                 nrow = length(latd),
+                 ncol = length(lond),
+                 byrow = F)),
+        col = jet.colors(100),
+        xlab = " ",
+        ylab = " ",
+        xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.3, .8),
+        ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+        zlim = c(-1, 1),
+        main = 'Predicted Change',
+        cex.main = 3.4,
+        cex.lab = 3,
+        cex.axis = 3)
+  contour(unique(bathy.dat$lon),
+          sort(unique(bathy.dat$lat)),
+          bathy.mat,
+          levels = -seq(200, 200, by = 200),
+          labcex = 1.1,
+          add = T,
+          col = 'black',
+          labels = NULL,
+          lwd = 1.95)
+  points(species_dist$longitude[significant_low],
+         species_dist$latitude[significant_low],
+         pch = 2,
+         cex = 1.1)
+  points(species_dist$longitude[significant_high],
+         species_dist$latitude[significant_high],
+         pch = 16,
+         cex = 1.4)
+  maps::map('worldHires',
+            add = T,
+            col = 'peachpuff3',
+            fill = T)
+  points(-124.0535, 44.6368, pch = 20)
+  text(-124.0535,
+       44.6368,
+       "Newport",
+       adj = c(0, 1.2),
+       cex = 3)
+  points(-123.8313, 46.1879, pch = 20)
+  text(-123.88028,
+       46.13361,
+       "Astoria",
+       adj = c(0, 1.2),
+       cex = 3)
+  points(-124.3, 43.3, pch = 20)
+  text(-124.3,
+       43.3,
+       "Charleston",
+       adj = c(0, 1.2),
+       cex = 3)
+  image.plot(legend.only = T,
+             zlim = c(-1, 1),
+             col = jet.colors(100),
+             legend.shrink = 0.2,
+             smallplot = c(.2, .223, .1, .25),
+             legend.cex = 1.8,
+             legend.lab = "change",
+             axis.args = list(cex.axis = 2),
+             legend.width = 1,
+             legend.line = 5)
+  legend("bottomleft",
+         legend = c("Decrease", "Increase"),
+         pch = c(2, 16),
+         bty = "n",
+         pt.cex = 3,
+         cex = 2.4,
+         inset = c(0.01, 0.2))
 }
 
 # Arrowtooth Flounder ----
@@ -353,159 +500,12 @@ arrowtooth_s_pred <- sum(arrowtooth_south$diff) / nrow(arrowtooth_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-arrowtooth_dist$mean_after <- arrowtooth_CI[[3]]$fit
-arrowtooth_dist$mean_before <- arrowtooth_CI[[4]]$fit
+arrowtooth_dist$mean_after <- arrowtooth_CI[[4]]$fit
+arrowtooth_dist$mean_before <- arrowtooth_CI[[3]]$fit
 arrowtooth_dist$diff <- arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
 arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
 arrowtooth_dist$diff[arrowtooth_dist$dist > 10000] <- NA
 
-tgam_map <- function(species_subset, tgam, longitude, latitude, threshold, title, bathy.dat, bathy.mat){
-  myvis_gam(tgam[[2]],
-            view = c('longitude', 'latitude'),
-            too.far = 0.025,
-            plot.type = 'contour',
-            color = 'jet',
-            type = 'response',
-            cond = list(thr = threshold),
-            main = title,
-            contour.col = "gray35",
-            xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.3, .8),
-            ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
-            cex.lab = 3.5,
-            cex.axis = 3,
-            cex.main = 3.4,
-            xlab = longitude,
-            ylab = latitude)
-  contour(unique(bathy.dat$lon),
-          sort(unique(bathy.dat$lat)),
-          bathy.mat,
-          levels = -seq(200, 200, by = 200),
-          labcex = 1.1,
-          add = T,
-          col = 'black',
-          labels = NULL,
-          lwd = 1.95)
-  symbols(species_subset$longitude[species_subset$pres > 0 &
-                                     species_subset$thr == threshold],
-          species_subset$latitude[species_subset$pres > 0 &
-                                    species_subset$thr == threshold],
-  circles = species_subset$pres[species_subset$pres > 0 &
-                                  species_subset$thr == threshold],
-  inches = 0.035,
-  add = T,
-  bg = alpha('gray', 0.4),
-  fg = alpha('gray', 0.4))
-  maps::map('worldHires',
-            add = T,
-            col = 'peachpuff3',
-            fill = T)
-  points(-124.0535, 44.6368, pch = 20)
-  text(-124.0535,
-       44.6368,
-       "Newport",
-       adj = c(0, 1.2),
-       cex = 3)
-  points(-123.8313, 46.1879, pch = 20)
-  text(-123.88028,
-       46.13361,
-       "Astoria",
-       adj = c(0, 1.2),
-       cex = 3)
-  points(-124.3, 43.3, pch = 20)
-  text(-124.3,
-       43.3,
-       "Charleston",
-       adj = c(0, 1.2),
-       cex = 3)
-  image.plot(legend.only = T,
-             zlim = c(0, 1),
-             col = jet.colors(100),
-             legend.shrink = 0.2,
-             smallplot = c(.2, .22, .1, .25),
-             legend.cex = 1.8,
-             legend.lab = "presence",
-             axis.args = list(cex.axis = 2),
-             legend.width = 1,
-             legend.line = 4)
-}
-pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.mat){
-  nlat = 40
-  nlon = 30
-  latd = seq(41, 48, length.out = nlat)
-  lond = seq(-125,-123.9, length.out = nlon)
-  significant_high <- species_CI[[1]]
-  significant_low <- species_CI[[2]]
-  image(lond, latd,
-        t(matrix(species_dist$diff,
-                 nrow = length(latd),
-                 ncol = length(lond),
-        byrow = F)),
-        col = jet.colors(100),
-        xlab = " ",
-        ylab = " ",
-        xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.3, .8),
-        ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
-        main = 'Predicted Change',
-        cex.main = 3.4,
-        cex.lab = 3,
-        cex.axis = 3)
-  contour(unique(bathy.dat$lon),
-          sort(unique(bathy.dat$lat)),
-          bathy.mat,
-          levels = -seq(200, 200, by = 200),
-          labcex = 1.1,
-          add = T,
-          col = 'black',
-          labels = NULL,
-          lwd = 1.95)
-  points(species_dist$longitude[significant_low],
-         species_dist$latitude[significant_low],
-         pch = 2,
-         cex = 1.1)
-  points(species_dist$longitude[significant_high],
-         species_dist$latitude[significant_high],
-         pch = 16,
-         cex = 1.4)
-  maps::map('worldHires',
-            add = T,
-            col = 'peachpuff3',
-            fill = T)
-  points(-124.0535, 44.6368, pch = 20)
-  text(-124.0535,
-       44.6368,
-       "Newport",
-       adj = c(0, 1.2),
-       cex = 3)
-  points(-123.8313, 46.1879, pch = 20)
-  text(-123.88028,
-       46.13361,
-       "Astoria",
-       adj = c(0, 1.2),
-       cex = 3)
-  points(-124.3, 43.3, pch = 20)
-  text(-124.3,
-       43.3,
-       "Charleston",
-       adj = c(0, 1.2),
-       cex = 3)
-  image.plot(legend.only = T,
-             zlim = c(-1, 1),
-             col = jet.colors(100),
-             legend.shrink = 0.2,
-             smallplot = c(.2, .223, .1, .25),
-             legend.cex = 1.8,
-             legend.lab = "change",
-             axis.args = list(cex.axis = 2),
-             legend.width = 1,
-             legend.line = 5)
-  legend("bottomleft",
-         legend = c("Decrease", "Increase"),
-         pch = c(2, 16),
-         bty = "n",
-         pt.cex = 3,
-         cex = 2.4,
-         inset = c(0.01, 0.2))
-  }
 
 pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
     width = 17,
@@ -538,8 +538,8 @@ tgam_map(
   bathy.dat,
   bathy.mat
 )
-jet.colors <- colorRampPalette(c("#b2182b", "#d6604d", "#f4a582", "#fddbc7", "#f7f7f7",
-                                 "#d1e5f0", "#92c5de", "#4393c3",  "#2166ac"), alpha = T) # Create new palette for predictions
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
 pred_map(arrowtooth_subset,
          arrowtooth_dist,
          arrowtooth_CI,
@@ -589,8 +589,8 @@ english_s_pred <- sum(english_south$diff) / nrow(english_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-english_dist$mean_after <- english_CI[[3]]$fit
-english_dist$mean_before <- english_CI[[4]]$fit
+english_dist$mean_after <- english_CI[[4]]$fit
+english_dist$mean_before <- english_CI[[3]]$fit
 english_dist$diff <-  english_dist$mean_after - english_dist$mean_before
 english_dist$diff[is.na(english_dist$diff)] <- 0
 english_dist$diff[english_dist$dist > 10000] <- NA
@@ -601,18 +601,42 @@ pdf("../results/TGAM/english_sole/english_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(6, 5, 5, 1) + 0.2,
-  oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(english_subset, english_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(english_subset, english_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(english_subset, english_dist, bathy.dat, bathy.mat)
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  english_subset,
+  english_tgam,
+  threshold = "before",
+  title = "Before 1995",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  english_subset,
+  english_tgam,
+  threshold = "after",
+  title = "After 1995",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
+pred_map(english_subset,
+         english_dist,
+         english_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("English Sole",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
 
 # Pacific Sanddab ----
@@ -661,8 +685,8 @@ sanddab_s_pred <- sum(sanddab_south$diff) / nrow(sanddab_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-sanddab_dist$mean_after <- sanddab_CI[[3]]$fit
-sanddab_dist$mean_before <- sanddab_CI[[4]]$fit
+sanddab_dist$mean_after <- sanddab_CI[[4]]$fit
+sanddab_dist$mean_before <- sanddab_CI[[3]]$fit
 sanddab_dist$diff <-  sanddab_dist$mean_after - sanddab_dist$mean_before
 sanddab_dist$diff[is.na(sanddab_dist$diff)] <- 0
 sanddab_dist$diff[sanddab_dist$dist > 10000] <- NA
@@ -673,18 +697,42 @@ pdf("../results/TGAM/pacific_sanddab/sanddab_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
-  oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(sanddab_subset, sanddab_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(sanddab_subset, sanddab_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(sanddab_subset, sanddab_dist, bathy.dat, bathy.mat)
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  sanddab_subset,
+  sanddab_tgam,
+  threshold = "before",
+  title = "Before 1989",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  sanddab_subset,
+  sanddab_tgam,
+  threshold = "after",
+  title = "After 1989",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
+pred_map(sanddab_subset,
+         sanddab_dist,
+         sanddab_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("Pacific Sanddab",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
 
 # Dover Sole ----
@@ -741,8 +789,8 @@ dover_s_pred <- sum(dover_south$diff) / nrow(dover_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-dover_dist$mean_after <- dover_CI[[3]]$fit
-dover_dist$mean_before <- dover_CI[[4]]$fit
+dover_dist$mean_after <- dover_CI[[4]]$fit
+dover_dist$mean_before <- dover_CI[[3]]$fit
 dover_dist$diff <-  dover_dist$mean_after - dover_dist$mean_before
 dover_dist$diff[is.na(dover_dist$diff)] <- 0
 dover_dist$diff[dover_dist$dist > 10000] <- NA
@@ -753,18 +801,42 @@ pdf("../results/TGAM/dover_sole/dover_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
-  oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(dover_subset, dover_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(dover_subset, dover_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(dover_subset, dover_dist, bathy.dat, bathy.mat)
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  dover_subset,
+  dover_tgam,
+  threshold = "before",
+  title = "Before 1995",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  dover_subset,
+  dover_tgam,
+  threshold = "after",
+  title = "After 1995",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
+pred_map(dover_subset,
+         dover_dist,
+         dover_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("Dover Sole",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
 
 # Rex Sole ----
@@ -813,8 +885,8 @@ rex_s_pred <- sum(rex_south$diff) / nrow(rex_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-rex_dist$mean_after <- rex_CI[[3]]$fit
-rex_dist$mean_before <- rex_CI[[4]]$fit
+rex_dist$mean_after <- rex_CI[[4]]$fit
+rex_dist$mean_before <- rex_CI[[3]]$fit
 rex_dist$diff <-  rex_dist$mean_after - rex_dist$mean_before
 rex_dist$diff[is.na(rex_dist$diff)] <- 0
 rex_dist$diff[rex_dist$dist > 10000] <- NA
@@ -825,18 +897,42 @@ pdf("../results/TGAM/rex_sole/rex_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
-  oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(rex_subset, rex_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(rex_subset, rex_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(rex_subset, rex_dist, bathy.dat, bathy.mat)
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  rex_subset,
+  rex_tgam,
+  threshold = "before",
+  title = "Before 1989",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  rex_subset,
+  rex_tgam,
+  threshold = "after",
+  title = "After 1989",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
+pred_map(rex_subset,
+         rex_dist,
+         rex_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("Rex Sole",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
 
 
@@ -886,8 +982,8 @@ lingcod_s_pred <- sum(lingcod_south$diff) / nrow(lingcod_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-lingcod_dist$mean_after <- lingcod_CI[[3]]$fit
-lingcod_dist$mean_before <- lingcod_CI[[4]]$fit
+lingcod_dist$mean_after <- lingcod_CI[[4]]$fit
+lingcod_dist$mean_before <- lingcod_CI[[3]]$fit
 lingcod_dist$diff <-  lingcod_dist$mean_after - lingcod_dist$mean_before
 lingcod_dist$diff[is.na(lingcod_dist$diff)] <- 0
 lingcod_dist$diff[lingcod_dist$dist > 10000] <- NA
@@ -898,18 +994,42 @@ pdf("../results/TGAM/lingcod/lingcod_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
-  oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(lingcod_subset, lingcod_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(lingcod_subset, lingcod_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(lingcod_subset, lingcod_dist, bathy.dat, bathy.mat)
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  lingcod_subset,
+  lingcod_tgam,
+  threshold = "before",
+  title = "Before 2009",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  lingcod_subset,
+  lingcod_tgam,
+  threshold = "after",
+  title = "After 2009",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
+pred_map(lingcod_subset,
+         lingcod_dist,
+         lingcod_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("Lingcod",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
 
 # Petrale Sole ----
@@ -954,8 +1074,8 @@ petrale_s_pred <- sum(petrale_south$diff) / nrow(petrale_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-petrale_dist$mean_after <- petrale_CI[[3]]$fit
-petrale_dist$mean_before <- petrale_CI[[4]]$fit
+petrale_dist$mean_after <- petrale_CI[[4]]$fit
+petrale_dist$mean_before <- petrale_CI[[3]]$fit
 petrale_dist$diff <-  petrale_dist$mean_after - petrale_dist$mean_before
 petrale_dist$diff[is.na(petrale_dist$diff)] <- 0
 petrale_dist$diff[petrale_dist$dist > 10000] <- NA
@@ -966,18 +1086,42 @@ pdf("../results/TGAM/petrale_sole/petrale_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
-  oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(petrale_subset, petrale_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(petrale_subset, petrale_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(petrale_subset, petrale_dist, bathy.dat, bathy.mat)
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  petrale_subset,
+  petrale_tgam,
+  threshold = "before",
+  title = "Before 2011",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  petrale_subset,
+  petrale_tgam,
+  threshold = "after",
+  title = "After 2011",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
+pred_map(petrale_subset,
+         petrale_dist,
+         petrale_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("Petrale Sole",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
 
 # Sablefish ----
@@ -1012,8 +1156,8 @@ sablefish_s_pred <- sum(sablefish_south$diff) / nrow(sablefish_south)
 
 # ***Create the final maps ----
 # Calculate difference before and after
-sablefish_dist$mean_after <- sablefish_CI[[3]]$fit
-sablefish_dist$mean_before <- sablefish_CI[[4]]$fit
+sablefish_dist$mean_after <- sablefish_CI[[4]]$fit
+sablefish_dist$mean_before <- sablefish_CI[[3]]$fit
 sablefish_dist$diff <-  sablefish_dist$mean_after - sablefish_dist$mean_before
 sablefish_dist$diff[is.na(sablefish_dist$diff)] <- 0
 sablefish_dist$diff[sablefish_dist$dist > 10000] <- NA
@@ -1024,16 +1168,40 @@ pdf("../results/TGAM/sablefish/sablefish_threshold.pdf",
 par(
   mfrow = c(1, 3),
   family = 'serif',
-  mar = c(4, 5, 3, 0.2) + 0.1,
-  oma = c(1.5, 2, 4, 2))
-jet.colors<-colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA", "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-tgam_map(sablefish_subset, sablefish_tgam, threshold = "before", title = "Before 2007", bathy.dat, bathy.mat)
-tgam_map(sablefish_subset, sablefish_tgam, threshold = "after", title = "After 2007", bathy.dat, bathy.mat)
-jet.colors <- colorRampPalette(c("#F7FCF090", "#E0F3DB90", "#CCEBC590", "#A8DDB590", "#7BCCC490",
-                                 "#4EB3D390", "#2B8CBE90", "#0868AC90",  "#08408190"), alpha = T) # Create new palette for predictions
-pred_map(sablefish_subset, sablefish_dist, bathy.dat, bathy.mat)
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  sablefish_subset,
+  sablefish_tgam,
+  threshold = "before",
+  title = "Before 2003",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map(
+  sablefish_subset,
+  sablefish_tgam,
+  threshold = "after",
+  title = "After 2003",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat
+)
+jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"), alpha = T) # Create new palette for predictions
+pred_map(sablefish_subset,
+         sablefish_dist,
+         sablefish_CI,
+         bathy.dat,
+         bathy.mat)
 mtext("Sablefish",
-      line = 1,
+      line = 1.5,
       outer = T,
-      cex = 2.5)
+      cex = 3)
 dev.off()
