@@ -287,17 +287,20 @@ cpue_GAMs <- function(species_subset){
                                          function(x) min(gam_list[[x]]$aic)))]] # would like to also select by AIC
   return_list <- list(gam_list, best_gam)
 } # need to figure out how to add GCV selection criteria
-plot_variable <- function(gam, covariate, variable){
-  par(mar = c(6.4, 7.2, .5, 0.6) + 0.1,
-      oma = c(1, 1, 1, 1),
-      mgp = c(5, 2, 0))
+plot_variable <- function(gam, covariate, bounds, variable, ylabel, yvalues){
+  par(
+    mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+    oma = c(1, 1, 1, 1),
+    mgp = c(5, 2, 0))
   plot(gam[[2]],
        pages = 0,
        select = covariate, # 1 = year/PDO/NPGO, 2 = lat/lon, 3 = depth, 4 = julian, 5 = temp
        shade = T,
        shade.col = "lemonchiffon3",
+       ylim = bounds,
        xlab = variable,
-       ylab = "Species Abundance Anomalies",
+       ylab = ylabel,
+       yaxt = yvalues,
        seWithMean = T,
        scale = 0,
        cex.axis = 3,
@@ -306,9 +309,10 @@ plot_variable <- function(gam, covariate, variable){
        lwd = 2)
 }
 location_plot <- function(gam, species_subset) {
-  par(mar = c(6.4, 7.2, .5, 0.6) + 0.1,
-      oma = c(1, 1, 1, 1),
-      mgp = c(5, 2, 0))
+  par(
+    mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+    oma = c(1, 1, 1, 1),
+    mgp = c(5, 2, 0))
   myvis_gam(
     gam[[2]],
     view = c('longitude', 'latitude'),
@@ -317,7 +321,7 @@ location_plot <- function(gam, species_subset) {
     contour.col = contour_col,
     color = "jet" ,
     type = 'response',
-    xlim = range(species_subset$longitude, na.rm = TRUE) + c(-.2, .6),
+    xlim = c(-125.7, -123.6),
     ylim = range(species_subset$latitude, na.rm = TRUE) + c(-.4, .5),
     family = "serif",
     xlab = "Longitude",
@@ -341,25 +345,45 @@ gam_plot(cpueGAM_arrow_a)
 pdf("../results/GAM/arrowtooth_flounder/year_annual.pdf",
     width = 12,
     height = 12)
-arrow_a_year <- plot_variable(cpueGAM_arrow_a, 1, "Year")
+arrow_a_year <- plot_variable(gam = cpueGAM_arrow_a,
+                              covariate = 1,
+                              bounds = c(-.6, .7),
+                              "Year",
+                              "Species Abundance Anomalies",
+                              "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/arrowtooth_flounder/depth_annual.pdf",
-    width = 12,
-    height = 12)
-arrow_a_depth <- plot_variable(cpueGAM_arrow_a, 3, "Depth (m)")
+     width = 12,
+     height = 12)
+arrow_a_depth <- plot_variable(cpueGAM_arrow_a,
+                               covariate = 3,
+                               bounds = c(-3, 2),
+                               "Depth (m)",
+                               "Species Abundance Anomalies",
+                               "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/arrowtooth_flounder/julian_annual.pdf",
-    width = 12,
-    height = 12)
-arrow_a_day <- plot_variable(cpueGAM_arrow_a, 4, "Day of Year")
+     width = 12,
+     height = 12)
+arrow_a_day <- plot_variable(cpueGAM_arrow_a,
+                             covariate = 4,
+                             bounds = c(-.6, .7),
+                             "Day of Year",
+                             " ",
+                             "n")
 dev.off()
 # Temperature variable
 pdf("../results/GAM/arrowtooth_flounder/temp_annual.pdf",
-    width = 12,
-    height = 12)
-arrow_a_temp <- plot_variable(cpueGAM_arrow_a, 5, "Temperature (째C)")
+     width = 12,
+     height = 12)
+arrow_a_temp <- plot_variable(cpueGAM_arrow_a,
+                              covariate = 5,
+                              bounds = c(-3, 2),
+                              "Temperature (캜)",
+                              " ",
+                              "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/arrowtooth_flounder/location_annual.pdf",
@@ -376,25 +400,45 @@ gam_plot(cpueGAM_arrow_t)
 pdf("../results/GAM/arrowtooth_flounder/year_triennial.pdf",
     width = 12,
     height = 12)
-arrow_t_year <- plot_variable(cpueGAM_arrow_t, 1, "Year")
+arrow_t_year <- plot_variable(cpueGAM_arrow_t,
+                              covariate = 1,
+                              bounds = c(-2, 1),
+                              "Year",
+                              "Species Abundance Anomalies",
+                              "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/arrowtooth_flounder/depth_triennial.pdf",
     width = 12,
     height = 12)
-arrow_t_depth <- plot_variable(cpueGAM_arrow_t, 3, "Depth (m)")
+arrow_t_depth <- plot_variable(cpueGAM_arrow_t,
+                               covariate = 3,
+                               bounds = c(-2.2, 1.3),
+                               "Depth (m)",
+                               "Species Abundance Anomalies",
+                               "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/arrowtooth_flounder/julian_triennial.pdf",
     width = 12,
     height = 12)
-arrow_t_day <- plot_variable(cpueGAM_arrow_t, 4, "Day of Year")
+arrow_t_day <- plot_variable(cpueGAM_arrow_t,
+                             covariate = 4,
+                             bounds = c(-2, 1),
+                             "Day of Year",
+                             " ",
+                             "n")
 dev.off()
 # Temperature variable
 pdf("../results/GAM/arrowtooth_flounder/temp_triennial.pdf",
     width = 12,
     height = 12)
-arrow_t_temp <- plot_variable(cpueGAM_arrow_t, 5, "Temperature (째C)")
+arrow_t_temp <- plot_variable(cpueGAM_arrow_t,
+                              covariate = 5,
+                              bounds = c(-2.2, 1.3),
+                              "Temperature (캜)",
+                              "",
+                              "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/arrowtooth_flounder/location_triennial.pdf",
@@ -413,25 +457,45 @@ gam_plot(cpueGAM_dover_a)
 pdf("../results/GAM/dover_sole/year_annual.pdf",
     width = 12,
     height = 12)
-dover_a_year <- plot_variable(cpueGAM_dover_a, 1, "Year")
+dover_a_year <- plot_variable(cpueGAM_dover_a,
+                              covariate = 1,
+                              bounds = c(-.42, .7),
+                              "Year",
+                              "Species Abundance Anomalies",
+                              "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/dover_sole/depth_annual.pdf",
     width = 12,
     height = 12)
-dover_a_depth <- plot_variable(cpueGAM_dover_a, 3, "Depth (m)")
+dover_a_depth <- plot_variable(cpueGAM_dover_a,
+                               covariate = 3,
+                               bounds = c(-3.2, 2.1),
+                               "Depth (m)",
+                               "Species Abundance Anomalies",
+                               "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/dover_sole/julian_annual.pdf",
     width = 12,
     height = 12)
-dover_a_day <- plot_variable(cpueGAM_dover_a, 4, "Day of Year")
+dover_a_day <- plot_variable(cpueGAM_dover_a,
+                             covariate = 4,
+                             bounds = c(-.42, .7),
+                             "Day of Year",
+                             " ",
+                             "n")
 dev.off()
 # Temperature variable
 pdf("../results/GAM/dover_sole/temp_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(cpueGAM_dover_a, 5, "Temperature (째C)")
+dover_a_temp <- plot_variable(cpueGAM_dover_a,
+                              covariate = 5,
+                              bounds = c(-3.2, 2.1),
+                              "Temperature (캜)",
+                              "",
+                              "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/dover_sole/location_annual.pdf",
@@ -448,19 +512,34 @@ gam_plot(cpueGAM_dover_t)
 pdf("../results/GAM/dover_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-dover_t_year <- plot_variable(cpueGAM_dover_t, 1, "Year")
+dover_t_year <- plot_variable(cpueGAM_dover_t,
+                              covariate = 1,
+                              bounds = c(-1.7, 1.5),
+                              "Year",
+                              "Species Abundance Anomalies",
+                              "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/dover_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-dover_t_depth <- plot_variable(cpueGAM_dover_t, 3, "Depth (m)")
+dover_t_depth <- plot_variable(cpueGAM_dover_t,
+                               covariate = 3,
+                               bounds = c(-3, 2),
+                               "Depth (m)",
+                               "Species Abundance Anomalies",
+                               "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/dover_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-dover_t_day <- plot_variable(cpueGAM_dover_t, 4, "Day of Year")
+dover_t_day <- plot_variable(cpueGAM_dover_t,
+                             covariate = 4,
+                             bounds = c(-1.6, 1),
+                             "Day of Year",
+                             " ",
+                             "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/dover_sole/location_triennial.pdf",
@@ -479,19 +558,34 @@ gam_plot(cpueGAM_english_a)
 pdf("../results/GAM/english_sole/year_annual.pdf",
     width = 12,
     height = 12)
-english_a_year <- plot_variable(cpueGAM_english_a, 1, "Year")
+english_a_year <- plot_variable(cpueGAM_english_a,
+                                covariate = 1,
+                                bounds = c(-.4, .8),
+                                "Year",
+                                "Species Abundance Anomalies",
+                                "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/english_sole/depth_annual.pdf",
     width = 12,
     height = 12)
-english_a_depth <- plot_variable(cpueGAM_english_a, 3, "Depth (m)")
+english_a_depth <- plot_variable(cpueGAM_english_a,
+                                 covariate = 3,
+                                 bounds = c(-1.1, 1.6),
+                                 "Depth (m)",
+                                 "Species Abundance Anomalies",
+                                 "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/english_sole/julian_annual.pdf",
     width = 12,
     height = 12)
-english_a_day <- plot_variable(cpueGAM_english_a, 4, "Day of Year")
+english_a_day <- plot_variable(cpueGAM_english_a,
+                               covariate = 4,
+                               bounds = c(-.4, .8),
+                               "Day of Year",
+                               " ",
+                               "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/english_sole/location_annual.pdf",
@@ -509,25 +603,45 @@ gam_plot(cpueGAM_english_t)
 pdf("../results/GAM/english_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-english_t_year <- plot_variable(cpueGAM_english_t, 1, "Year")
+english_t_year <- plot_variable(cpueGAM_english_t,
+                                covariate = 1,
+                                bounds = c(-1.5, 1.5),
+                                "Year",
+                                "Species Abundance Anomalies",
+                                "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/english_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-english_t_depth <- plot_variable(cpueGAM_english_t, 3, "Depth (m)")
+english_t_depth <- plot_variable(cpueGAM_english_t,
+                                 covariate = 3,
+                                 bounds = c(-3, 2),
+                                 "Depth (m)",
+                                 "Species Abundance Anomalies",
+                                 "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/english_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-english_t_day <- plot_variable(cpueGAM_english_t, 4, "Day of Year")
+english_t_day <- plot_variable(cpueGAM_english_t,
+                               covariate = 4,
+                               bounds = c(-1.5, 1.5),
+                               "Day of Year",
+                               " ",
+                               "n")
 dev.off()
 # Temperature Variable
 pdf("../results/GAM/english_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
-english_t_temp <- plot_variable(cpueGAM_english_t, 5, "Temperature (째C)")
+english_t_temp <- plot_variable(cpueGAM_english_t,
+                                covariate = 5,
+                                bounds = c(-3, 2),
+                                "Temperature (캜)",
+                                "",
+                                "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/english_sole/location_triennial.pdf",
@@ -546,25 +660,45 @@ gam_plot(cpueGAM_lingcod_a)
 pdf("../results/GAM/lingcod/year_annual.pdf",
     width = 12,
     height = 12)
-lingcod_a_year <- plot_variable(cpueGAM_lingcod_a, 1, "Year")
+lingcod_a_year <- plot_variable(cpueGAM_lingcod_a,
+                                covariate = 1,
+                                bounds = c(-.5, .4),
+                                "Year",
+                                "Species Abundance Anomalies",
+                                "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/lingcod/depth_annual.pdf",
     width = 12,
     height = 12)
-lingcod_a_depth <- plot_variable(cpueGAM_lingcod_a, 3, "Depth (m)")
+lingcod_a_depth <- plot_variable(cpueGAM_lingcod_a,
+                                 covariate = 3,
+                                 bounds = c(-1, 1),
+                                 "Depth (m)",
+                                 "Species Abundance Anomalies",
+                                 "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/lingcod/julian_annual.pdf",
     width = 12,
     height = 12)
-lingcod_a_day <- plot_variable(cpueGAM_lingcod_a, 4, "Day of Year")
+lingcod_a_day <- plot_variable(cpueGAM_lingcod_a,
+                               covariate = 4,
+                               bounds = c(-.5, .4),
+                               "Day of Year",
+                               " ",
+                               "n")
 dev.off()
 # Temperature variable
 pdf("../results/GAM/lingcod/temp_annual.pdf",
     width = 12,
     height = 12)
-lingcod_a_temp <- plot_variable(cpueGAM_lingcod_a, 5, "Temperature (째C)")
+lingcod_a_temp <- plot_variable(cpueGAM_lingcod_a,
+                                covariate = 5,
+                                bounds = c(-1, 1),
+                                "Temperature (캜)",
+                                "",
+                                "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/lingcod/location_annual.pdf",
@@ -582,25 +716,45 @@ gam_plot(cpueGAM_lingcod_t)
 pdf("../results/GAM/lingcod/NPGO_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_t_npgo <- plot_variable(cpueGAM_lingcod_t, 1, "NPGO")
+lingcod_t_npgo <- plot_variable(cpueGAM_lingcod_t,
+                                covariate = 1,
+                                bounds = c(-.4, 1),
+                                "NPGO",
+                                "",
+                                "n")
 dev.off()
 # Depth variable
 pdf("../results/GAM/lingcod/depth_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_t_depth <- plot_variable(cpueGAM_lingcod_t, 3, "Depth (m)")
+lingcod_t_depth <- plot_variable(cpueGAM_lingcod_t,
+                                 covariate = 3,
+                                 bounds = c(-.4, 1),
+                                 "Depth (m)",
+                                 "Species Abundance Anomalies",
+                                 "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/lingcod/julian_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_t_day <- plot_variable(cpueGAM_lingcod_t, 4, "Day of Year")
+lingcod_t_day <- plot_variable(cpueGAM_lingcod_t,
+                               covariate = 4,
+                               bounds = c(-.25, .4),
+                               "Day of Year",
+                               " ",
+                               "n")
 dev.off()
 # Temperature variable
 pdf("../results/GAM/lingcod/temp_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_t_temp <- plot_variable(cpueGAM_lingcod_t, 5, "Temperature (째C)")
+lingcod_t_temp <- plot_variable(cpueGAM_lingcod_t,
+                                covariate = 5,
+                                bounds = c(-.4, 1),
+                                "Temperature (캜)",
+                                "",
+                                "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/lingcod/location_triennial.pdf",
@@ -619,19 +773,34 @@ gam_plot(cpueGAM_petrale_a)
 pdf("../results/GAM/petrale_sole/year_annual.pdf",
     width = 12,
     height = 12)
-petrale_a_year <- plot_variable(cpueGAM_petrale_a, 1, "Year")
+petrale_a_year <- plot_variable(cpueGAM_petrale_a,
+                                covariate = 1,
+                                bounds = c(-.7, .5),
+                                "Year",
+                                "Species Abundance Anomalies",
+                                "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/petrale_sole/depth_annual.pdf",
     width = 12,
     height = 12)
-petrale_a_depth <- plot_variable(cpueGAM_petrale_a, 3, "Depth (m)")
+petrale_a_depth <- plot_variable(cpueGAM_petrale_a,
+                                 covariate = 3,
+                                 bounds = c(-1, .3),
+                                 "Depth (m)",
+                                 "Species Abundance Anomalies",
+                                 "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/petrale_sole/julian_annual.pdf",
     width = 12,
     height = 12)
-petrale_a_day <- plot_variable(cpueGAM_petrale_a, 4, "Day of Year")
+petrale_a_day <- plot_variable(cpueGAM_petrale_a,
+                               covariate = 4,
+                               bounds = c(-.7, .5),
+                               "Day of Year",
+                               " ",
+                               "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/petrale_sole/location_annual.pdf",
@@ -649,19 +818,34 @@ gam_plot(cpueGAM_petrale_t)
 pdf("../results/GAM/petrale_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-petrale_t_year <- plot_variable(cpueGAM_petrale_t, 1, "Year")
+petrale_t_year <- plot_variable(cpueGAM_petrale_t,
+                                covariate = 1,
+                                bounds = c(-.4, .6),
+                                "Year",
+                                "Species Abundance Anomalies",
+                                "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/petrale_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-petrale_t_depth <- plot_variable(cpueGAM_petrale_t, 3, "Depth (m)")
+petrale_t_depth <- plot_variable(cpueGAM_petrale_t,
+                                 covariate = 3,
+                                 bounds = c(-.8, .5),
+                                 "Depth (m)",
+                                 "Species Abundance Anomalies",
+                                 "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/petrale_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-petrale_t_day <- plot_variable(cpueGAM_petrale_t, 4, "Day of Year")
+petrale_t_day <- plot_variable(cpueGAM_petrale_t,
+                               covariate = 4,
+                               bounds = c(-.4, .6),
+                               "Day of Year",
+                               " ",
+                               "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/petrale_sole/location_triennial.pdf",
@@ -670,6 +854,118 @@ pdf("../results/GAM/petrale_sole/location_triennial.pdf",
 location_plot(cpueGAM_petrale_t, petrale_triennial)
 dev.off()
 
+# ***Pacific Sanddab ----
+# Annual
+cpueGAM_sanddab_a <- cpue_GAMs(sanddab_annual)
+summary(cpueGAM_sanddab_a[[2]]) # view the best model
+gam_check(cpueGAM_sanddab_a)
+gam_plot(cpueGAM_sanddab_a)
+# Year variable
+pdf("../results/GAM/pacific_sanddab/year_annual.pdf",
+    width = 12,
+    height = 12)
+sanddab_a_year <- plot_variable(cpueGAM_sanddab_a,
+                                  covariate = 1,
+                                  bounds = c(-.5, .6),
+                                  "Year",
+                                  "Species Abundance Anomalies",
+                                  "s")
+dev.off()
+# Depth variable
+pdf("../results/GAM/pacific_sanddab/depth_annual.pdf",
+    width = 12,
+    height = 12)
+sanddab_a_depth <- plot_variable(cpueGAM_sanddab_a,
+                                   covariate = 3,
+                                   bounds = c(-4.1, 1.1),
+                                   "Depth (m)",
+                                   "Species Abundance Anomalies",
+                                   "s")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/pacific_sanddab/julian_annual.pdf",
+    width = 12,
+    height = 12)
+sanddab_a_day <- plot_variable(cpueGAM_sanddab_a,
+                                 covariate = 4,
+                                 bounds = c(-.5, .6),
+                                 "Day of Year",
+                                 " ",
+                                 "n")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/pacific_sanddab/temp_annual.pdf",
+    width = 12,
+    height = 12)
+sanddab_a_temp <- plot_variable(cpueGAM_sanddab_a,
+                                  covariate = 5,
+                                  bounds = c(-4.1, 1.1),
+                                  "Temperature (캜)",
+                                  "",
+                                  "n")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/pacific_sanddab/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_sanddab_a, sanddab_annual)
+dev.off()
+
+# Triennial
+cpueGAM_sanddab_t <- cpue_GAMs(sanddab_triennial)
+summary(cpueGAM_sanddab_t[[2]]) # view the best model
+gam_check(cpueGAM_sanddab_t)
+gam_plot(cpueGAM_sanddab_t)
+# Year variable
+pdf("../results/GAM/pacific_sanddab/year_triennial.pdf",
+    width = 12,
+    height = 12)
+sanddab_t_year <- plot_variable(cpueGAM_sanddab_t,
+                                  covariate = 1,
+                                  bounds = c(-4.2, 1),
+                                  "Year",
+                                  "Species Abundance Anomalies",
+                                  "s")
+dev.off()
+# Depth variable
+pdf("../results/GAM/pacific_sanddab/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+sanddab_t_depth <- plot_variable(cpueGAM_sanddab_t,
+                                   covariate = 3,
+                                   bounds = c(-4, 2),
+                                   "Depth (m)",
+                                   "Species Abundance Anomalies",
+                                   "s")
+dev.off()
+# Day of year variable
+pdf("../results/GAM/pacific_sanddab/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+sanddab_t_day <- plot_variable(cpueGAM_sanddab_t,
+                                 covariate = 4,
+                                 bounds = c(-4.2, 1),
+                                 "Day of Year",
+                                 " ",
+                                 "n")
+dev.off()
+# Temperature variable
+pdf("../results/GAM/pacific_sanddab/temp_triennial.pdf",
+    width = 12,
+    height = 12)
+sanddab_t_temp <- plot_variable(cpueGAM_sanddab_t,
+                                  covariate = 5,
+                                  bounds = c(-4, 2),
+                                  "Temperature (캜)",
+                                  "",
+                                  "n")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/GAM/pacific_sanddab/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(cpueGAM_sanddab_t, sanddab_triennial)
+dev.off()
 # ***Rex Sole ----
 # Annual
 cpueGAM_rex_a <- cpue_GAMs(rex_annual)
@@ -680,25 +976,45 @@ gam_plot(cpueGAM_rex_a)
 pdf("../results/GAM/rex_sole/year_annual.pdf",
     width = 12,
     height = 12)
-rex_a_year <- plot_variable(cpueGAM_rex_a, 1, "Year")
+rex_a_year <- plot_variable(cpueGAM_rex_a,
+                            covariate = 1,
+                            bounds = c(-.7, .8),
+                            "Year",
+                            "Species Abundance Anomalies",
+                            "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/rex_sole/depth_annual.pdf",
     width = 12,
     height = 12)
-rex_a_depth <- plot_variable(cpueGAM_rex_a, 3, "Depth (m)")
+rex_a_depth <- plot_variable(cpueGAM_rex_a,
+                             covariate = 3,
+                             bounds = c(-1.8, 1.5),
+                             "Depth (m)",
+                             "Species Abundance Anomalies",
+                             "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/rex_sole/julian_annual.pdf",
     width = 12,
     height = 12)
-rex_a_day <- plot_variable(cpueGAM_rex_a, 4, "Day of Year")
+rex_a_day <- plot_variable(cpueGAM_rex_a,
+                           covariate = 4,
+                           bounds = c(-.7, .8),
+                           "Day of Year",
+                           " ",
+                           "n")
 dev.off()
 # Temperature Variable
 pdf("../results/GAM/rex_sole/temp_annual.pdf",
     width = 12,
     height = 12)
-rex_a_temp <- plot_variable(cpueGAM_rex_a, 5, "Temperature (째C)")
+rex_a_temp <- plot_variable(cpueGAM_rex_a,
+                            covariate = 5,
+                            bounds = c(-1.8, 1.5),
+                            "Temperature (캜)",
+                            "",
+                            "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/rex_sole/location_annual.pdf",
@@ -716,25 +1032,45 @@ gam_plot(cpueGAM_rex_t)
 pdf("../results/GAM/rex_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-rex_t_year <- plot_variable(cpueGAM_rex_t, 1, "Year")
+rex_t_year <- plot_variable(cpueGAM_rex_t,
+                            covariate = 1,
+                            bounds = c(-3, 1),
+                            "Year",
+                            "Species Abundance Anomalies",
+                            "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/rex_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-rex_t_depth <- plot_variable(cpueGAM_rex_t, 3, "Depth (m)")
+rex_t_depth <- plot_variable(cpueGAM_rex_t,
+                             covariate = 3,
+                             bounds = c(-.7, 1.2),
+                             "Depth (m)",
+                             "Species Abundance Anomalies",
+                             "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/rex_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-rex_t_day <- plot_variable(cpueGAM_rex_t, 4, "Day of Year")
+rex_t_day <- plot_variable(cpueGAM_rex_t,
+                           covariate = 4,
+                           bounds = c(-3, 1),
+                           "Day of Year",
+                           " ",
+                           "n")
 dev.off()
 # Temperature Variable
 pdf("../results/GAM/rex_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
-rex_t_temp <- plot_variable(cpueGAM_rex_t, 5, "Temperature (째C)")
+rex_t_temp <- plot_variable(cpueGAM_rex_t,
+                            covariate = 5,
+                            bounds = c(-.7, 1.2),
+                            "Temperature (캜)",
+                            "",
+                            "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/rex_sole/location_triennial.pdf",
@@ -753,25 +1089,45 @@ gam_plot(cpueGAM_sablefish_a)
 pdf("../results/GAM/sablefish/year_annual.pdf",
     width = 12,
     height = 12)
-sablefish_a_year <- plot_variable(cpueGAM_sablefish_a, 1, "Year")
+sablefish_a_year <- plot_variable(cpueGAM_sablefish_a,
+                                  covariate = 1,
+                                  bounds = c(-.7, .6),
+                                  "Year",
+                                  "Species Abundance Anomalies",
+                                  "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/sablefish/depth_annual.pdf",
     width = 12,
     height = 12)
-sablefish_a_depth <- plot_variable(cpueGAM_sablefish_a, 3, "Depth (m)")
+sablefish_a_depth <- plot_variable(cpueGAM_sablefish_a,
+                                   covariate = 3,
+                                   bounds = c(-1.5, 1),
+                                   "Depth (m)",
+                                   "Species Abundance Anomalies",
+                                   "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/sablefish/julian_annual.pdf",
     width = 12,
     height = 12)
-sablefish_a_day <- plot_variable(cpueGAM_sablefish_a, 4, "Day of Year")
+sablefish_a_day <- plot_variable(cpueGAM_sablefish_a,
+                                 covariate = 4,
+                                 bounds = c(-.7, .6),
+                                 "Day of Year",
+                                 " ",
+                                 "n")
 dev.off()
 # Temperature variable
 pdf("../results/GAM/sablefish/temp_annual.pdf",
     width = 12,
     height = 12)
-sablefish_a_temp <- plot_variable(cpueGAM_sablefish_a, 5, "Temperature (째C)")
+sablefish_a_temp <- plot_variable(cpueGAM_sablefish_a,
+                                  covariate = 5,
+                                  bounds = c(-1.5, 1),
+                                  "Temperature (캜)",
+                                  "",
+                                  "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/sablefish/location_annual.pdf",
@@ -789,25 +1145,45 @@ gam_plot(cpueGAM_sablefish_t)
 pdf("../results/GAM/sablefish/year_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_t_year <- plot_variable(cpueGAM_sablefish_t, 1, "Year")
+sablefish_t_year <- plot_variable(cpueGAM_sablefish_t,
+                                  covariate = 1,
+                                  bounds = c(-1.5, 1.5),
+                                  "Year",
+                                  "Species Abundance Anomalies",
+                                  "s")
 dev.off()
 # Depth variable
 pdf("../results/GAM/sablefish/depth_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_t_depth <- plot_variable(cpueGAM_sablefish_t, 3, "Depth (m)")
+sablefish_t_depth <- plot_variable(cpueGAM_sablefish_t,
+                                   covariate = 3,
+                                   bounds = c(-2.5, 1),
+                                   "Depth (m)",
+                                   "Species Abundance Anomalies",
+                                   "s")
 dev.off()
 # Day of year variable
 pdf("../results/GAM/sablefish/julian_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_t_day <- plot_variable(cpueGAM_sablefish_t, 4, "Day of Year")
+sablefish_t_day <- plot_variable(cpueGAM_sablefish_t,
+                                 covariate = 4,
+                                 bounds = c(-1.5, 1.5),
+                                 "Day of Year",
+                                 " ",
+                                 "n")
 dev.off()
 # Temperature variable
 pdf("../results/GAM/sablefish/temp_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_t_temp <- plot_variable(cpueGAM_sablefish_t, 5, "Temperature (째C)")
+sablefish_t_temp <- plot_variable(cpueGAM_sablefish_t,
+                                  covariate = 5,
+                                  bounds = c(-2.5, 1),
+                                  "Temperature (캜)",
+                                  "",
+                                  "n")
 dev.off()
 # Latitude/Longitude Map
 pdf("../results/GAM/sablefish/location_triennial.pdf",
