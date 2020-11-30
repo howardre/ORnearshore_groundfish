@@ -15,7 +15,7 @@ library(tidyr)
 setwd('/Users/howar/Documents/Oregon State/Thesis/Data visualization')
 load('trawl_data')
 load('OR_fish')
-setwd('/Users/howar/Documents/Oregon State/Thesis/Data analysis/Individual Species Analysis/')
+setwd("/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code")
 
 # Subset the data to contain only species of interest ----
 subset_species <- function(species, catch, tows){
@@ -169,17 +169,40 @@ boxplot_bootstrap_df <- boxplot_bootstrap_df %>%
                names_to = "species",
                values_to = "delta_AIC")
 
+colnames(boxplot_bootstrap_df) <- c("Dover sole", "arrowtooth flounder",
+                                    "English sole", "rex sole", "lingcod",
+                                    "sablefish", "Pacific sanddab",
+                                    "petrale sole")
+
+shaded_interval <- function(x) {
+  boxplot_data <- boxplot.stats(x)
+  data.frame(ymin = boxplot_data$conf[1],
+             ymax = boxplot_data$conf[2],
+             y = boxplot_data$stats[3])
+}
+
 # Plot boxplots with notches where 95% CI is
-windows()
-ggplot() +
-  geom_boxplot(data = boxplot_bootstrap_df,
-               aes(x = species, y = delta_AIC), notch = T) +
+tiff("../final_figs/boxplot_CI.tiff", width = 6,
+     height = 5,
+     units = "in",
+     res = 300)
+par(family = "serif")
+ggplot(data = boxplot_bootstrap_df,
+       aes(x = species, y = delta_AIC)) +
+  geom_boxplot(fatten = .8) +
+  stat_summary(fun.data = shaded_interval, geom = "crossbar",
+               colour = NA, fill = "lightblue", width = 0.75, alpha = 0.6) +
+  scale_x_discrete(labels = c("Dover sole", "arrowtooth flounder",
+                              "English sole", "rex sole", "lingcod",
+                              "sablefish", "Pacific sanddab",
+                              "petrale sole")) +
+  coord_flip() +
   #geom_point(data = TGAM_bootstrap, aes(x = species, y = upper_CI)) +
   #geom_point(data = TGAM_bootstrap, aes(x = species, y = lower_CI)) +
   geom_hline(yintercept = 0, color = "red") +
   xlab("Species") +
   ylab("Change in AIC") +
-  ggtitle("Resampled change in AIC between TGAM and GAM") +
-  theme_pubr(x.text.angle = 45, base_family = "serif") +
-  theme(plot.title = element_text(hjust = 0.5))
-  labs_pubr(base_family = "serif")
+  theme_pubr(base_family = "serif") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", lineheight = 1),
+        axis.title = element_text(face = "bold"))
+dev.off()
