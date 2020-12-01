@@ -12,10 +12,9 @@ library(ggpubr)
 library(tidyr)
 
 # Load data ----
-setwd('/Users/howar/Documents/Oregon State/Thesis/Data visualization')
-load('trawl_data')
-load('OR_fish')
 setwd("/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code")
+trawl_data <- read.delim("../data/NMFS_data/trawl_data.txt", header = T)
+OR_fish <- read.delim("../data/NMFS_data/OR_fish.txt", header = T)
 
 # Subset the data to contain only species of interest ----
 subset_species <- function(species, catch, tows){
@@ -182,7 +181,7 @@ shaded_interval <- function(x) {
 }
 
 # Plot boxplots with notches where 95% CI is
-tiff("../final_figs/boxplot_CI.tiff", width = 6,
+tiff("../results/TGAM/boxplot_CI.tiff", width = 6,
      height = 5,
      units = "in",
      res = 300)
