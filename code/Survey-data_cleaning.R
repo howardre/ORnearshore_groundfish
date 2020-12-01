@@ -156,8 +156,8 @@ NPGO <- as.data.frame(NPGO)
 colnames(NPGO)[1] <- "NPGO"
 match_id<-match(trawl_data$year_month,NPGO$Date)
 trawl_data$NPGO<-NPGO$NPGO[match_id]
-save(trawl_data, file = "trawl_data")
-write.table(trawl_data,"trawl_data.txt",sep="\t",row.names=FALSE)
+save(trawl_data, file = "../data/NMFS_data/trawl_data")
+write.table(trawl_data,"../data/NMFS_data/trawl_data.txt",sep="\t",row.names=FALSE)
 
 --------------------------------------#######################------------------------------------------------------
 

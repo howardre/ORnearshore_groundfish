@@ -7,9 +7,9 @@ library(dplyr)
 library(fossil)
 
 # Load data
-setwd('C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
+setwd('/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
 options(scipen=999)
-trawl_data <- read.delim("../data/NMFS_data/trawl_data.txt")
+trawl_data <- read.delim("../data/NMFS_data/trawl_data.txt", header = T)
 triennial_filtered <- read.delim("../data/NMFS_data/triennial_filtered.txt")
 annual_filtered <- read.delim("../data/NMFS_data/annual_filtered.txt")
 
@@ -69,10 +69,10 @@ rownames(env_matrix_annual) <- env_matrix_annual[, 1]
 env_matrix_annual <- env_matrix_annual[, -1]
 
 # Save as .csv and .R files
-save(species_matrix_annual, file = "species_matrix_a")
-write.csv(species_matrix_annual, 'species_matrix_a.csv')
-save(env_matrix_annual, file = "env_matrix_a")
-write.csv(env_matrix_annual, 'env_matrix_a.csv')
+save(species_matrix_annual, file = "../data/NMFS_data/species_matrix_a")
+write.csv(species_matrix_annual, '../data/NMFS_data/species_matrix_a.csv')
+save(env_matrix_annual, file = "../data/NMFS_data/env_matrix_a")
+write.csv(env_matrix_annual, '../data/NMFS_data/env_matrix_a.csv')
 
 # Triennial Survey matrices ----
 # Remove the rows with NA's in the environmental variable columns
@@ -130,7 +130,7 @@ rownames(env_matrix_triennial) <- env_matrix_triennial[, 1]
 env_matrix_triennial <- env_matrix_triennial[, -1]
 
 # Save as .csv and .R files
-save(species_matrix_triennial, file = "species_matrix_t")
-write.csv(species_matrix_triennial, 'species_matrix_t.csv')
-save(env_matrix_triennial, file = "env_matrix_t")
-write.csv(env_matrix_triennial, 'env_matrix_t.csv')
+save(species_matrix_triennial, file = "../data/NMFS_data/species_matrix_t")
+write.csv(species_matrix_triennial, '../data/NMFS_data/species_matrix_t.csv')
+save(env_matrix_triennial, file = "../data/NMFS_data/env_matrix_t")
+write.csv(env_matrix_triennial, '../data/NMFS_data/env_matrix_t.csv')
