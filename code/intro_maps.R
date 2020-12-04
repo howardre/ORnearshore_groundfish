@@ -249,7 +249,7 @@ tgam_map <- function(species_subset, tgam, latitude, threshold, title, bathy.dat
             cex.main = 2.5,
             cex.axis = 1.8,
             ylab = latitude,
-            xlab = "Longitude Â°W")
+            xlab = "Longitude °W")
   contour(unique(bathy.dat$lon),
           sort(unique(bathy.dat$lat)),
           bathy.mat,
@@ -283,22 +283,22 @@ tgam_map <- function(species_subset, tgam, latitude, threshold, title, bathy.dat
        cex = 1.8)
 }
 
-tiff("../final_figs/Figure_7.tiff", width = 11, height = 12, units = "in", res = 300)
+tiff("../final_figs/Figure_3.tiff", width = 11, height = 12, units = "in", res = 300)
 par(mfrow=c(1, 2),
     family = 'serif',
     mar=c(4, 5, 3, .2) + .1)
-tgam_map(trawl_data, temp_tgam, "Latitude Â°N", "before", "Before 1995", bathy.dat, bathy.mat)
+tgam_map(trawl_data, temp_tgam, "Latitude °N", "before", "Before 1992", bathy.dat, bathy.mat)
 image.plot(legend.only = T,
-           zlim = c(0, 1),
+           zlim = c(4, 10),
            col = jet.colors(100),
            legend.shrink = 0.2,
            smallplot = c(.25, .27, .1, .25),
            legend.cex = 2,
-           legend.lab = "presence",
+           legend.lab = "temperature (°C)",
            axis.args = list(cex.axis = 1.8),
            legend.width = 1,
-           legend.line = 4)
-tgam_map(trawl_data, temp_tgam, " ", "after", "After 1995", bathy.dat, bathy.mat)
+           legend.line = 3.3)
+tgam_map(trawl_data, temp_tgam, " ", "after", "After 1992", bathy.dat, bathy.mat)
 points(temp_dist$longitude[significant_low],
        temp_dist$latitude[significant_low],
        pch = 2,
