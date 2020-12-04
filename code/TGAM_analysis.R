@@ -24,6 +24,8 @@ source("functions/distance_function.R")
 source("functions/vis_gam_COLORS.R")
 source("functions/subset_species.R")
 source("functions/TGAM_selection.R")
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
 
 # Subset the data to contain only species of interest ----
 # Eight species of interest
@@ -371,12 +373,12 @@ pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(arrowtooth_subset, arrowtooth_tgam, arrowtooth_CI, arrowtooth_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# arrowtooth_poly_n1 = data.frame(x = savePol$x, y = savePol$y) # northern portion of decrease part 1
-# arrowtooth_poly_n2 = data.frame(x = savePol$x, y = savePol$y) # northern portion of decrease part 2
-# arrowtooth_poly_c = data.frame(x = savePol$x, y = savePol$y) # central
-# arrowtooth_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern
-# arrowtooth_poly_n <- rbind(arrowtooth_poly_n1, arrowtooth_poly_n2)
+ savePol = locator(40, type = "o")
+ arrowtooth_poly_n1 = data.frame(x = savePol$x, y = savePol$y) # northern portion of decrease part 1
+ arrowtooth_poly_n2 = data.frame(x = savePol$x, y = savePol$y) # northern portion of decrease part 2
+ arrowtooth_poly_c = data.frame(x = savePol$x, y = savePol$y) # central
+ arrowtooth_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern
+ arrowtooth_poly_n <- rbind(arrowtooth_poly_n1, arrowtooth_poly_n2)
 
 # Can use this index to check if there are an appropriate number of data points in a polygon
 data_check <- function(species_subset, polygon){
@@ -436,6 +438,8 @@ prediction_map <- function(species_dist, species_CI){
   nlon = 30
   latd = seq(41, 48, length.out = nlat)
   lond = seq(-125,-123.9, length.out = nlon)
+  significant_high <- species_CI[[1]]
+  significant_low <- species_CI[[2]]
   image.plot(
     lond, latd,
     t(matrix(species_dist$diff,
@@ -467,18 +471,21 @@ prediction_map <- function(species_dist, species_CI){
 windows(width = 7, height = 15)
 prediction_map(arrowtooth_dist, arrowtooth_CI)
 
-# Subset data to only pick up those that are inside the polygon for real data
-polygon_pred <- function(species_dist, polygon){
-  species_distr[in.chull(
+# Subset data to only pick up those that are inside the polygon for predictions
+polygon_pred <- function(species_dist, species_CI, polygon){
+  species_dist$mean_after <- species_CI[[4]]$fit
+  species_dist$mean_before <- species_CI[[3]]$fit
+  species_dist$diff<- species_dist$mean_after - species_dist$mean_before
+  species_dist[in.chull(
     species_dist$longitude,
     species_dist$latitude,
     polygon$x,
     polygon$y), ]
 }
 
-arrowtooth_north <- polygon_subset(arrowtooth_dist, arrowtooth_poly_n)
-arrowtooth_central <- polygon_subset(arrowtooth_dist, arrowtooth_poly_c)
-arrowtooth_south <- polygon_subset(arrowtooth_dist, arrowtooth_poly_s)
+arrowtooth_north <- polygon_pred(arrowtooth_dist, arrowtooth_CI, arrowtooth_poly_n)
+arrowtooth_central <- polygon_pred(arrowtooth_dist, arrowtooth_CI, arrowtooth_poly_c)
+arrowtooth_south <- polygon_pred(arrowtooth_dist, arrowtooth_CI, arrowtooth_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
 avg_pres_change <- function(difference){
@@ -505,7 +512,6 @@ arrowtooth_dist$mean_before <- arrowtooth_CI[[3]]$fit
 arrowtooth_dist$diff <- arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
 arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
 arrowtooth_dist$diff[arrowtooth_dist$dist > 10000] <- NA
-
 
 pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
     width = 17,
@@ -555,9 +561,9 @@ dev.off()
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(english_subset, english_tgam, english_CI, english_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# english_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
-# english_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+ savePol = locator(40, type = "o")
+ english_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+ english_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
@@ -575,9 +581,9 @@ polygon_map_check(english_subset, english_s_increase, english_poly_s)
 windows(width = 7, height = 15)
 prediction_map(english_dist, english_CI)
 
-# Subset data to only pick up those that are inside the polygon for real data
-english_central <- polygon_subset(english_dist, english_poly_c)
-english_south <- polygon_subset(english_dist, english_poly_s)
+# Subset data to only pick up those that are inside the polygon for predictions
+english_central <- polygon_pred(english_dist, english_CI, english_poly_c)
+english_south <- polygon_pred(english_dist, english_CI, english_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
 english_c_avg <- avg_pres_change(english_c_decrease)
@@ -643,10 +649,10 @@ dev.off()
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(sanddab_subset, sanddab_tgam, sanddab_CI, sanddab_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# sanddab_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
-# sanddab_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
-# sanddab_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern decrease
+ savePol = locator(40, type = "o")
+ sanddab_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
+ sanddab_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+ sanddab_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern decrease
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
@@ -668,10 +674,10 @@ polygon_map_check(sanddab_subset, sanddab_s_decrease, sanddab_poly_s)
 windows(width = 7, height = 15)
 prediction_map(sanddab_dist, sanddab_CI)
 
-# Subset data to only pick up those that are inside the polygon for real data
-sanddab_north <- polygon_subset(sanddab_dist, sanddab_poly_n)
-sanddab_central <- polygon_subset(sanddab_dist, sanddab_poly_c)
-sanddab_south <- polygon_subset(sanddab_dist, sanddab_poly_s)
+# Subset data to only pick up those that are inside the polygon for predictions
+sanddab_north <- polygon_pred(sanddab_dist, sanddab_CI, sanddab_poly_n)
+sanddab_central <- polygon_pred(sanddab_dist, sanddab_CI, sanddab_poly_c)
+sanddab_south <- polygon_pred(sanddab_dist, sanddab_CI, sanddab_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
 sanddab_n_avg <- avg_pres_change(sanddab_n_decrease)
@@ -739,19 +745,21 @@ dev.off()
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(dover_subset, dover_tgam, dover_CI, dover_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# dover_poly_n1 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 1
-# dover_poly_n2 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 2
-# dover_poly_c1 = data.frame(x = savePol$x, y = savePol$y) # central increase
-# dover_poly_c2 = data.frame(x = savePol$x, y = savePol$y) # central increase
-# dover_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
-# dover_poly_n <- rbind(dover_poly_n1, dover_poly_n2) # merge two northern polygons
-# dover_poly_c <- rbind(dover_poly_c1, dover_poly_c2) # merge two northern polygons
+ savePol = locator(40, type = "o")
+ dover_poly_n1 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 1
+ dover_poly_n2 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 2
+ dover_poly_n3 = data.frame(x = savePol$x, y = savePol$y) # northern decrease
+ dover_poly_c1 = data.frame(x = savePol$x, y = savePol$y) # central increase
+ dover_poly_c2 = data.frame(x = savePol$x, y = savePol$y) # central increase
+ dover_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+ dover_poly_n <- rbind(dover_poly_n1, dover_poly_n2) # merge two northern polygons
+ dover_poly_c <- rbind(dover_poly_c1, dover_poly_c2) # merge two northern polygons
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
 dover_n_increase1 <- polygon_subset(dover_subset, dover_poly_n1)
 dover_n_increase2 <- polygon_subset(dover_subset, dover_poly_n2)
+dover_n_decrease <- polygon_subset(dover_subset, dover_poly_n3)
 dover_c_increase1 <- polygon_subset(dover_subset, dover_poly_c1)
 dover_c_increase2 <- polygon_subset(dover_subset, dover_poly_c2)
 dover_s_increase <- polygon_subset(dover_subset, dover_poly_s)
@@ -763,6 +771,9 @@ windows(width = 7, height = 15)
 polygon_map_check(dover_subset, dover_n_increase, dover_poly_n)
 
 windows(width = 7, height = 15)
+polygon_map_check(dover_subset, dover_n_decrease, dover_poly_n3)
+
+windows(width = 7, height = 15)
 polygon_map_check(dover_subset, dover_c_increase, dover_poly_c)
 
 windows(width = 7, height = 15)
@@ -772,18 +783,21 @@ polygon_map_check(dover_subset, dover_s_increase, dover_poly_s)
 windows(width = 7, height = 15)
 prediction_map(dover_dist, dover_CI)
 
-# Subset data to only pick up those that are inside the polygon for real data
-dover_north <- polygon_subset(dover_dist, dover_poly_n)
-dover_central <- polygon_subset(dover_dist, dover_poly_c)
-dover_south <- polygon_subset(dover_dist, dover_poly_s)
+# Subset data to only pick up those that are inside the polygon for predictions
+dover_north_i <- polygon_pred(dover_dist, dover_CI, dover_poly_n)
+dover_north_d <- polygon_pred(dover_dist, dover_CI, dover_poly_n3)
+dover_central <- polygon_pred(dover_dist, dover_CI, dover_poly_c)
+dover_south <- polygon_pred(dover_dist, dover_CI, dover_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
-dover_n_avg <- avg_pres_change(dover_n_increase)
+dover_ni_avg <- avg_pres_change(dover_n_increase)
+dover_nd_avg <- avg_pres_change(dover_n_decrease)
 dover_c_avg <- avg_pres_change(dover_c_increase)
 dover_s_avg <- avg_pres_change(dover_s_increase)
 
 # Calculate difference before and after the threshold year for the predictions
-dover_n_pred <- sum(dover_north$diff) / nrow(dover_north)
+dover_ni_pred <- sum(dover_north_i$diff) / nrow(dover_north_i)
+dover_nd_pred <- sum(dover_north_d$diff) / nrow(dover_north_d)
 dover_c_pred <- sum(dover_central$diff) / nrow(dover_central)
 dover_s_pred <- sum(dover_south$diff) / nrow(dover_south)
 
@@ -843,10 +857,10 @@ dev.off()
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(rex_subset, rex_tgam, rex_CI, rex_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# rex_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern increase
-# rex_poly_c = data.frame(x = savePol$x, y = savePol$y) # central increase
-# rex_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+ savePol = locator(40, type = "o")
+ rex_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern increase
+ rex_poly_c = data.frame(x = savePol$x, y = savePol$y) # central increase
+ rex_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
@@ -868,10 +882,10 @@ polygon_map_check(rex_subset, rex_s_increase, rex_poly_s)
 windows(width = 7, height = 15)
 prediction_map(rex_dist, rex_CI)
 
-# Subset data to only pick up those that are inside the polygon for real data
-rex_north <- polygon_subset(rex_dist, rex_poly_n)
-rex_central <- polygon_subset(rex_dist, rex_poly_c)
-rex_south <- polygon_subset(rex_dist, rex_poly_s)
+# Subset data to only pick up those that are inside the polygon for predictions
+rex_north <- polygon_pred(rex_dist, rex_CI, rex_poly_n)
+rex_central <- polygon_pred(rex_dist, rex_CI, rex_poly_c)
+rex_south <- polygon_pred(rex_dist, rex_CI, rex_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
 rex_n_avg <- avg_pres_change(rex_n_increase)
@@ -940,10 +954,10 @@ dev.off()
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(lingcod_subset, lingcod_tgam, lingcod_CI, lingcod_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# lingcod_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
-# lingcod_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
-# lingcod_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+ savePol = locator(40, type = "o")
+ lingcod_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
+ lingcod_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+ lingcod_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
@@ -966,9 +980,9 @@ windows(width = 7, height = 15)
 prediction_map(lingcod_dist, lingcod_CI)
 
 # Subset data to only pick up those that are inside the polygon for real data
-lingcod_north <- polygon_subset(lingcod_dist, lingcod_poly_n)
-lingcod_central <- polygon_subset(lingcod_dist, lingcod_poly_c)
-lingcod_south <- polygon_subset(lingcod_dist, lingcod_poly_s)
+lingcod_north <- polygon_pred(lingcod_dist, lingcod_CI, lingcod_poly_n)
+lingcod_central <- polygon_pred(lingcod_dist, lingcod_CI, lingcod_poly_c)
+lingcod_south <- polygon_pred(lingcod_dist, lingcod_CI, lingcod_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
 lingcod_n_avg <- avg_pres_change(lingcod_n_decrease)
@@ -1036,40 +1050,60 @@ dev.off()
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(petrale_subset, petrale_tgam, petrale_CI, petrale_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# petrale_poly_c = data.frame(x = savePol$x, y = savePol$y) # southern decrease
-# petrale_poly_s1 = data.frame(x = savePol$x, y = savePol$y) # southern decrease
-# petrale_poly_s2 = data.frame(x = savePol$x, y = savePol$y) # southern decrease
-# petrale_poly_s <- rbind(petrale_poly_s1, petrale_poly_s2) # merge two southern polygons
+ savePol = locator(40, type = "o")
+ petrale_poly_n1 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 1
+ petrale_poly_n2 = data.frame(x = savePol$x, y = savePol$y) # northern increase part 2
+ petrale_poly_c1 = data.frame(x = savePol$x, y = savePol$y) # central decrease
+ petrale_poly_c2 = data.frame(x = savePol$x, y = savePol$y) # central increase
+ petrale_poly_s1 = data.frame(x = savePol$x, y = savePol$y) # southern increase
+ petrale_poly_s2 = data.frame(x = savePol$x, y = savePol$y) # southern increase
+ petrale_poly_s <- rbind(petrale_poly_s1, petrale_poly_s2) # merge two southern polygons
+ petrale_poly_n <- rbind(petrale_poly_n1, petrale_poly_n2)
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
-petrale_c_decrease <- polygon_subset(petrale_subset, petrale_poly_c)
-petrale_s_decrease1 <- polygon_subset(petrale_subset, petrale_poly_s1)
-petrale_s_decrease2 <- polygon_subset(petrale_subset, petrale_poly_s2)
-petrale_s_decrease <- rbind(petrale_s_decrease1, petrale_s_decrease2)
+ petrale_n_increase1 <- polygon_subset(petrale_subset, petrale_poly_n1)
+ petrale_n_increase2 <- polygon_subset(petrale_subset, petrale_poly_n2)
+ petrale_c_decrease <- polygon_subset(petrale_subset, petrale_poly_c1)
+ petrale_c_increase <- polygon_subset(petrale_subset, petrale_poly_c2)
+ petrale_s_increase1 <- polygon_subset(petrale_subset, petrale_poly_s1)
+ petrale_s_increase2 <- polygon_subset(petrale_subset, petrale_poly_s2)
+ petrale_s_increase <- rbind(petrale_s_increase1, petrale_s_increase2)
+ petrale_n_increase <- rbind(petrale_n_increase1, petrale_n_increase2)
 
 # Add the subset of data to the map to check if polygon is in right spot
-windows(width = 7, height = 15)
-polygon_map_check(petrale_subset, petrale_c_decrease, petrale_poly_c)
+ windows(width = 7, height = 15)
+ polygon_map_check(petrale_subset, petrale_n_increase, petrale_poly_n)
 
-windows(width = 7, height = 15)
-polygon_map_check(petrale_subset, petrale_s_decrease, petrale_poly_s)
+ windows(width = 7, height = 15)
+ polygon_map_check(petrale_subset, petrale_c_decrease, petrale_poly_c1)
+
+ windows(width = 7, height = 15)
+ polygon_map_check(petrale_subset, petrale_c_increase, petrale_poly_c2)
+
+ windows(width = 7, height = 15)
+ polygon_map_check(petrale_subset, petrale_s_increase, petrale_poly_s)
 
 # Plot prediction grid
 windows(width = 7, height = 15)
 prediction_map(petrale_dist, petrale_CI)
 
-# Subset data to only pick up those that are inside the polygon for real data
-petrale_central <- polygon_subset(petrale_dist, petrale_poly_c)
-petrale_south <- polygon_subset(petrale_dist, petrale_poly_s)
+# Subset data to only pick up those that are inside the polygon for predictions
+petrale_north <- polygon_pred(petrale_dist, petrale_CI, petrale_poly_n)
+petrale_central_d <- polygon_pred(petrale_dist, petrale_CI, petrale_poly_c1)
+petrale_central_i <- polygon_pred(petrale_dist, petrale_CI, petrale_poly_c2)
+petrale_south <- polygon_pred(petrale_dist, petrale_CI, petrale_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
-petrale_c_avg <- avg_pres_change(petrale_c_decrease)
-petrale_s_avg <- avg_pres_change(petrale_s_decrease)
+petrale_n_avg <- avg_pres_change(petrale_n_increase)
+petrale_c_avg_d <- avg_pres_change(petrale_c_decrease)
+petrale_c_avg_i <- avg_pres_change(petrale_c_increase)
+petrale_s_avg <- avg_pres_change(petrale_s_increase)
 
 # Calculate difference before and after the threshold year for the predictions
-petrale_c_pred <- sum(petrale_central$diff) / nrow(petrale_central)
+petrale_n_pred <- sum(petrale_north$diff) / nrow(petrale_north)
+petrale_c_pred_d <- sum(petrale_central_d$diff) / nrow(petrale_central_d)
+petrale_c_pred_i <- sum(petrale_central_i$diff) / nrow(petrale_central_i)
 petrale_s_pred <- sum(petrale_south$diff) / nrow(petrale_south)
 
 # ***Create the final maps ----
@@ -1128,30 +1162,44 @@ dev.off()
 # ***Validate the results ----
 windows(width = 7, height = 15)
 validation_map(sablefish_subset, sablefish_tgam, sablefish_CI, sablefish_dist, bathy.dat, bathy.mat)
-# savePol = locator(40, type = "o")
-# sablefish_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
-# sablefish_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
-# sablefish_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
+ savePol = locator(40, type = "o")
+ sablefish_poly_n = data.frame(x = savePol$x, y = savePol$y) # northern decrease
+ sablefish_poly_c = data.frame(x = savePol$x, y = savePol$y) # central decrease
+ sablefish_poly_s = data.frame(x = savePol$x, y = savePol$y) # southern increase
 
 # Can use the data_check() function to see if there are appropriate number of data points in a polygon
 # Subset data to only pick up those that are inside the polygon for real data
-sablefish_s_increase <- polygon_subset(sablefish_subset, sablefish_poly_s)
+ sablefish_n_decrease <- polygon_subset(sablefish_subset, sablefish_poly_n)
+ sablefish_c_decrease <- polygon_subset(sablefish_subset, sablefish_poly_c)
+ sablefish_s_decrease <- polygon_subset(sablefish_subset, sablefish_poly_s)
 
 # Add the subset of data to the map to check if polygon is in right spot
-windows(width = 7, height = 15)
-polygon_map_check(sablefish_subset, sablefish_s_increase, sablefish_poly_s)
+ windows(width = 7, height = 15)
+ polygon_map_check(sablefish_subset, sablefish_n_decrease, sablefish_poly_n)
+
+ windows(width = 7, height = 15)
+ polygon_map_check(sablefish_subset, sablefish_c_decrease, sablefish_poly_c)
+
+ windows(width = 7, height = 15)
+ polygon_map_check(sablefish_subset, sablefish_s_decrease, sablefish_poly_s)
 
 # Plot prediction grid
 windows(width = 7, height = 15)
 prediction_map(sablefish_dist, sablefish_CI)
 
-# Subset data to only pick up those that are inside the polygon for real data
-sablefish_south <- polygon_subset(sablefish_dist, sablefish_poly_s)
+# Subset data to only pick up those that are inside the polygon for predictions
+sablefish_north <- polygon_pred(sablefish_dist, sablefish_CI, sablefish_poly_n)
+sablefish_central <- polygon_pred(sablefish_dist, sablefish_CI, sablefish_poly_c)
+sablefish_south <- polygon_pred(sablefish_dist, sablefish_CI, sablefish_poly_s)
 
 # Calculate difference before and after the threshold year in the real data
-sablefish_s_avg <- avg_pres_change(sablefish_s_increase)
+sablefish_n_avg <- avg_pres_change(sablefish_n_decrease)
+sablefish_c_avg <- avg_pres_change(sablefish_c_decrease)
+sablefish_s_avg <- avg_pres_change(sablefish_s_decrease)
 
 # Calculate difference before and after the threshold year for the predictions
+sablefish_n_pred <- sum(sablefish_north$diff) / nrow(sablefish_north)
+sablefish_c_pred <- sum(sablefish_central$diff) / nrow(sablefish_central)
 sablefish_s_pred <- sum(sablefish_south$diff) / nrow(sablefish_south)
 
 # ***Create the final maps ----
