@@ -20,8 +20,8 @@ load("../data/bathy.dat")
 load("../data/bathy.mat")
 source("functions/subset_species.R")
 source("functions/vis_gam_COLORS.R")
-jet.colors <- colorRampPalette(c("#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
-                                 "#fddbc7", "#f4a582", "#d6604d", "#b2182b"))
+jet.colors <- colorRampPalette(rev(c("#b2182b", "#d6604d", "#f4a582", "#fddbc7",
+                                 "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac" )))
 contour_col <- rgb(0, 0, 255, max = 255, alpha = 0, names = "white")
 
 # Subset the data to contain only species of interest for each survey ----
@@ -1190,4 +1190,208 @@ pdf("../results/GAM/sablefish/location_triennial.pdf",
     width = 4,
     height = 11)
 location_plot(cpueGAM_sablefish_t, sablefish_triennial)
+dev.off()
+
+# ***Proposal Figues----
+load("../data/bathy.dat")
+load("../data/bathy.mat")
+
+# Edit location function
+location_plot2 <- function(gam, species_subset, title) {
+  par(
+    mar = c(5, 7.2, 1.4, 0.6) + 0.1,
+    oma = c(1, 1, 1, 1),
+    mgp = c(4, 1.7, 0))
+  myvis_gam(
+    gam[[2]],
+    view = c('longitude', 'latitude'),
+    too.far = 0.03,
+    plot.type = 'contour',
+    col = contour_col,
+    color = "jet" ,
+    type = 'response',
+    xlim = c(-125.7, -123.6),
+    ylim = range(species_subset$latitude, na.rm = TRUE) + c(-.4, .5),
+    family = "serif",
+    xlab = "Longitude",
+    ylab = "Latitude",
+    main = title,
+    cex.lab = 1.7,
+    cex.axis = 1.7,
+    cex.main = 1.7)
+  maps::map('worldHires',
+            add = T,
+            col = 'antiquewhite4',
+            fill = T)
+}
+
+location_plot2 <- function(gam, species_subset, title) {
+  par(
+    mar = c(5, 7.2, 1.4, 0.6) + 0.1,
+    oma = c(1, 1, 1, 1),
+    mgp = c(4, 1.7, 0))
+  myvis_gam(
+    gam[[2]],
+    view = c('longitude', 'latitude'),
+    too.far = 0.03,
+    plot.type = 'contour',
+    contour.col = contour_col,
+    color = "jet" ,
+    type = 'response',
+    xlim = c(-125.7, -123.6),
+    ylim = range(species_subset$latitude, na.rm = TRUE) + c(-.4, .5),
+    family = "serif",
+    xlab = "Longitude",
+    ylab = "Latitude",
+    main = title,
+    cex.lab = 1.7,
+    cex.axis = 1.7,
+    cex.main = 1.7)
+  maps::map('worldHires',
+            add = T,
+            col = 'antiquewhite4',
+            fill = T)
+}
+
+
+# Sablefish
+pdf("../results/GAM/sablefish/proposal.pdf",
+    width = 4,
+    height = 11,
+    family = "serif")
+location_plot2(cpueGAM_sablefish_a, sablefish_annual, "Sablefish")
+symbols(
+  sablefish_annual$longitude[sablefish_annual$lncpue > 0],
+  sablefish_annual$latitude[sablefish_annual$lncpue > 0],
+  circles = sablefish_annual$lncpue[sablefish_annual$lncpue > 0],
+  inches = 0.07,
+  add = T,
+  fg = 'gray47',
+  bg = alpha("gray59", 0.5))
+contour(unique(bathy.dat$lon),
+        sort(unique(bathy.dat$lat)),
+        bathy.mat,
+        levels = -seq(200, 200, by = 200),
+        labcex = 1.1,
+        add = T,
+        col = 'black',
+        labels = NULL,
+        lwd = 1.95)
+image.plot(legend.only = T,
+           zlim = c(0.6, 2.1),
+           col = jet.colors(100),
+           legend.shrink = 0.2,
+           smallplot = c(.45, .47, .11, .2),
+           legend.cex = 1,
+           legend.lab = "log(CPUE+1)",
+           axis.args = list(cex.axis = 1),
+           legend.width = 1,
+           legend.line = 2)
+dev.off()
+
+# Dover
+dover_subset <- dover_annual[sample(nrow(dover_annual), 1000), ]
+pdf("../results/GAM/dover_sole/proposal.pdf",
+    width = 4,
+    height = 11,
+    family = "serif")
+location_plot2(cpueGAM_dover_a, dover_annual, "Dover Sole")
+symbols(
+  dover_subset$longitude[dover_subset$lncpue > 0],
+  dover_subset$latitude[dover_subset$lncpue > 0],
+  circles = dover_subset$lncpue[dover_subset$lncpue > 0],
+  inches = 0.07,
+  add = T,
+  fg = 'gray47',
+  bg = alpha("gray59", 0.5))
+contour(unique(bathy.dat$lon),
+        sort(unique(bathy.dat$lat)),
+        bathy.mat,
+        levels = -seq(200, 200, by = 200),
+        labcex = 1.1,
+        add = T,
+        col = 'black',
+        labels = NULL,
+        lwd = 1.95)
+image.plot(legend.only = T,
+           zlim = c(2, 6.2),
+           col = jet.colors(100),
+           legend.shrink = 0.2,
+           smallplot = c(.45, .47, .11, .2),
+           legend.cex = 1,
+           legend.lab = "log(CPUE+1)",
+           axis.args = list(cex.axis = 1),
+           legend.width = 1,
+           legend.line = 2)
+dev.off()
+
+# Lingcod
+pdf("../results/GAM/lingcod/proposal.pdf",
+    width = 4,
+    height = 11,
+    family = "serif")
+location_plot2(cpueGAM_lingcod_a, lingcod_annual, "Lingcod")
+symbols(
+  lingcod_annual$longitude[lingcod_annual$lncpue > 0],
+  lingcod_annual$latitude[lingcod_annual$lncpue > 0],
+  circles = lingcod_annual$lncpue[lingcod_annual$lncpue > 0],
+  inches = 0.07,
+  add = T,
+  fg = 'gray47',
+  bg = alpha("gray59", 0.5))
+contour(unique(bathy.dat$lon),
+        sort(unique(bathy.dat$lat)),
+        bathy.mat,
+        levels = -seq(200, 200, by = 200),
+        labcex = 1.1,
+        add = T,
+        col = 'black',
+        labels = NULL,
+        lwd = 1.95)
+image.plot(legend.only = T,
+           zlim = c(0.2, 2),
+           col = jet.colors(100),
+           legend.shrink = 0.2,
+           smallplot = c(.45, .47, .11, .2),
+           legend.cex = 1,
+           legend.lab = "log(CPUE+1)",
+           axis.args = list(cex.axis = 1),
+           legend.width = 1,
+           legend.line = 2)
+dev.off()
+
+# Petrale
+petrale_subset <- petrale_annual[sample(nrow(petrale_annual), 1000), ]
+pdf("../results/GAM/petrale_sole/proposal.pdf",
+    width = 4,
+    height = 11,
+    family = "serif")
+location_plot2(cpueGAM_petrale_a, petrale_annual, "Petrale Sole")
+symbols(
+  petrale_subset$longitude[petrale_subset$lncpue > 0],
+  petrale_subset$latitude[petrale_subset$lncpue > 0],
+  circles = petrale_subset$lncpue[petrale_subset$lncpue > 0],
+  inches = 0.07,
+  add = T,
+  fg = 'gray47',
+  bg = alpha("gray59", 0.5))
+contour(unique(bathy.dat$lon),
+        sort(unique(bathy.dat$lat)),
+        bathy.mat,
+        levels = -seq(200, 200, by = 200),
+        labcex = 1.1,
+        add = T,
+        col = 'black',
+        labels = NULL,
+        lwd = 1.95)
+image.plot(legend.only = T,
+           zlim = c(2, 3),
+           col = jet.colors(100),
+           legend.shrink = 0.2,
+           smallplot = c(.45, .47, .11, .2),
+           legend.cex = 1,
+           legend.lab = "log(CPUE+1)",
+           axis.args = list(cex.axis = 1),
+           legend.width = 1,
+           legend.line = 2)
 dev.off()
