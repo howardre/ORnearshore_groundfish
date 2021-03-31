@@ -24,7 +24,7 @@ load('../data/NMFS_data/triennial_tows')
 load("../data/bathy.dat")
 load("../data/bathy.mat")
 source("functions/subset_species.R")
-source("functions/vis_gam_COLORS.R")
+source("functions/vis_ziplss_COLORS.R")
 jet.colors <- colorRampPalette(rev(c("#b2182b", "#d6604d", "#f4a582", "#fddbc7",
                                      "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac" )))
 contour_col <- rgb(0, 0, 255, max = 255, alpha = 0, names = "white")
@@ -51,75 +51,134 @@ lingcod_triennial <- subset_species_count("Ophiodon elongatus", triennial, trien
 petrale_triennial <- subset_species_count("Eopsetta jordani", triennial, triennial_trawl)
 sablefish_triennial <- subset_species_count("Anoplopoma fimbria", triennial, triennial_trawl)
 
-# Test zip for Dover
-dover_zip <- gam(count ~ factor(year) +
-                   s(julian) +
-                   s(latitude, longitude) +
-                   s(bottom_temp),
-                 data = dover_subset,
-                 family = ziP())
-summary(dover_zip)
 
-# Test ziplss for Dover
-# No environmental
-dover_ziplss <- gam(
-  list(
-    count ~ s(year) +
-      s(julian) +
+# Create functions to select the best ZIP for each species ----
+ZIP_selection <- function(species_subset){
+  year_ziplss <- gam(list(
+    count ~ s(year, k = 5) +
+      s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m),
-    ~ s(year) +
-      s(julian) +
-      s(latitude, longitude)),
-  data = dover_subset,
+    ~ s(year, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)
+  ),
+  data = species_subset,
   family = ziplss)
-summary(dover_ziplss)
-AIC(dover_ziplss)
-plot(dover_ziplss)
-
-# Include temperature
-dover_ziplss_temp <- gam(
-  list(
-    count ~ s(year) +
-      s(julian) +
-      s(latitude, longitude),
-    ~ factor(program) +
-      s(year) +
-      s(julian) +
+  yeartemp_ziplss <-  gam(list(
+    count ~ s(year, k = 5) +
+      s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(bottom_temp)),
-  data = dover_subset,
+      s(bottom_temp, k = 5),
+    ~ s(year, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)
+  ),
+  data = species_subset,
   family = ziplss)
-summary(dover_ziplss_temp)
-AIC(dover_ziplss_temp)
-plot(dover_ziplss_temp)
-gam.check(dover_ziplss_temp)
-
-
-# Remove program variable
-dover_ziplss_program <- gam(
-  list(
-    count ~ s(year) +
-      s(julian) +
-      s(latitude, longitude),
-    ~ s(year) +
-      s(julian) +
+  PDO_ziplss <- gam(list(
+    count ~ s(PDO, k = 5) +
+      s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m)),
-  data = dover_subset,
+      s(depth_m),
+    ~ s(PDO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)
+  ),
+  data = species_subset,
   family = ziplss)
-summary(dover_ziplss_program)
-AIC(dover_ziplss_program)
-plot(dover_ziplss_program)
+  PDOtemp_ziplss <-  gam(list(
+    count ~ s(PDO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude) +
+      s(depth_m) +
+      s(bottom_temp, k = 5),
+    ~ s(PDO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)
+  ),
+  data = species_subset,
+  family = ziplss)
+  NPGO_ziplss <- gam(list(
+    count ~ s(NPGO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude) +
+      s(depth_m),
+    ~ s(NPGO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)
+  ),
+  data = species_subset,
+  family = ziplss)
+  NPGOtemp_ziplss <-  gam(list(
+    count ~ s(NPGO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude) +
+      s(depth_m) +
+      s(bottom_temp, k = 5),
+    ~ s(NPGO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)
+  ),
+  data = species_subset,
+  family = ziplss)
+  ziplss_list <- list(year_ziplss, yeartemp_ziplss, PDOtemp_ziplss, PDO_ziplss, NPGO_ziplss, NPGOtemp_ziplss)
+  best_ziplss <- ziplss_list[[which.min(sapply(1:length(ziplss_list),
+                                         function(x) min(ziplss_list[[x]]$aic)))]] # would like to also select by AIC
+  return_list <- list(ziplss_list, best_ziplss)
+}
+ZIP_test <- function(species_subset) {
+  test <- gam(count ~ s(year) +
+                          s(julian) +
+                          s(latitude, longitude) +
+                          s(depth_m), family = poisson, data = species_subset[species_subset$count > 0,])
+}
 
-test <- gam(count ~ s(year) +
-  s(julian) +
-  s(latitude, longitude) +
-  s(depth_m), family = poisson, data = dover_subset[dover_subset$count > 0,])
-summary(test)
-plot(test)
-gam.check(test)
 
-range(dover_subset$count)
-range(predict(dover_ziplss))
+
+# ****Dover sole ----
+# Annual
+dover_annualzip <- ZIP_selection(dover_annual)
+summary(dover_annualzip[[2]])
+plot(dover_annualzip[[2]])
+
+windows()
+par(mfrow = c(2,2))
+gam.check(dover_annualzip[[2]])
+
+# Test to ensure looks like a Poisson distribution
+dover_annualcheck <- ZIP_test(dover_annual)
+summary(dover_annualcheck)
+plot(dover_annualcheck)
+
+windows()
+par(mfrow = c(2,2))
+gam.check(dover_annualcheck)
+
+range(dover_annual$count)
+range(predict(dover_annualzip[[2]]))
+range(predict(dover_annualcheck))
+
+
+# Triennial
+dover_triennialzip <- ZIP_selection(dover_triennial)
+summary(dover_triennialzip[[2]])
+plot(dover_triennialzip[[2]])
+
+windows()
+par(mfrow = c(2,2))
+gam.check(dover_triennialzip[[2]])
+
+# Test to ensure looks like a Poisson distribution
+dover_triennialcheck <- ZIP_test(dover_triennial)
+summary(dover_triennialcheck)
+plot(dover_triennialcheck)
+
+windows()
+par(mfrow = c(2,2))
+gam.check(dover_triennialcheck)
+
+range(dover_triennial$count)
+range(predict(dover_triennialzip[[2]]))
+range(predict(dover_triennialcheck))
