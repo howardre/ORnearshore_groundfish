@@ -15,32 +15,41 @@ library(mgcv)
 library(furrr)
 
 # Load data and necessary functions ----
+# Load data and necessary functions ----
 setwd("/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code")
-trawl_data <- read.delim("../data/NMFS_data/trawl_data.txt", header = T)
-OR_fish <- read.delim("../data/NMFS_data/OR_fish.txt", header = T)
+load('../data/NMFS_data/annual_samples')
+load('../data/NMFS_data/annual_tows')
+load('../data/NMFS_data/triennial_samples')
+load('../data/NMFS_data/triennial_tows')
 load("../data/bathy.dat")
 load("../data/bathy.mat")
-source("functions/distance_function.R")
-source("functions/vis_gam_COLORS.R")
 source("functions/subset_species.R")
-source("functions/TGAM_selection.R")
-jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
-                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
-trawl_data$program <- recode(trawl_data$project, "Groundfish Slope and Shelf Combination Survey" = "annual",
-                             "Groundfish Triennial Shelf Survey" = "triennial")
-trawl_data$program[trawl_data$program == "triennial" & trawl_data$year < 1995] <- "triennial1"
-trawl_data$program[trawl_data$program == "triennial" & trawl_data$year > 1994] <- "triennial2"
+source("functions/vis_gam_COLORS.R")
+jet.colors <- colorRampPalette(rev(c("#b2182b", "#d6604d", "#f4a582", "#fddbc7",
+                                     "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac" )))
+contour_col <- rgb(0, 0, 255, max = 255, alpha = 0, names = "white")
 
-# Subset the data to contain only species of interest ----
+# Subset the data to contain only species of interest for each survey ----
 # Eight species of interest
-arrowtooth_subset <- subset_species_temp("Atheresthes stomias", OR_fish, trawl_data)
-english_subset <- subset_species_temp("Parophrys vetulus", OR_fish, trawl_data)
-sanddab_subset <- subset_species_temp("Citharichthys sordidus", OR_fish, trawl_data)
-dover_subset <- subset_species_temp("Microstomus pacificus", OR_fish, trawl_data)
-rex_subset <- subset_species_temp("Glyptocephalus zachirus", OR_fish, trawl_data)
-lingcod_subset <- subset_species_temp("Ophiodon elongatus", OR_fish, trawl_data)
-petrale_subset <- subset_species_temp("Eopsetta jordani", OR_fish, trawl_data)
-sablefish_subset <- subset_species_temp("Anoplopoma fimbria", OR_fish, trawl_data)
+# Annual subsets
+arrowtooth_annual <- subset_species_count("Atheresthes stomias", annual, annual_trawl)
+english_annual <- subset_species_count("Parophrys vetulus", annual, annual_trawl)
+sanddab_annual <- subset_species_count("Citharichthys sordidus", annual, annual_trawl)
+dover_annual <- subset_species_count("Microstomus pacificus", annual, annual_trawl)
+rex_annual <- subset_species_count("Glyptocephalus zachirus", annual, annual_trawl)
+lingcod_annual <- subset_species_count("Ophiodon elongatus", annual, annual_trawl)
+petrale_annual <- subset_species_count("Eopsetta jordani", annual, annual_trawl)
+sablefish_annual <- subset_species_count("Anoplopoma fimbria", annual, annual_trawl)
+
+# Triennial subsets
+arrowtooth_triennial <- subset_species_count("Atheresthes stomias", triennial, triennial_trawl)
+english_triennial <- subset_species_count("Parophrys vetulus", triennial, triennial_trawl)
+sanddab_triennial <- subset_species_count("Citharichthys sordidus", triennial, triennial_trawl)
+dover_triennial <- subset_species_count("Microstomus pacificus", triennial, triennial_trawl)
+rex_triennial <- subset_species_count("Glyptocephalus zachirus", triennial, triennial_trawl)
+lingcod_triennial <- subset_species_count("Ophiodon elongatus", triennial, triennial_trawl)
+petrale_triennial <- subset_species_count("Eopsetta jordani", triennial, triennial_trawl)
+sablefish_triennial <- subset_species_count("Anoplopoma fimbria", triennial, triennial_trawl)
 
 # Test zip for Dover
 dover_zip <- gam(count ~ factor(year) +
@@ -55,15 +64,13 @@ summary(dover_zip)
 # No environmental
 dover_ziplss <- gam(
   list(
-    count ~ factor(program) +
-      s(year) +
-      s(julian) +
-      s(latitude, longitude),
-    ~ factor(program) +
-      s(year) +
+    count ~ s(year) +
       s(julian) +
       s(latitude, longitude) +
-      s(depth_m)),
+      s(depth_m),
+    ~ s(year) +
+      s(julian) +
+      s(latitude, longitude)),
   data = dover_subset,
   family = ziplss)
 summary(dover_ziplss)
@@ -73,8 +80,7 @@ plot(dover_ziplss)
 # Include temperature
 dover_ziplss_temp <- gam(
   list(
-    count ~ factor(program) +
-      s(year) +
+    count ~ s(year) +
       s(julian) +
       s(latitude, longitude),
     ~ factor(program) +
@@ -106,3 +112,14 @@ dover_ziplss_program <- gam(
 summary(dover_ziplss_program)
 AIC(dover_ziplss_program)
 plot(dover_ziplss_program)
+
+test <- gam(count ~ s(year) +
+  s(julian) +
+  s(latitude, longitude) +
+  s(depth_m), family = poisson, data = dover_subset[dover_subset$count > 0,])
+summary(test)
+plot(test)
+gam.check(test)
+
+range(dover_subset$count)
+range(predict(dover_ziplss))
