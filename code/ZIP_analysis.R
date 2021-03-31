@@ -15,7 +15,6 @@ library(mgcv)
 library(furrr)
 
 # Load data and necessary functions ----
-# Load data and necessary functions ----
 setwd("/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code")
 load('../data/NMFS_data/annual_samples')
 load('../data/NMFS_data/annual_tows')
@@ -59,8 +58,8 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m),
-    ~ s(year, k = 5) +
-      s(julian, k = 5) +
+    ~ s(year) +
+      s(julian) +
       s(latitude, longitude)
   ),
   data = species_subset,
@@ -71,8 +70,8 @@ ZIP_selection <- function(species_subset){
       s(latitude, longitude) +
       s(depth_m) +
       s(bottom_temp, k = 5),
-    ~ s(year, k = 5) +
-      s(julian, k = 5) +
+    ~ s(year) +
+      s(julian) +
       s(latitude, longitude)
   ),
   data = species_subset,
@@ -82,8 +81,8 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m),
-    ~ s(PDO, k = 5) +
-      s(julian, k = 5) +
+    ~ s(PDO) +
+      s(julian) +
       s(latitude, longitude)
   ),
   data = species_subset,
@@ -94,8 +93,8 @@ ZIP_selection <- function(species_subset){
       s(latitude, longitude) +
       s(depth_m) +
       s(bottom_temp, k = 5),
-    ~ s(PDO, k = 5) +
-      s(julian, k = 5) +
+    ~ s(PDO) +
+      s(julian) +
       s(latitude, longitude)
   ),
   data = species_subset,
@@ -105,8 +104,8 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m),
-    ~ s(NPGO, k = 5) +
-      s(julian, k = 5) +
+    ~ s(NPGO) +
+      s(julian) +
       s(latitude, longitude)
   ),
   data = species_subset,
@@ -117,8 +116,8 @@ ZIP_selection <- function(species_subset){
       s(latitude, longitude) +
       s(depth_m) +
       s(bottom_temp, k = 5),
-    ~ s(NPGO, k = 5) +
-      s(julian, k = 5) +
+    ~ s(NPGO) +
+      s(julian) +
       s(latitude, longitude)
   ),
   data = species_subset,
@@ -129,13 +128,58 @@ ZIP_selection <- function(species_subset){
   return_list <- list(ziplss_list, best_ziplss)
 }
 ZIP_test <- function(species_subset) {
-  test <- gam(count ~ s(year) +
-                          s(julian) +
+  test <- gam(count ~ s(year, k = 5) +
+                          s(julian, k = 5) +
                           s(latitude, longitude) +
                           s(depth_m), family = poisson, data = species_subset[species_subset$count > 0,])
 }
-
-
+plot_variable <- function(zip, covariate, bounds, variable, ylabel, yvalues){
+  par(
+    mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+    oma = c(1, 1, 1, 1),
+    mgp = c(5, 2, 0))
+  plot(zip[[2]],
+       pages = 0,
+       select = covariate, # 1 = year/PDO/NPGO, 2 = lat/lon, 3 = depth, 4 = julian, 5 = temp
+       shade = T,
+       shade.col = "lemonchiffon3",
+       ylim = bounds,
+       xlab = variable,
+       ylab = ylabel,
+       yaxt = yvalues,
+       seWithMean = T,
+       scale = 0,
+       cex.axis = 3,
+       cex.lab = 3,
+       family = "serif",
+       lwd = 2)
+}
+location_plot <- function(zip, species_subset) {
+  par(
+    mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+    oma = c(1, 1, 1, 1),
+    mgp = c(5, 2, 0))
+  myvis_gam(
+    zip[[2]],
+    view = c('longitude', 'latitude'),
+    too.far = 0.03,
+    plot.type = 'contour',
+    contour.col = contour_col,
+    color = "jet" ,
+    type = 'response',
+    xlim = c(-125.7, -123.6),
+    ylim = range(species_subset$latitude, na.rm = TRUE) + c(-.4, .5),
+    family = "serif",
+    xlab = "Longitude",
+    ylab = "Latitude",
+    main = " ",
+    cex.lab = 2,
+    cex.axis = 2)
+  maps::map('worldHires',
+            add = T,
+            col = 'antiquewhite4',
+            fill = T)
+}
 
 # ****Dover sole ----
 # Annual
@@ -160,6 +204,58 @@ range(dover_annual$count)
 range(predict(dover_annualzip[[2]]))
 range(predict(dover_annualcheck))
 
+# Create manuscript figures
+# Year variable
+pdf("../results/ZIP/dover_sole/year_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_year <- plot_variable(dover_annualzip,
+                              covariate = 1,
+                              bounds = c(-3.5, 2.1),
+                              "Year",
+                              "Species Abundance Anomalies",
+                              "s")
+dev.off()
+# Day of year variable
+pdf("../results/ZIP/dover_sole/julian_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_day <- plot_variable(dover_annualzip,
+                             covariate = 2,
+                             bounds = c(-3.5, 2.1),
+                             "Day of Year",
+                             " ",
+                             "n")
+dev.off()
+# Depth variable
+pdf("../results/ZIP/dover_sole/depth_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_depth <- plot_variable(dover_annualzip,
+                               covariate = 4,
+                               bounds = c(-4.2, 2),
+                               "Depth (m)",
+                               "Species Abundance Anomalies",
+                               "s")
+dev.off()
+# Temperature variable
+pdf("../results/ZIP/dover_sole/temp_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(dover_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/ZIP/dover_sole/location_annual.pdf",
+    width = 4,
+    height = 11)
+location_plot(dover_annualzip, dover_annual)
+dev.off()
+
 
 # Triennial
 dover_triennialzip <- ZIP_selection(dover_triennial)
@@ -182,3 +278,55 @@ gam.check(dover_triennialcheck)
 range(dover_triennial$count)
 range(predict(dover_triennialzip[[2]]))
 range(predict(dover_triennialcheck))
+
+# Create manuscript figures
+# Year variable
+pdf("../results/ZIP/dover_sole/year_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_year <- plot_variable(dover_triennialzip,
+                              covariate = 1,
+                              bounds = c(-3.5, 2.1),
+                              "Year",
+                              "Species Abundance Anomalies",
+                              "s")
+dev.off()
+# Day of year variable
+pdf("../results/ZIP/dover_sole/julian_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_day <- plot_variable(dover_triennialzip,
+                             covariate = 2,
+                             bounds = c(-3.5, 2.1),
+                             "Day of Year",
+                             " ",
+                             "n")
+dev.off()
+# Depth variable
+pdf("../results/ZIP/dover_sole/depth_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_depth <- plot_variable(dover_triennialzip,
+                               covariate = 4,
+                               bounds = c(-4.2, 2),
+                               "Depth (m)",
+                               "Species Abundance Anomalies",
+                               "s")
+dev.off()
+# Temperature variable
+pdf("../results/ZIP/dover_sole/temp_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(dover_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Latitude/Longitude Map
+pdf("../results/ZIP/dover_sole/location_triennial.pdf",
+    width = 4,
+    height = 11)
+location_plot(dover_triennialzip, dover_triennial)
+dev.off()
