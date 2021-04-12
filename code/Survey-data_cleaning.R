@@ -11,6 +11,7 @@ library(reshape2)
 library(data.table)
 library(zoo)
 library(lubridate)
+library(RANN)
 
 # Load data
 setwd('C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
@@ -21,6 +22,7 @@ scientific_name_id <- read.csv("../data/NMFS_data/Scientific_id.csv", header = T
 species_pacfin <- read.csv("../data/NMFS_data/Fish_class.csv", header = T)
 trawl_data <- read.csv("../data/NMFS_data/trawl_characteristics.csv", header = T)
 
+# Clean survey sample and species data ----
 # Limit to less than 200 m depth
 species_depth <- filter(species_data, depth_m <= 200.0)
 
@@ -156,8 +158,85 @@ NPGO <- as.data.frame(NPGO)
 colnames(NPGO)[1] <- "NPGO"
 match_id<-match(trawl_data$year_month,NPGO$Date)
 trawl_data$NPGO<-NPGO$NPGO[match_id]
+
+# Add the grain size to trawl data
+trawl_data[, c(17, 18)] <- as.data.frame(RANN::nn2(grain_df[, c(3, 2)], trawl_data[, c(4, 5)], k = 1))
+trawl_data[, 19] <- grain_df[trawl_data[, 17], 1]
+trawl_data <- trawl_data[- c(17, 18)]
+colnames(trawl_data)[17] <- "grain_size"
+
 save(trawl_data, file = "../data/NMFS_data/trawl_data")
 write.table(trawl_data,"../data/NMFS_data/trawl_data.txt",sep="\t",row.names=FALSE)
+
+
+# Create separate annual and triennial datasets ----
+# Filter by FMP species
+commercial_filter <- filter(OR_fish, Class != "non-FMP")
+match_id<-match(commercial_filter$trawl_id,trawl_data$trawl_id)
+commercial_filter$catch_kg<-trawl_data$vertebrate_weight_kg[match_id]
+commercial_species <- commercial_filter
+
+# Create separate survey datasets (get rid of 2004 triennial survey)
+annual <- filter(commercial_species, project != "Groundfish Triennial Shelf Survey", year > "2002")
+annual_trawl <- filter(trawl_data, project != "Groundfish Triennial Shelf Survey", year > "2002")
+triennial <- filter(commercial_species, project != "Groundfish Slope and Shelf Combination Survey")
+triennial_trawl <- filter(trawl_data, project != "Groundfish Slope and Shelf Combination Survey")
+save(annual_trawl, file = "../data/NMFS_data/annual_tows")
+save(triennial_trawl, file = "../data/NMFS_data/triennial_tows")
+save(annual, file = "../data/NMFS_data/annual_samples")
+save(triennial, file = "../data/NMFS_data/triennial_samples")
+
+# Annual: Remove species that appear in < 1% of trawls (47 species extracted, excluded Raja and Rajiformes)
+annual <- as.data.frame(annual[order(annual$trawl_id),])
+annual_matrix <- create.matrix(annual, tax.name = "scientific_name",
+                               locality = "trawl_id", time.col = NULL, time = NULL,
+                               abund = F, abund.col = "lncpue")
+annual_matrix <- as.data.frame(annual_matrix)
+annual_matrix$sum <- rowSums(annual_matrix)
+annual_matrix$percentage <- ((annual_matrix$sum)/2405)*100
+annual_filtered <- annual_matrix[annual_matrix$percentage >= 1,]
+annual_filtered <- rownames_to_column(annual_filtered, "scientific_name")
+annual_vec <- as.vector(annual_filtered['scientific_name'])
+filter <- c("Anoplopoma fimbria", "Atheresthes stomias",
+            "Bathyraja kincaidii", "Citharichthys sordidus","Eopsetta jordani", "Gadus macrocephalus",
+            "Glyptocephalus zachirus", "Hexagrammos decagrammus", "Hippoglossoides elassodon", "Hydrolagus colliei",
+            "Isopsetta isolepis", "Lepidopsetta bilineata", "Microstomus pacificus","Ophiodon elongatus","Parophrys vetulus",
+            "Platichthys stellatus", "Pleuronichthys decurrens", "Psettichthys melanostictus", "Raja binoculata", "Raja inornata",
+            "Raja rhina","Raja stellulata","Sebastes alutus","Sebastes babcocki","Sebastes brevispinis", "Sebastes chlorostictus",
+            "Sebastes crameri","Sebastes diploproa","Sebastes elongatus","Sebastes entomelas","Sebastes flavidus","Sebastes goodei",
+            "Sebastes helvomaculatus","Sebastes jordani","Sebastes maliger","Sebastes paucispinis","Sebastes pinniger",
+            "Sebastes proriger","Sebastes ruberrimus","Sebastes saxicola","Sebastes sp. (aleutianus / melanostictus)",
+            "Sebastes wilsoni","Sebastes zacentrus","Sebastolobus alascanus","Squalus suckleyi")
+annual_filter <- filter(annual, scientific_name %in% filter)
+save(annual_filter, file = "../data/NMFS_data/annual_filtered")
+write.table(annual_filter,"../data/NMFS_data/annual_filtered.txt",sep="\t",row.names=T)
+
+
+# Triennial: Remove species that appear in < 1% of trawls (44 species extracted, excluded Sebastes sp.)
+triennial <- triennial[order(triennial$trawl_id),]
+triennial_matrix <- create.matrix(triennial, tax.name = "scientific_name",
+                                  locality = "trawl_id", time.col = NULL, time = NULL,
+                                  abund = F, abund.col = "lncpue")
+triennial_matrix <- as.data.frame(triennial_matrix)
+triennial_matrix$sum <- rowSums(triennial_matrix)
+triennial_matrix$percentage <- ((triennial_matrix$sum)/1942)*100
+triennial_filtered <- triennial_matrix[triennial_matrix$percentage >= 1,]
+triennial_filtered <- rownames_to_column(triennial_filtered, "scientific_name")
+triennial_vec <- as.vector(triennial_filtered['scientific_name'])
+filter <- c("Anoplopoma fimbria", "Atheresthes stomias",
+            "Bathyraja kincaidii", "Citharichthys sordidus","Eopsetta jordani", "Gadus macrocephalus",
+            "Glyptocephalus zachirus", "Hexagrammos decagrammus", "Hippoglossoides elassodon", "Hydrolagus colliei",
+            "Isopsetta isolepis", "Lepidopsetta bilineata", "Microstomus pacificus","Ophiodon elongatus","Parophrys vetulus",
+            "Pleuronichthys decurrens", "Psettichthys melanostictus", "Raja binoculata",
+            "Raja rhina","Sebastes alutus","Sebastes babcocki","Sebastes brevispinis", "Sebastes chlorostictus",
+            "Sebastes crameri","Sebastes diploproa","Sebastes elongatus","Sebastes entomelas","Sebastes flavidus","Sebastes goodei",
+            "Sebastes helvomaculatus","Sebastes jordani","Sebastes melanops","Sebastes paucispinis","Sebastes pinniger",
+            "Sebastes proriger","Sebastes ruberrimus","Sebastes saxicola","Sebastes sp. (aleutianus / melanostictus)",
+            "Sebastes wilsoni","Sebastes zacentrus","Sebastolobus alascanus","Squalus suckleyi")
+triennial_filter <- filter(triennial, scientific_name %in% filter)
+save(triennial_filter, file = "../data/NMFS_data/triennial_filtered")
+write.table(triennial_filter,"../data/NMFS_data/triennial_filtered.txt",sep="\t",row.names=T)
+
 
 --------------------------------------#######################------------------------------------------------------
 

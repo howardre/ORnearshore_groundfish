@@ -9,6 +9,7 @@
 .Ruserdata
 /ODFW_data
 manuscripts/
+/Environmental_data/sediment
 
 # Example code in package build process
 *-Ex.R

@@ -16,55 +16,43 @@ library(MVA)
 library(readxl)
 
 ###########################################################################################################################
-# Load matrices ----
-setwd('C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
-species_matrix_t <- read.csv("../data/NMFS_data/species_matrix_t.csv",
-                             header = T,
-                             row.names = 1,
-                             check.names = F) # Triennial
-env_matrix_t <- read.csv("../data/NMFS_data/env_matrix_t.csv",
-                         header = T,
-                         row.names = 1,
-                         check.names = F)
-species_matrix_a <- read.csv("../data/NMFS_data/species_matrix_a.csv",
-                             header = T,
-                             row.names = 1,
-                             check.names = F) # Annual
-env_matrix_a <- read.csv("../data/NMFS_data/env_matrix_a.csv",
-                         header = T,
-                         row.names = 1,
-                         check.names = F)
-
-###########################################################################################################################
 # Split into two data sets ----
 # Separate matrices with trawl_id row names and environmental/location columns
 # Use the matrices created in NMS_matrices script, these contain log(x+1) transformed CPUE for each species and tow
-
-# Turn matrices into dataframes and make first column the row names
-# Annual species
-species_matrix_a <- as.data.frame(species_matrix_a)
-rownames(species_matrix_a) <- species_matrix_a[, 1]
-species_matrix_a <- species_matrix_a[, -1]
-
-# Triennial species
-species_matrix_t <- as.data.frame(species_matrix_t)
-rownames(species_matrix_t) <- species_matrix_t[, 1]
-species_matrix_t <- species_matrix_t[, -1]
-
-# Annual environmental data
-env_matrix_a <- as.data.frame(env_matrix_a)
-rownames(env_matrix_a) <- env_matrix_a[, 1]
-env_matrix_a <- env_matrix_a[, -1]
-
-# Triennial environmental data
-env_matrix_t <- as.data.frame(env_matrix_t)
-rownames(env_matrix_t) <- env_matrix_t[, 1]
-env_matrix_t <- env_matrix_t[, -1]
+setwd('C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code')
+species_matrix_t <-
+        as.data.frame(
+                read.csv(
+                        "../data/NMFS_data/species_matrix_t.csv",
+                        header = T,
+                        row.names = 1,
+                        check.names = F)) # Triennial
+env_matrix_t <-
+        as.data.frame(
+                read.csv(
+                        "../data/NMFS_data/env_matrix_t.csv",
+                        header = T,
+                        row.names = 1,
+                        check.names = F))
+species_matrix_a <-
+        as.data.frame(
+                read.csv(
+                        "../data/NMFS_data/species_matrix_a.csv",
+                        header = T,
+                        row.names = 1,
+                        check.names = F)) # Annual
+env_matrix_a <-
+        as.data.frame(
+                read.csv(
+                        "../data/NMFS_data/env_matrix_a.csv",
+                        header = T,
+                        row.names = 1,
+                        check.names = F))
 
 ###########################################################################################################################
 # Add richness and Shannon diversity index to environmental matrix from species matrix ----
-species_matrix_a1 <- species_matrix_a
-species_matrix_t1 <- species_matrix_t
+# species_matrix_a1 <- species_matrix_a
+# species_matrix_t1 <- species_matrix_t
 env_matrix_a$richness <- specnumber(species_matrix_a)
 env_matrix_t$richness <- specnumber(species_matrix_t)
 env_matrix_a$diversity <- diversity(species_matrix_a)
@@ -88,7 +76,6 @@ final_env <- env_matrix_a[-env_matrix_a2,]
 # Create dissimilarity matrix and check stress
 practice_a <- as.data.frame(practice_a)
 mds_nulla <- isoMDS(practice_a,         # uses isoMDS engine
-                   tol = 1e-7,
                    trace = F)
 mds_testa <- metaMDS(practice_a,           # uses monoMDS engine
                  autotransform = F,

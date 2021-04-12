@@ -34,6 +34,7 @@ annual_filtered$PDO <- annual_trawl$PDO[match_id]
 annual_filtered$NPGO <- annual_trawl$NPGO[match_id]
 annual_filtered$julian <- annual_trawl$julian[match_id]
 annual_filtered$bottom_temp <- annual_trawl$bottom_temp[match_id]
+annual_filtered$grain_size <- annual_trawl$grain_size[match_id]
 
 # Remove unselected samples
 annual_subset <- annual_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22)]
@@ -62,7 +63,8 @@ annual_env <- select(annual_trawl,
                      depth_m,
                      latitude,
                      year,
-                     julian)
+                     julian,
+                     grain_size)
 env_matrix_annual <- annual_env[complete.cases(annual_env),]
 env_matrix_annual <- as.data.frame(env_matrix_annual)
 rownames(env_matrix_annual) <- env_matrix_annual[, 1]
@@ -81,6 +83,7 @@ triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$bottom_temp), ]
 triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$PDO), ]
 triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$NPGO), ]
 triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$julian), ]
+triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$grain_size), ]
 triennial_trawl <- triennial_trawl[complete.cases(triennial_trawl), ]
 
 # Can create a subsetted matrix if necessary
@@ -95,6 +98,7 @@ triennial_filtered$PDO <- triennial_trawl$PDO[match_id]
 triennial_filtered$NPGO <- triennial_trawl$NPGO[match_id]
 triennial_filtered$julian <- triennial_trawl$julian[match_id]
 triennial_filtered$bottom_temp <- triennial_trawl$bottom_temp[match_id]
+triennial_filtered$grain_size <- triennial_trawl$grain_size[match_id]
 
 # Remove unselected samples
 triennial_subset <- triennial_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22)]
@@ -123,7 +127,8 @@ triennial_env <- select(triennial_trawl,
                      depth_m,
                      latitude,
                      year,
-                     julian)
+                     julian,
+                     grain_size)
 env_matrix_triennial <- triennial_env[complete.cases(triennial_env),]
 env_matrix_triennial <- as.data.frame(env_matrix_triennial)
 rownames(env_matrix_triennial) <- env_matrix_triennial[, 1]
