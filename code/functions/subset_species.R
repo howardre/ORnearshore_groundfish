@@ -29,7 +29,11 @@ subset_species_count <- function(species, catch, tows){
   tows$count <- OR_subset$total_catch_numbers[match_id]
   tows$count[is.na(tows$count)] <- 0
   selected_species <- select(tows, julian, year, latitude, longitude, PDO, NPGO,
+<<<<<<< HEAD
                              bottom_temp, depth_m, count, grain_size)
+=======
+                             bottom_temp, depth_m, count)
+>>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
   selected_species <- na.omit(selected_species)
   selected_species <- selected_species[selected_species$bottom_temp < 11,] # Filter out outlier temperature tows
   return(selected_species)
