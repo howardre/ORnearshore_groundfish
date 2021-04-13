@@ -14,6 +14,7 @@ library(plyr)
 library(caret)
 library(MVA)
 library(readxl)
+library(parallel)
 
 ###########################################################################################################################
 # Split into two data sets ----
@@ -96,18 +97,22 @@ annual_dis <- vegdist(practice_t, "bray") # Create dissimilarity matrix with bes
 # Run initial NMS with 2 axes, can choose either engine
 # Can use either the dissimilarity matrix above or put in the matrix itself
 # ****Use monoMDS engine -----
+options(mc.cores = 6)
+clus <- makeCluster(6)
 annual_mds_mono <- metaMDS(species_matrix_a,
                            autotransform = F,
                            trymax = 999,
-                           trace = 0,
-                           k = 2)
+                           trace = F,
+                           k = 2,
+                           parallel = clus)
 # Additional run to further lower stress
 annual_mds_mono <- metaMDS(species_matrix_a,
                            autotransform = F,
                            trymax = 999,
                            trace = 0,
                            k = 2,
-                           previous.best = annual_mds_mono)
+                           previous.best = annual_mds_mono,
+                           parallel = clus)
 
 # ****Use isoMDS engine ----
 annual_mds_iso <- metaMDS(species_matrix_a,
@@ -126,19 +131,20 @@ annual_mds_iso <- metaMDS(species_matrix_a,
                           trace = 0,
                           k = 2,
                           previous.best = annual_mds_iso)
-
+stopCluster(clus)
 ##############################################################################################################################
 # Fit environmental data to the ordination ----
-annual_env_mds <- envfit(annual_mds_mono,
+annual_mds <- annual_mds_mono
+annual_env_mds <- envfit(annual_mds,
                          env_matrix_a,
                          permu = 999)
 annual_env_mds
 
-save(ef_a, file = "enviro_fit_annual")
+save(annual_env_mds, file = "enviro_fit_annual")
 
 # Rotate the ordination to depth
 annual_mds_mono <- with(env_matrix_a,
-                   MDSrotate(annual_mds_mono,
+                   MDSrotate(annual_mds,
                              depth_m))
 
 save(annual_mds, file = "annual_mds")
@@ -152,54 +158,54 @@ index_annual <- read.csv("../data/NMFS_data/index_annual.csv", header = T)
 # Plot the species labels with ordipointlabel and then change the point colors to the species groupings
 windows()
 par(family = "serif")
-ordiplot(annual_mds_mono,
+ordiplot(annual_mds,
          type = "n",
-         xlim = c(-.2, .5),
-         ylim = c(-1.2, 2.2),
+         xlim = c(-1.5, 1.8),
+         ylim = c(-2.1, 0.5),
          xlab = "Axis 1",
          ylab = "Axis 2",
          main = "Annual Survey")
-#ordipointlabel(annual_mds, display = "spec", cex = 0.9, col = "black", add = T)
-points(annual_mds_mono,
+ordipointlabel(annual_mds, display = "spec", cex = 0.7, col = "black", add = T)
+points(annual_mds,
        display = "spec",
        select = index_annual$group == "other",
-       cex = 1.7, col = "darkorchid4",
+       cex = 1, col = "darkorchid4",
        bg = "darkorchid4",
        pch = 25)
-points(annual_mds_mono,
+points(annual_mds,
        display = "spec",
        select = index_annual$group == "roundfish",
-       cex = 1.9,
+       cex = 1.2,
        col = "darkgreen",
        pch = 18)
-points(annual_mds_mono,
+points(annual_mds,
        display = "spec",
        select = index_annual$group == "elasmobranch",
-       cex = 1.7,
+       cex = 1,
        col = "goldenrod4",
        pch = 17)
-points(annual_mds_mono,
+points(annual_mds,
        display = "spec",
        select = index_annual$group == "rockfish",
-       cex = 1.7,
+       cex = 1,
        col = "navy",
        pch = 19)
-points(annual_mds_mono,
+points(annual_mds,
        display = "spec",
        select = index_annual$group == "flatfish",
-       cex = 1.7,
+       cex = 1,
        col = "firebrick4",
        pch = 15)
 # with environmental variables
 with(env_matrix_a,
-     ordisurf(annual_mds_mono,
+     ordisurf(annual_mds,
               depth_m,
               add = T,
               col = "green4",
-              cex = 4,
-              labcex = .7)) # depth contours
-plot(envfit(annual_mds_mono,
-            env_matrix_a[ ,8:9]),
+              cex = 5,
+              labcex = 1)) # depth contours
+plot(envfit(annual_mds,
+            env_matrix_a[, -c(2:3, 5:7)]),
      col = "firebrick4",
      cex = 0.9) # diversity and richness
 point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
@@ -209,7 +215,7 @@ legend("bottomleft",
        col = point_colors,
        pt.bg = "darkorchid4",
        bty = "n",
-       pt.cex = 1.9,
+       pt.cex = 1,
        cex = 0.9,
        inset = c(0.01, 0.05))
 
@@ -351,36 +357,36 @@ ordiplot(triennial_mds,
          xlab = "Axis 1",
          ylab = "Axis 2",
          main = "Triennial Survey")
-# ordipointlabel(triennial_mds, display = "spec", cex = 0.9, col = "black", add = T)
+ordipointlabel(triennial_mds, display = "spec", cex = 0.9, col = "black", add = T)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "other",
-       cex = 1.7,
+       cex = 1,
        col = "darkorchid4",
        bg = "darkorchid4",
        pch = 25)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "roundfish",
-       cex = 1.9,
+       cex = 1.2,
        col = "darkgreen",
        pch = 18)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "elasmobranch",
-       cex = 1.7,
+       cex = 1,
        col = "goldenrod4",
        pch = 17)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "rockfish",
-       cex = 1.7,
+       cex = 1,
        col = "navy",
        pch = 19)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "flatfish",
-       cex = 1.7,
+       cex = 1,
        col = "firebrick4",
        pch = 15)
 # with environmental variables
@@ -391,13 +397,24 @@ with(env_matrix_t,
               col = "green4",
               cex = 4,
               labcex = .7)) # depth contours
-plot(envfit(triennial_mds, env_matrix_t[, 8:9]),
+plot(envfit(triennial_mds, env_matrix_t[, -c(1:3, 5:7)]),
      col = "firebrick4",
      cex = 0.01,
-     labels = F) # diversity and richness
+     labels = F)
 text(locator(1), "richness", cex = 0.9, col = "firebrick4")
 text(locator(1), "diversity", cex = 0.9, col = "firebrick4")
+text(locator(1), "depth_m", cex = 0.9, col = "firebrick4")
+text(locator(1), "grain_size", cex = 0.9, col = "firebrick4")
 point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
+legend("bottomleft",
+       legend = c("Flatfish", "Rockfish", "Roundfish", "Elasmobranch", "Other"),
+       pch = c(15, 19, 18, 17, 25),
+       col = point_colors,
+       pt.bg = "darkorchid4",
+       bty = "n",
+       pt.cex = 1.9,
+       cex = 0.9,
+       inset = c(0.01, 0.01))
 #legend("bottomleft", legend = c("Flatfish", "Rockfish", "Roundfish", "Elasmobranch", "Other"), pch = c(15, 19, 18, 17, 25),
 #col = point_colors, pt.bg = "darkorchid4", bty = "n", pt.cex = 1, cex = 0.9, inset = c(0.75, 0.75))
 
