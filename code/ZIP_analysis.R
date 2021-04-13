@@ -23,11 +23,7 @@ load('../data/NMFS_data/triennial_tows')
 load("../data/bathy.dat")
 load("../data/bathy.mat")
 source("functions/subset_species.R")
-<<<<<<< HEAD
 source("functions/vis_gam_COLORS.R")
-=======
-source("functions/vis_ziplss_COLORS.R")
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
 jet.colors <- colorRampPalette(rev(c("#b2182b", "#d6604d", "#f4a582", "#fddbc7",
                                      "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac" )))
 contour_col <- rgb(0, 0, 255, max = 255, alpha = 0, names = "white")
@@ -58,160 +54,110 @@ sablefish_triennial <- subset_species_count("Anoplopoma fimbria", triennial, tri
 # Create functions to select the best ZIP for each species ----
 ZIP_selection <- function(species_subset){
   year_ziplss <- gam(list(
-<<<<<<< HEAD
-    count ~ s(year) +
-      s(julian) +
+    count ~ offset(area_swept) +
+      s(year, k = 5) +
+      s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
       s(grain_size),
-=======
-    count ~ s(year, k = 5) +
+    ~ offset(area_swept) +
+      s(year, k = 5) +
       s(julian, k = 5) +
-      s(latitude, longitude) +
-      s(depth_m),
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
-    ~ s(year) +
-      s(julian) +
-      s(latitude, longitude)
-  ),
+      s(latitude, longitude)),
   data = species_subset,
   family = ziplss)
+
   yeartemp_ziplss <-  gam(list(
-<<<<<<< HEAD
-    count ~ s(year) +
-=======
-    count ~ s(year, k = 5) +
+    count ~ offset(area_swept) +
+      s(year, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m) +
-      s(bottom_temp, k = 5),
-    ~ s(year) +
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
-      s(julian) +
-      s(latitude, longitude)
-  ),
-  data = species_subset,
-  family = ziplss)
-  PDO_ziplss <- gam(list(
-    count ~ s(PDO, k = 5) +
-      s(julian, k = 5) +
-      s(latitude, longitude) +
-<<<<<<< HEAD
       s(depth_m) +
       s(grain_size) +
-      s(bottom_temp),
-    ~ s(year) +
-=======
-      s(depth_m),
-    ~ s(PDO) +
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
-      s(julian) +
-      s(latitude, longitude)
-  ),
+      s(bottom_temp, k = 5),
+    ~ offset(area_swept) +
+      s(year, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)),
   data = species_subset,
   family = ziplss)
-<<<<<<< HEAD
+
   PDO_ziplss <- gam(list(
-    count ~ s(PDO) +
-      s(julian) +
+    count ~ offset(area_swept) +
+      s(PDO, k = 5) +
+      s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
       s(grain_size),
-=======
+    ~ offset(area_swept) +
+      s(PDO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)),
+  data = species_subset,
+  family = ziplss)
+
   PDOtemp_ziplss <-  gam(list(
-    count ~ s(PDO, k = 5) +
+    count ~ offset(area_swept) +
+      s(PDO, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(bottom_temp, k = 5),
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
-    ~ s(PDO) +
-      s(julian) +
-      s(latitude, longitude)
-  ),
-  data = species_subset,
-  family = ziplss)
-<<<<<<< HEAD
-  PDOtemp_ziplss <-  gam(list(
-    count ~ s(PDO) +
-=======
-  NPGO_ziplss <- gam(list(
-    count ~ s(NPGO, k = 5) +
-      s(julian, k = 5) +
-      s(latitude, longitude) +
-      s(depth_m),
-    ~ s(NPGO) +
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
-      s(julian) +
-      s(latitude, longitude)
-  ),
-  data = species_subset,
-  family = ziplss)
-  NPGOtemp_ziplss <-  gam(list(
-    count ~ s(NPGO, k = 5) +
-      s(julian, k = 5) +
-      s(latitude, longitude) +
-      s(depth_m) +
-<<<<<<< HEAD
       s(grain_size) +
-      s(bottom_temp),
-    ~ s(PDO) +
-=======
       s(bottom_temp, k = 5),
-    ~ s(NPGO) +
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
-      s(julian) +
-      s(latitude, longitude)
-  ),
+    ~ offset(area_swept) +
+      s(PDO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)),
   data = species_subset,
   family = ziplss)
-<<<<<<< HEAD
+
   NPGO_ziplss <- gam(list(
-    count ~ s(NPGO) +
-      s(julian) +
+    count ~ offset(area_swept) +
+      s(NPGO, k = 5) +
+      s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
       s(grain_size),
-    ~ s(NPGO) +
-      s(julian) +
-      s(latitude, longitude)
-  ),
+    ~ offset(area_swept) +
+      s(NPGO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)),
   data = species_subset,
   family = ziplss)
+
   NPGOtemp_ziplss <-  gam(list(
-    count ~ s(NPGO) +
-      s(julian) +
+    count ~ offset(area_swept) +
+      s(NPGO, k = 5) +
+      s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
       s(grain_size) +
-      s(bottom_temp),
-    ~ s(NPGO) +
-      s(julian) +
-      s(latitude, longitude)
-  ),
+      s(bottom_temp, k = 5),
+    ~ offset(area_swept) +
+      s(NPGO, k = 5) +
+      s(julian, k = 5) +
+      s(latitude, longitude)),
   data = species_subset,
   family = ziplss)
-=======
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
+
   ziplss_list <- list(year_ziplss, yeartemp_ziplss, PDOtemp_ziplss, PDO_ziplss, NPGO_ziplss, NPGOtemp_ziplss)
   best_ziplss <- ziplss_list[[which.min(sapply(1:length(ziplss_list),
                                          function(x) min(ziplss_list[[x]]$aic)))]] # would like to also select by AIC
   return_list <- list(ziplss_list, best_ziplss)
 }
 ZIP_test <- function(species_subset) {
-<<<<<<< HEAD
-  test <- gam(count ~ s(year) +
+  test <- gam(count ~ offset(area_swept) +
+                s(year) +
                 s(julian) +
                 s(latitude, longitude) +
                 s(depth_m) +
                 s(grain_size),
               family = poisson, data = species_subset[species_subset$count > 0,])
-=======
-  test <- gam(count ~ s(year, k = 5) +
-                          s(julian, k = 5) +
-                          s(latitude, longitude) +
-                          s(depth_m), family = poisson, data = species_subset[species_subset$count > 0,])
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
+  test <- gam(count ~ offset(area_swept) +
+                s(year, k = 5) +
+                s(julian, k = 5) +
+                s(latitude, longitude) +
+                s(depth_m), family = poisson, data = species_subset[species_subset$count > 0,])
 }
 plot_variable <- function(zip, covariate, bounds, variable, ylabel, yvalues){
   par(
@@ -278,11 +224,8 @@ plot(dover_annualcheck)
 
 windows()
 par(mfrow = c(2,2))
-<<<<<<< HEAD
 gam.check(dover_annualcheck) # not a normal distribution
-=======
 gam.check(dover_annualcheck)
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
 
 range(dover_annual$count)
 range(predict(dover_annualzip[[2]]))
@@ -327,9 +270,20 @@ pdf("../results/ZIP/dover_sole/temp_annual.pdf",
     width = 12,
     height = 12)
 dover_a_temp <- plot_variable(dover_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/dover_sole/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(dover_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -402,9 +356,20 @@ pdf("../results/ZIP/dover_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
 dover_a_temp <- plot_variable(dover_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/dover_sole/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(dover_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -414,7 +379,6 @@ pdf("../results/ZIP/dover_sole/location_triennial.pdf",
     height = 11)
 location_plot(dover_triennialzip, dover_triennial)
 dev.off()
-<<<<<<< HEAD
 
 
 # ****Arrowtooth Flounder ----
@@ -479,9 +443,20 @@ pdf("../results/ZIP/arrowtooth_flounder/temp_annual.pdf",
     width = 12,
     height = 12)
 arrowtooth_a_temp <- plot_variable(arrowtooth_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/arrowtooth_flounder/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(arrowtooth_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -554,9 +529,20 @@ pdf("../results/ZIP/arrowtooth_flounder/temp_triennial.pdf",
     width = 12,
     height = 12)
 arrowtooth_a_temp <- plot_variable(arrowtooth_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/arrowtooth_flounder/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(arrowtooth_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -629,9 +615,20 @@ pdf("../results/ZIP/english_sole/temp_annual.pdf",
     width = 12,
     height = 12)
 english_a_temp <- plot_variable(english_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/english_sole/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(english_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -704,9 +701,20 @@ pdf("../results/ZIP/english_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
 english_a_temp <- plot_variable(english_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/english_sole/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(english_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -780,9 +788,20 @@ pdf("../results/ZIP/lingcod/temp_annual.pdf",
     width = 12,
     height = 12)
 lingcod_a_temp <- plot_variable(lingcod_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/lingcod/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(lingcod_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -855,9 +874,20 @@ pdf("../results/ZIP/lingcod/temp_triennial.pdf",
     width = 12,
     height = 12)
 lingcod_a_temp <- plot_variable(lingcod_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/lingcod/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(lingcod_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -931,9 +961,20 @@ pdf("../results/ZIP/pacific_sanddab/temp_annual.pdf",
     width = 12,
     height = 12)
 sanddab_a_temp <- plot_variable(sanddab_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/pacific_sanddab/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(sanddab_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1006,9 +1047,20 @@ pdf("../results/ZIP/pacific_sanddab/temp_triennial.pdf",
     width = 12,
     height = 12)
 sanddab_a_temp <- plot_variable(sanddab_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/pacific_sanddab/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(sanddab_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1082,9 +1134,20 @@ pdf("../results/ZIP/petrale_sole/temp_annual.pdf",
     width = 12,
     height = 12)
 petrale_a_temp <- plot_variable(petrale_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/petrale_sole/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(petrale_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1157,9 +1220,20 @@ pdf("../results/ZIP/petrale_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
 petrale_a_temp <- plot_variable(petrale_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/petrale_sole/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(petrale_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1233,9 +1307,20 @@ pdf("../results/ZIP/rex_sole/temp_annual.pdf",
     width = 12,
     height = 12)
 rex_a_temp <- plot_variable(rex_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/rex_sole/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(rex_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1308,9 +1393,20 @@ pdf("../results/ZIP/rex_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
 rex_a_temp <- plot_variable(rex_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/rex_sole/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(rex_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1383,9 +1479,20 @@ pdf("../results/ZIP/sablefish/temp_annual.pdf",
     width = 12,
     height = 12)
 sablefish_a_temp <- plot_variable(sablefish_annualzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/sablefish/grain_annual.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(sablefish_annualzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1458,9 +1565,20 @@ pdf("../results/ZIP/sablefish/temp_triennial.pdf",
     width = 12,
     height = 12)
 sablefish_a_temp <- plot_variable(sablefish_triennialzip,
-                              covariate = 5,
+                              covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
+                              "",
+                              "n")
+dev.off()
+# Grain size variable
+pdf("../results/ZIP/sablefish/grain_triennial.pdf",
+    width = 12,
+    height = 12)
+dover_a_temp <- plot_variable(sablefish_triennialzip,
+                              covariate = 5,
+                              bounds = c(-4.2, 2),
+                              "Grain Size (phi)",
                               "",
                               "n")
 dev.off()
@@ -1470,6 +1588,3 @@ pdf("../results/ZIP/sablefish/location_triennial.pdf",
     height = 11)
 location_plot(sablefish_triennialzip, sablefish_triennial)
 dev.off()
-
-=======
->>>>>>> 7f2d8a176d5f7e23fe32e7da0fcbb233d827da25
