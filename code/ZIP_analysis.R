@@ -59,7 +59,7 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(grain_size),
+      s(grain_size, k = 5),
     ~ offset(area_swept) +
       s(year, k = 5) +
       s(julian, k = 5) +
@@ -73,7 +73,7 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(grain_size) +
+      s(grain_size, k = 5) +
       s(bottom_temp, k = 5),
     ~ offset(area_swept) +
       s(year, k = 5) +
@@ -88,7 +88,7 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(grain_size),
+      s(grain_size, k = 5),
     ~ offset(area_swept) +
       s(PDO, k = 5) +
       s(julian, k = 5) +
@@ -102,7 +102,7 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(grain_size) +
+      s(grain_size, k = 5) +
       s(bottom_temp, k = 5),
     ~ offset(area_swept) +
       s(PDO, k = 5) +
@@ -117,7 +117,7 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(grain_size),
+      s(grain_size, k = 5),
     ~ offset(area_swept) +
       s(NPGO, k = 5) +
       s(julian, k = 5) +
@@ -131,7 +131,7 @@ ZIP_selection <- function(species_subset){
       s(julian, k = 5) +
       s(latitude, longitude) +
       s(depth_m) +
-      s(grain_size) +
+      s(grain_size, k = 5) +
       s(bottom_temp, k = 5),
     ~ offset(area_swept) +
       s(NPGO, k = 5) +
@@ -147,11 +147,11 @@ ZIP_selection <- function(species_subset){
 }
 ZIP_test <- function(species_subset) {
   test <- gam(count ~ offset(area_swept) +
-                s(year) +
-                s(julian) +
+                s(year, k = 5) +
+                s(julian, k = 5) +
                 s(latitude, longitude) +
                 s(depth_m) +
-                s(grain_size),
+                s(grain_size, k = 5),
               family = poisson, data = species_subset[species_subset$count > 0,])
   test <- gam(count ~ offset(area_swept) +
                 s(year, k = 5) +
@@ -238,7 +238,7 @@ pdf("../results/ZIP/dover_sole/year_annual.pdf",
     height = 12)
 dover_a_year <- plot_variable(dover_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-2, 1),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -249,7 +249,7 @@ pdf("../results/ZIP/dover_sole/julian_annual.pdf",
     height = 12)
 dover_a_day <- plot_variable(dover_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-2, 1),
                              "Day of Year",
                              " ",
                              "n")
@@ -260,7 +260,7 @@ pdf("../results/ZIP/dover_sole/depth_annual.pdf",
     height = 12)
 dover_a_depth <- plot_variable(dover_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-4.2, 3),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -271,7 +271,7 @@ pdf("../results/ZIP/dover_sole/temp_annual.pdf",
     height = 12)
 dover_a_temp <- plot_variable(dover_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4.2, 3),
                               "Temperature (C)",
                               "",
                               "n")
@@ -282,7 +282,7 @@ pdf("../results/ZIP/dover_sole/grain_annual.pdf",
     height = 12)
 dover_a_grain <- plot_variable(dover_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4.2, 3),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -324,7 +324,7 @@ pdf("../results/ZIP/dover_sole/year_triennial.pdf",
     height = 12)
 dover_t_year <- plot_variable(dover_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-2, 1),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -335,7 +335,7 @@ pdf("../results/ZIP/dover_sole/julian_triennial.pdf",
     height = 12)
 dover_t_day <- plot_variable(dover_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-2, 1),
                              "Day of Year",
                              " ",
                              "n")
@@ -346,7 +346,7 @@ pdf("../results/ZIP/dover_sole/depth_triennial.pdf",
     height = 12)
 dover_t_depth <- plot_variable(dover_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-4.2, 3),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -357,7 +357,7 @@ pdf("../results/ZIP/dover_sole/temp_triennial.pdf",
     height = 12)
 dover_t_temp <- plot_variable(dover_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4.2, 3),
                               "Temperature (C)",
                               "",
                               "n")
@@ -368,7 +368,7 @@ pdf("../results/ZIP/dover_sole/grain_triennial.pdf",
     height = 12)
 dover_t_grain <- plot_variable(dover_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4.2, 3),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -411,7 +411,7 @@ pdf("../results/ZIP/arrowtooth_flounder/year_annual.pdf",
     height = 12)
 arrowtooth_a_year <- plot_variable(arrowtooth_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-2, 2),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -422,7 +422,7 @@ pdf("../results/ZIP/arrowtooth_flounder/julian_annual.pdf",
     height = 12)
 arrowtooth_a_day <- plot_variable(arrowtooth_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-2, 2),
                              "Day of Year",
                              " ",
                              "n")
@@ -433,7 +433,7 @@ pdf("../results/ZIP/arrowtooth_flounder/depth_annual.pdf",
     height = 12)
 arrowtooth_a_depth <- plot_variable(arrowtooth_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-3.5, 2),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -444,7 +444,7 @@ pdf("../results/ZIP/arrowtooth_flounder/temp_annual.pdf",
     height = 12)
 arrowtooth_a_temp <- plot_variable(arrowtooth_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-3.5, 2),
                               "Temperature (C)",
                               "",
                               "n")
@@ -455,7 +455,7 @@ pdf("../results/ZIP/arrowtooth_flounder/grain_annual.pdf",
     height = 12)
 arrowtooth_a_grain <- plot_variable(arrowtooth_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-3.5, 2),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -497,7 +497,7 @@ pdf("../results/ZIP/arrowtooth_flounder/year_triennial.pdf",
     height = 12)
 arrowtooth_t_year <- plot_variable(arrowtooth_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-2, 2),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -508,7 +508,7 @@ pdf("../results/ZIP/arrowtooth_flounder/julian_triennial.pdf",
     height = 12)
 arrowtooth_t_day <- plot_variable(arrowtooth_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-2, 2),
                              "Day of Year",
                              " ",
                              "n")
@@ -519,7 +519,7 @@ pdf("../results/ZIP/arrowtooth_flounder/depth_triennial.pdf",
     height = 12)
 arrowtooth_t_depth <- plot_variable(arrowtooth_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-3.5, 2),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -530,7 +530,7 @@ pdf("../results/ZIP/arrowtooth_flounder/temp_triennial.pdf",
     height = 12)
 arrowtooth_t_temp <- plot_variable(arrowtooth_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-3.5, 2),
                               "Temperature (C)",
                               "",
                               "n")
@@ -541,7 +541,7 @@ pdf("../results/ZIP/arrowtooth_flounder/grain_triennial.pdf",
     height = 12)
 arrowtooth_t_grain <- plot_variable(arrowtooth_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-3.5, 2),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -583,7 +583,7 @@ pdf("../results/ZIP/english_sole/year_annual.pdf",
     height = 12)
 english_a_year <- plot_variable(english_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-6, 2),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -594,7 +594,7 @@ pdf("../results/ZIP/english_sole/julian_annual.pdf",
     height = 12)
 english_a_day <- plot_variable(english_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-6, 2),
                              "Day of Year",
                              " ",
                              "n")
@@ -605,7 +605,7 @@ pdf("../results/ZIP/english_sole/depth_annual.pdf",
     height = 12)
 english_a_depth <- plot_variable(english_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-4, 6),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -616,7 +616,7 @@ pdf("../results/ZIP/english_sole/temp_annual.pdf",
     height = 12)
 english_a_temp <- plot_variable(english_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4, 6),
                               "Temperature (C)",
                               "",
                               "n")
@@ -627,7 +627,7 @@ pdf("../results/ZIP/english_sole/grain_annual.pdf",
     height = 12)
 english_a_grain <- plot_variable(english_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4, 6),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -669,7 +669,7 @@ pdf("../results/ZIP/english_sole/year_triennial.pdf",
     height = 12)
 english_t_year <- plot_variable(english_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-6, 2),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -680,7 +680,7 @@ pdf("../results/ZIP/english_sole/julian_triennial.pdf",
     height = 12)
 english_t_day <- plot_variable(english_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-6, 2),
                              "Day of Year",
                              " ",
                              "n")
@@ -691,7 +691,7 @@ pdf("../results/ZIP/english_sole/depth_triennial.pdf",
     height = 12)
 english_t_depth <- plot_variable(english_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-4, 6),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -702,7 +702,7 @@ pdf("../results/ZIP/english_sole/temp_triennial.pdf",
     height = 12)
 english_t_temp <- plot_variable(english_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4, 6),
                               "Temperature (C)",
                               "",
                               "n")
@@ -713,7 +713,7 @@ pdf("../results/ZIP/english_sole/grain_triennial.pdf",
     height = 12)
 english_t_grain <- plot_variable(english_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-4, 6),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -756,7 +756,7 @@ pdf("../results/ZIP/lingcod/year_annual.pdf",
     height = 12)
 lingcod_a_year <- plot_variable(lingcod_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-1.2, 1.5),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -767,7 +767,7 @@ pdf("../results/ZIP/lingcod/julian_annual.pdf",
     height = 12)
 lingcod_a_day <- plot_variable(lingcod_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-1.2, 1.5),
                              "Day of Year",
                              " ",
                              "n")
@@ -778,7 +778,7 @@ pdf("../results/ZIP/lingcod/depth_annual.pdf",
     height = 12)
 lingcod_a_depth <- plot_variable(lingcod_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-1.2, 4),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -789,7 +789,7 @@ pdf("../results/ZIP/lingcod/temp_annual.pdf",
     height = 12)
 lingcod_a_temp <- plot_variable(lingcod_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.2, 4),
                               "Temperature (C)",
                               "",
                               "n")
@@ -800,7 +800,7 @@ pdf("../results/ZIP/lingcod/grain_annual.pdf",
     height = 12)
 lingcod_a_grain <- plot_variable(lingcod_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.2, 4),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -837,15 +837,15 @@ range(predict(lingcod_triennialcheck))
 
 # Create manuscript figures
 # Year variable
-pdf("../results/ZIP/lingcod/year_triennial.pdf",
+pdf("../results/ZIP/lingcod/NPGO_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_t_year <- plot_variable(lingcod_triennialzip,
+lingcod_t_NPGO <- plot_variable(lingcod_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
-                              "Year",
-                              "Species Abundance Anomalies",
-                              "s")
+                              bounds = c(-1.2, 4),
+                              "NPGO",
+                              " ",
+                              "n")
 dev.off()
 # Day of year variable
 pdf("../results/ZIP/lingcod/julian_triennial.pdf",
@@ -853,10 +853,10 @@ pdf("../results/ZIP/lingcod/julian_triennial.pdf",
     height = 12)
 lingcod_t_day <- plot_variable(lingcod_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-1.2, 1.5),
                              "Day of Year",
-                             " ",
-                             "n")
+                             "Species Abundance Anomalies",
+                             "s")
 dev.off()
 # Depth variable
 pdf("../results/ZIP/lingcod/depth_triennial.pdf",
@@ -864,7 +864,7 @@ pdf("../results/ZIP/lingcod/depth_triennial.pdf",
     height = 12)
 lingcod_t_depth <- plot_variable(lingcod_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-1.2, 4),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -875,7 +875,7 @@ pdf("../results/ZIP/lingcod/temp_triennial.pdf",
     height = 12)
 lingcod_t_temp <- plot_variable(lingcod_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.2, 4),
                               "Temperature (C)",
                               "",
                               "n")
@@ -886,7 +886,7 @@ pdf("../results/ZIP/lingcod/grain_triennial.pdf",
     height = 12)
 lingcod_t_grain <- plot_variable(lingcod_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.2, 4),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -929,7 +929,7 @@ pdf("../results/ZIP/pacific_sanddab/year_annual.pdf",
     height = 12)
 sanddab_a_year <- plot_variable(sanddab_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-3, 1),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -940,7 +940,7 @@ pdf("../results/ZIP/pacific_sanddab/julian_annual.pdf",
     height = 12)
 sanddab_a_day <- plot_variable(sanddab_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-3, 1),
                              "Day of Year",
                              " ",
                              "n")
@@ -951,7 +951,7 @@ pdf("../results/ZIP/pacific_sanddab/depth_annual.pdf",
     height = 12)
 sanddab_a_depth <- plot_variable(sanddab_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-7, 20),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -962,7 +962,7 @@ pdf("../results/ZIP/pacific_sanddab/temp_annual.pdf",
     height = 12)
 sanddab_a_temp <- plot_variable(sanddab_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7, 20),
                               "Temperature (C)",
                               "",
                               "n")
@@ -973,7 +973,7 @@ pdf("../results/ZIP/pacific_sanddab/grain_annual.pdf",
     height = 12)
 sanddab_a_grain <- plot_variable(sanddab_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7, 20),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1015,7 +1015,7 @@ pdf("../results/ZIP/pacific_sanddab/year_triennial.pdf",
     height = 12)
 sanddab_t_year <- plot_variable(sanddab_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-3, 1),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -1026,7 +1026,7 @@ pdf("../results/ZIP/pacific_sanddab/julian_triennial.pdf",
     height = 12)
 sanddab_t_day <- plot_variable(sanddab_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-3, 1),
                              "Day of Year",
                              " ",
                              "n")
@@ -1037,7 +1037,7 @@ pdf("../results/ZIP/pacific_sanddab/depth_triennial.pdf",
     height = 12)
 sanddab_t_depth <- plot_variable(sanddab_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-7, 20),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1048,7 +1048,7 @@ pdf("../results/ZIP/pacific_sanddab/temp_triennial.pdf",
     height = 12)
 sanddab_t_temp <- plot_variable(sanddab_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7, 20),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1059,7 +1059,7 @@ pdf("../results/ZIP/pacific_sanddab/grain_triennial.pdf",
     height = 12)
 sanddab_t_grain <- plot_variable(sanddab_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7, 20),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1102,7 +1102,7 @@ pdf("../results/ZIP/petrale_sole/year_annual.pdf",
     height = 12)
 petrale_a_year <- plot_variable(petrale_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-1.5, 1),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -1113,7 +1113,7 @@ pdf("../results/ZIP/petrale_sole/julian_annual.pdf",
     height = 12)
 petrale_a_day <- plot_variable(petrale_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-1.5, 1),
                              "Day of Year",
                              " ",
                              "n")
@@ -1124,7 +1124,7 @@ pdf("../results/ZIP/petrale_sole/depth_annual.pdf",
     height = 12)
 petrale_a_depth <- plot_variable(petrale_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-1.5, 2.5),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1135,7 +1135,7 @@ pdf("../results/ZIP/petrale_sole/temp_annual.pdf",
     height = 12)
 petrale_a_temp <- plot_variable(petrale_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.5, 2.5),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1146,7 +1146,7 @@ pdf("../results/ZIP/petrale_sole/grain_annual.pdf",
     height = 12)
 petrale_a_grain <- plot_variable(petrale_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.5, 2.5),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1188,7 +1188,7 @@ pdf("../results/ZIP/petrale_sole/year_triennial.pdf",
     height = 12)
 petrale_t_year <- plot_variable(petrale_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-1.5, 1),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -1199,7 +1199,7 @@ pdf("../results/ZIP/petrale_sole/julian_triennial.pdf",
     height = 12)
 petrale_t_day <- plot_variable(petrale_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-1.5, 1),
                              "Day of Year",
                              " ",
                              "n")
@@ -1210,7 +1210,7 @@ pdf("../results/ZIP/petrale_sole/depth_triennial.pdf",
     height = 12)
 petrale_t_depth <- plot_variable(petrale_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-1.5, 2.5),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1221,7 +1221,7 @@ pdf("../results/ZIP/petrale_sole/temp_triennial.pdf",
     height = 12)
 petrale_t_temp <- plot_variable(petrale_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.5, 2.5),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1232,7 +1232,7 @@ pdf("../results/ZIP/petrale_sole/grain_triennial.pdf",
     height = 12)
 petrale_t_grain <- plot_variable(petrale_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1.5, 2.5),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1275,7 +1275,7 @@ pdf("../results/ZIP/rex_sole/year_annual.pdf",
     height = 12)
 rex_a_year <- plot_variable(rex_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-4, 1.2),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -1286,7 +1286,7 @@ pdf("../results/ZIP/rex_sole/julian_annual.pdf",
     height = 12)
 rex_a_day <- plot_variable(rex_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-4, 1.2),
                              "Day of Year",
                              " ",
                              "n")
@@ -1297,7 +1297,7 @@ pdf("../results/ZIP/rex_sole/depth_annual.pdf",
     height = 12)
 rex_a_depth <- plot_variable(rex_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-1, 1),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1308,7 +1308,7 @@ pdf("../results/ZIP/rex_sole/temp_annual.pdf",
     height = 12)
 rex_a_temp <- plot_variable(rex_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1, 1),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1319,7 +1319,7 @@ pdf("../results/ZIP/rex_sole/grain_annual.pdf",
     height = 12)
 rex_a_grain <- plot_variable(rex_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1, 1),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1361,7 +1361,7 @@ pdf("../results/ZIP/rex_sole/year_triennial.pdf",
     height = 12)
 rex_t_year <- plot_variable(rex_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-4, 1.2),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -1372,7 +1372,7 @@ pdf("../results/ZIP/rex_sole/julian_triennial.pdf",
     height = 12)
 rex_t_day <- plot_variable(rex_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-4, 1.2),
                              "Day of Year",
                              " ",
                              "n")
@@ -1383,7 +1383,7 @@ pdf("../results/ZIP/rex_sole/depth_triennial.pdf",
     height = 12)
 rex_t_depth <- plot_variable(rex_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-1, 1),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1394,7 +1394,7 @@ pdf("../results/ZIP/rex_sole/temp_triennial.pdf",
     height = 12)
 rex_t_temp <- plot_variable(rex_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1, 1),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1405,7 +1405,7 @@ pdf("../results/ZIP/rex_sole/grain_triennial.pdf",
     height = 12)
 rex_t_grain <- plot_variable(rex_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-1, 1),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1447,7 +1447,7 @@ pdf("../results/ZIP/sablefish/year_annual.pdf",
     height = 12)
 sablefish_a_year <- plot_variable(sablefish_annualzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-2.5, 3),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -1458,7 +1458,7 @@ pdf("../results/ZIP/sablefish/julian_annual.pdf",
     height = 12)
 sablefish_a_day <- plot_variable(sablefish_annualzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-2.5, 3),
                              "Day of Year",
                              " ",
                              "n")
@@ -1469,7 +1469,7 @@ pdf("../results/ZIP/sablefish/depth_annual.pdf",
     height = 12)
 sablefish_a_depth <- plot_variable(sablefish_annualzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-7.5, 2.5),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1480,7 +1480,7 @@ pdf("../results/ZIP/sablefish/temp_annual.pdf",
     height = 12)
 sablefish_a_temp <- plot_variable(sablefish_annualzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7.5, 2.5),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1491,7 +1491,7 @@ pdf("../results/ZIP/sablefish/grain_annual.pdf",
     height = 12)
 sablefish_a_grain <- plot_variable(sablefish_annualzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7.5, 2.5),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1533,7 +1533,7 @@ pdf("../results/ZIP/sablefish/year_triennial.pdf",
     height = 12)
 sablefish_t_year <- plot_variable(sablefish_triennialzip,
                               covariate = 1,
-                              bounds = c(-3.5, 2.1),
+                              bounds = c(-2.5, 3),
                               "Year",
                               "Species Abundance Anomalies",
                               "s")
@@ -1544,7 +1544,7 @@ pdf("../results/ZIP/sablefish/julian_triennial.pdf",
     height = 12)
 sablefish_t_day <- plot_variable(sablefish_triennialzip,
                              covariate = 2,
-                             bounds = c(-3.5, 2.1),
+                             bounds = c(-2.5, 3),
                              "Day of Year",
                              " ",
                              "n")
@@ -1555,7 +1555,7 @@ pdf("../results/ZIP/sablefish/depth_triennial.pdf",
     height = 12)
 sablefish_t_depth <- plot_variable(sablefish_triennialzip,
                                covariate = 4,
-                               bounds = c(-4.2, 2),
+                               bounds = c(-7.5, 2.5),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1566,7 +1566,7 @@ pdf("../results/ZIP/sablefish/temp_triennial.pdf",
     height = 12)
 sablefish_t_temp <- plot_variable(sablefish_triennialzip,
                               covariate = 6,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7.5, 2.5),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1577,7 +1577,7 @@ pdf("../results/ZIP/sablefish/grain_triennial.pdf",
     height = 12)
 sablefish_t_grain <- plot_variable(sablefish_triennialzip,
                               covariate = 5,
-                              bounds = c(-4.2, 2),
+                              bounds = c(-7.5, 2.5),
                               "Grain Size (phi)",
                               "",
                               "n")
