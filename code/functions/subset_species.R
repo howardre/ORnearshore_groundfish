@@ -20,6 +20,7 @@ subset_species_temp <- function(species, catch, tows){
   selected_species <- na.omit(selected_species)
   selected_species$pres <- 1 * (selected_species$lncpue > 0)
   selected_species <- selected_species[selected_species$bottom_temp < 11,] # Filter out outlier temperature tows
+  selected_species <- selected_species[selected_species$grain_size > 1,] # Filter out outlier grain size tows
   return(selected_species)
 }
 
@@ -32,5 +33,6 @@ subset_species_count <- function(species, catch, tows){
                              bottom_temp, depth_m, count, grain_size, area_swept)
   selected_species <- na.omit(selected_species)
   selected_species <- selected_species[selected_species$bottom_temp < 11,] # Filter out outlier temperature tows
+  selected_species <- selected_species[selected_species$grain_size > 1,] # Filter out outlier grain size tows
   return(selected_species)
 }
