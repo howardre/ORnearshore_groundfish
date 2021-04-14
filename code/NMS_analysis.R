@@ -143,7 +143,7 @@ annual_env_mds
 save(annual_env_mds, file = "enviro_fit_annual")
 
 # Rotate the ordination to depth
-annual_mds_mono <- with(env_matrix_a,
+annual_mds <- with(env_matrix_a,
                    MDSrotate(annual_mds,
                              depth_m))
 
@@ -202,12 +202,33 @@ with(env_matrix_a,
               depth_m,
               add = T,
               col = "green4",
-              cex = 5,
-              labcex = 1)) # depth contours
-plot(envfit(annual_mds,
-            env_matrix_a[, -c(2:3, 5:7)]),
+              cex = 4,
+              labcex = 0.7)) # depth contours
+# plot(envfit(annual_mds,
+#             env_matrix_a[, -c(2:3, 5:7)]),
+#      col = "firebrick4",
+#      cex = 0.9) # diversity and richness
+# point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
+# legend("bottomleft",
+#        legend = c("Flatfish", "Rockfish", "Roundfish", "Elasmobranch", "Other"),
+#        pch = c(15, 19, 18, 17, 25),
+#        col = point_colors,
+#        pt.bg = "darkorchid4",
+#        bty = "n",
+#        pt.cex = 1,
+#        cex = 0.9,
+#        inset = c(0.01, 0.05))
+
+# Move labels
+plot(envfit(annual_mds, env_matrix_a[, -c(2:3, 5:7)]),
      col = "firebrick4",
-     cex = 0.9) # diversity and richness
+     cex = 0.01,
+     labels = F)
+text(locator(1), "richness", cex = 0.9, col = "firebrick4")
+text(locator(1), "diversity", cex = 0.9, col = "firebrick4")
+text(locator(1), "depth_m", cex = 0.9, col = "firebrick4")
+text(locator(1), "bottom_temp", cex = 0.9, col = "firebrick4")
+text(locator(1), "grain_size", cex = 0.9, col = "firebrick4")
 point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
 legend("bottomleft",
        legend = c("Flatfish", "Rockfish", "Roundfish", "Elasmobranch", "Other"),
@@ -217,9 +238,7 @@ legend("bottomleft",
        bty = "n",
        pt.cex = 1,
        cex = 0.9,
-       inset = c(0.01, 0.05))
-
-# Move labels
+       inset = c(0.01, 0.01))
 
 ##############################################################################################################################
 # Multi-response permutation procedure (MRPP)
@@ -357,7 +376,7 @@ ordiplot(triennial_mds,
          xlab = "Axis 1",
          ylab = "Axis 2",
          main = "Triennial Survey")
-ordipointlabel(triennial_mds, display = "spec", cex = 0.9, col = "black", add = T)
+ordipointlabel(triennial_mds, display = "spec", cex = 0.7, col = "black", add = T)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "other",
@@ -412,9 +431,9 @@ legend("bottomleft",
        col = point_colors,
        pt.bg = "darkorchid4",
        bty = "n",
-       pt.cex = 1.9,
+       pt.cex = 1,
        cex = 0.9,
-       inset = c(0.01, 0.01))
+       inset = c(0.75, 0.75))
 #legend("bottomleft", legend = c("Flatfish", "Rockfish", "Roundfish", "Elasmobranch", "Other"), pch = c(15, 19, 18, 17, 25),
 #col = point_colors, pt.bg = "darkorchid4", bty = "n", pt.cex = 1, cex = 0.9, inset = c(0.75, 0.75))
 
