@@ -280,7 +280,7 @@ dev.off()
 pdf("../results/ZIP/dover_sole/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(dover_annualzip,
+dover_a_grain <- plot_variable(dover_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -322,7 +322,7 @@ range(predict(dover_triennialcheck))
 pdf("../results/ZIP/dover_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_year <- plot_variable(dover_triennialzip,
+dover_t_year <- plot_variable(dover_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -333,7 +333,7 @@ dev.off()
 pdf("../results/ZIP/dover_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_day <- plot_variable(dover_triennialzip,
+dover_t_day <- plot_variable(dover_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -344,7 +344,7 @@ dev.off()
 pdf("../results/ZIP/dover_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_depth <- plot_variable(dover_triennialzip,
+dover_t_depth <- plot_variable(dover_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -355,7 +355,7 @@ dev.off()
 pdf("../results/ZIP/dover_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(dover_triennialzip,
+dover_t_temp <- plot_variable(dover_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -366,7 +366,7 @@ dev.off()
 pdf("../results/ZIP/dover_sole/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(dover_triennialzip,
+dover_t_grain <- plot_variable(dover_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -453,7 +453,7 @@ dev.off()
 pdf("../results/ZIP/arrowtooth_flounder/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(arrowtooth_annualzip,
+arrowtooth_a_grain <- plot_variable(arrowtooth_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -495,7 +495,7 @@ range(predict(arrowtooth_triennialcheck))
 pdf("../results/ZIP/arrowtooth_flounder/year_triennial.pdf",
     width = 12,
     height = 12)
-arrowtooth_a_year <- plot_variable(arrowtooth_triennialzip,
+arrowtooth_t_year <- plot_variable(arrowtooth_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -506,7 +506,7 @@ dev.off()
 pdf("../results/ZIP/arrowtooth_flounder/julian_triennial.pdf",
     width = 12,
     height = 12)
-arrowtooth_a_day <- plot_variable(arrowtooth_triennialzip,
+arrowtooth_t_day <- plot_variable(arrowtooth_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -517,7 +517,7 @@ dev.off()
 pdf("../results/ZIP/arrowtooth_flounder/depth_triennial.pdf",
     width = 12,
     height = 12)
-arrowtooth_a_depth <- plot_variable(arrowtooth_triennialzip,
+arrowtooth_t_depth <- plot_variable(arrowtooth_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -528,7 +528,7 @@ dev.off()
 pdf("../results/ZIP/arrowtooth_flounder/temp_triennial.pdf",
     width = 12,
     height = 12)
-arrowtooth_a_temp <- plot_variable(arrowtooth_triennialzip,
+arrowtooth_t_temp <- plot_variable(arrowtooth_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -539,7 +539,7 @@ dev.off()
 pdf("../results/ZIP/arrowtooth_flounder/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(arrowtooth_triennialzip,
+arrowtooth_t_grain <- plot_variable(arrowtooth_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -625,7 +625,7 @@ dev.off()
 pdf("../results/ZIP/english_sole/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(english_annualzip,
+english_a_grain <- plot_variable(english_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -667,7 +667,7 @@ range(predict(english_triennialcheck))
 pdf("../results/ZIP/english_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-english_a_year <- plot_variable(english_triennialzip,
+english_t_year <- plot_variable(english_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -678,7 +678,7 @@ dev.off()
 pdf("../results/ZIP/english_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-english_a_day <- plot_variable(english_triennialzip,
+english_t_day <- plot_variable(english_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -689,7 +689,7 @@ dev.off()
 pdf("../results/ZIP/english_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-english_a_depth <- plot_variable(english_triennialzip,
+english_t_depth <- plot_variable(english_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -700,7 +700,7 @@ dev.off()
 pdf("../results/ZIP/english_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
-english_a_temp <- plot_variable(english_triennialzip,
+english_t_temp <- plot_variable(english_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -711,7 +711,7 @@ dev.off()
 pdf("../results/ZIP/english_sole/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(english_triennialzip,
+english_t_grain <- plot_variable(english_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -798,7 +798,7 @@ dev.off()
 pdf("../results/ZIP/lingcod/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(lingcod_annualzip,
+lingcod_a_grain <- plot_variable(lingcod_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -840,7 +840,7 @@ range(predict(lingcod_triennialcheck))
 pdf("../results/ZIP/lingcod/year_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_a_year <- plot_variable(lingcod_triennialzip,
+lingcod_t_year <- plot_variable(lingcod_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -851,7 +851,7 @@ dev.off()
 pdf("../results/ZIP/lingcod/julian_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_a_day <- plot_variable(lingcod_triennialzip,
+lingcod_t_day <- plot_variable(lingcod_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -862,7 +862,7 @@ dev.off()
 pdf("../results/ZIP/lingcod/depth_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_a_depth <- plot_variable(lingcod_triennialzip,
+lingcod_t_depth <- plot_variable(lingcod_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -873,7 +873,7 @@ dev.off()
 pdf("../results/ZIP/lingcod/temp_triennial.pdf",
     width = 12,
     height = 12)
-lingcod_a_temp <- plot_variable(lingcod_triennialzip,
+lingcod_t_temp <- plot_variable(lingcod_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -884,7 +884,7 @@ dev.off()
 pdf("../results/ZIP/lingcod/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(lingcod_triennialzip,
+lingcod_t_grain <- plot_variable(lingcod_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -971,7 +971,7 @@ dev.off()
 pdf("../results/ZIP/pacific_sanddab/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(sanddab_annualzip,
+sanddab_a_grain <- plot_variable(sanddab_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -1013,7 +1013,7 @@ range(predict(sanddab_triennialcheck))
 pdf("../results/ZIP/pacific_sanddab/year_triennial.pdf",
     width = 12,
     height = 12)
-sanddab_a_year <- plot_variable(sanddab_triennialzip,
+sanddab_t_year <- plot_variable(sanddab_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -1024,7 +1024,7 @@ dev.off()
 pdf("../results/ZIP/pacific_sanddab/julian_triennial.pdf",
     width = 12,
     height = 12)
-sanddab_a_day <- plot_variable(sanddab_triennialzip,
+sanddab_t_day <- plot_variable(sanddab_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -1035,7 +1035,7 @@ dev.off()
 pdf("../results/ZIP/pacific_sanddab/depth_triennial.pdf",
     width = 12,
     height = 12)
-sanddab_a_depth <- plot_variable(sanddab_triennialzip,
+sanddab_t_depth <- plot_variable(sanddab_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -1046,7 +1046,7 @@ dev.off()
 pdf("../results/ZIP/pacific_sanddab/temp_triennial.pdf",
     width = 12,
     height = 12)
-sanddab_a_temp <- plot_variable(sanddab_triennialzip,
+sanddab_t_temp <- plot_variable(sanddab_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -1057,7 +1057,7 @@ dev.off()
 pdf("../results/ZIP/pacific_sanddab/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(sanddab_triennialzip,
+sanddab_t_grain <- plot_variable(sanddab_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -1144,7 +1144,7 @@ dev.off()
 pdf("../results/ZIP/petrale_sole/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(petrale_annualzip,
+petrale_a_grain <- plot_variable(petrale_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -1186,7 +1186,7 @@ range(predict(petrale_triennialcheck))
 pdf("../results/ZIP/petrale_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-petrale_a_year <- plot_variable(petrale_triennialzip,
+petrale_t_year <- plot_variable(petrale_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -1197,7 +1197,7 @@ dev.off()
 pdf("../results/ZIP/petrale_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-petrale_a_day <- plot_variable(petrale_triennialzip,
+petrale_t_day <- plot_variable(petrale_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -1208,7 +1208,7 @@ dev.off()
 pdf("../results/ZIP/petrale_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-petrale_a_depth <- plot_variable(petrale_triennialzip,
+petrale_t_depth <- plot_variable(petrale_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -1219,7 +1219,7 @@ dev.off()
 pdf("../results/ZIP/petrale_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
-petrale_a_temp <- plot_variable(petrale_triennialzip,
+petrale_t_temp <- plot_variable(petrale_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -1230,7 +1230,7 @@ dev.off()
 pdf("../results/ZIP/petrale_sole/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(petrale_triennialzip,
+petrale_t_grain <- plot_variable(petrale_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -1317,7 +1317,7 @@ dev.off()
 pdf("../results/ZIP/rex_sole/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(rex_annualzip,
+rex_a_grain <- plot_variable(rex_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -1359,7 +1359,7 @@ range(predict(rex_triennialcheck))
 pdf("../results/ZIP/rex_sole/year_triennial.pdf",
     width = 12,
     height = 12)
-rex_a_year <- plot_variable(rex_triennialzip,
+rex_t_year <- plot_variable(rex_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -1370,7 +1370,7 @@ dev.off()
 pdf("../results/ZIP/rex_sole/julian_triennial.pdf",
     width = 12,
     height = 12)
-rex_a_day <- plot_variable(rex_triennialzip,
+rex_t_day <- plot_variable(rex_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -1381,7 +1381,7 @@ dev.off()
 pdf("../results/ZIP/rex_sole/depth_triennial.pdf",
     width = 12,
     height = 12)
-rex_a_depth <- plot_variable(rex_triennialzip,
+rex_t_depth <- plot_variable(rex_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -1392,7 +1392,7 @@ dev.off()
 pdf("../results/ZIP/rex_sole/temp_triennial.pdf",
     width = 12,
     height = 12)
-rex_a_temp <- plot_variable(rex_triennialzip,
+rex_t_temp <- plot_variable(rex_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -1403,7 +1403,7 @@ dev.off()
 pdf("../results/ZIP/rex_sole/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(rex_triennialzip,
+rex_t_grain <- plot_variable(rex_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -1489,7 +1489,7 @@ dev.off()
 pdf("../results/ZIP/sablefish/grain_annual.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(sablefish_annualzip,
+sablefish_a_grain <- plot_variable(sablefish_annualzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
@@ -1531,7 +1531,7 @@ range(predict(sablefish_triennialcheck))
 pdf("../results/ZIP/sablefish/year_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_a_year <- plot_variable(sablefish_triennialzip,
+sablefish_t_year <- plot_variable(sablefish_triennialzip,
                               covariate = 1,
                               bounds = c(-3.5, 2.1),
                               "Year",
@@ -1542,7 +1542,7 @@ dev.off()
 pdf("../results/ZIP/sablefish/julian_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_a_day <- plot_variable(sablefish_triennialzip,
+sablefish_t_day <- plot_variable(sablefish_triennialzip,
                              covariate = 2,
                              bounds = c(-3.5, 2.1),
                              "Day of Year",
@@ -1553,7 +1553,7 @@ dev.off()
 pdf("../results/ZIP/sablefish/depth_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_a_depth <- plot_variable(sablefish_triennialzip,
+sablefish_t_depth <- plot_variable(sablefish_triennialzip,
                                covariate = 4,
                                bounds = c(-4.2, 2),
                                "Depth (m)",
@@ -1564,7 +1564,7 @@ dev.off()
 pdf("../results/ZIP/sablefish/temp_triennial.pdf",
     width = 12,
     height = 12)
-sablefish_a_temp <- plot_variable(sablefish_triennialzip,
+sablefish_t_temp <- plot_variable(sablefish_triennialzip,
                               covariate = 6,
                               bounds = c(-4.2, 2),
                               "Temperature (C)",
@@ -1575,7 +1575,7 @@ dev.off()
 pdf("../results/ZIP/sablefish/grain_triennial.pdf",
     width = 12,
     height = 12)
-dover_a_temp <- plot_variable(sablefish_triennialzip,
+sablefish_t_grain <- plot_variable(sablefish_triennialzip,
                               covariate = 5,
                               bounds = c(-4.2, 2),
                               "Grain Size (phi)",
