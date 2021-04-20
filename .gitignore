@@ -10,6 +10,7 @@
 /ODFW_data
 manuscripts/
 /Environmental_data/sediment
+/Environmental_data/lithology
 
 # Example code in package build process
 *-Ex.R
