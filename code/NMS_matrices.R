@@ -20,7 +20,6 @@ annual_trawl <- annual_trawl[!is.na(annual_trawl$bottom_temp), ]
 annual_trawl <- annual_trawl[!is.na(annual_trawl$PDO), ]
 annual_trawl <- annual_trawl[!is.na(annual_trawl$NPGO), ]
 annual_trawl <- annual_trawl[!is.na(annual_trawl$julian), ]
-annual_trawl <- annual_trawl[complete.cases(annual_trawl), ]
 
 # Can create a subsetted matrix if necessary
 # set.seed(1)
@@ -35,9 +34,10 @@ annual_filtered$NPGO <- annual_trawl$NPGO[match_id]
 annual_filtered$julian <- annual_trawl$julian[match_id]
 annual_filtered$bottom_temp <- annual_trawl$bottom_temp[match_id]
 annual_filtered$grain_size <- annual_trawl$grain_size[match_id]
+annual_filtered$lithology <- annual_trawl$lithology[match_id]
 
 # Remove unselected samples
-annual_subset <- annual_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22)]
+annual_subset <- annual_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22, 23, 24)]
 annual_subset <- annual_subset[complete.cases(annual_subset),]
 
 # Make matrices ----
@@ -55,7 +55,7 @@ species_matrix_annual <- as.data.frame(t(annual_matrix))
 # Environmental matrix
 env_filter_annual <- c(unique(annual_subset$trawl_id))
 annual_trawl <- filter(annual_trawl, trawl_id %in% env_filter_annual)
-annual_env <- select(annual_trawl,
+annual_env <- dplyr::select(annual_trawl,
                      trawl_id,
                      bottom_temp,
                      PDO,
@@ -64,7 +64,8 @@ annual_env <- select(annual_trawl,
                      latitude,
                      year,
                      julian,
-                     grain_size)
+                     grain_size,
+                     lithology)
 env_matrix_annual <- annual_env[complete.cases(annual_env),]
 env_matrix_annual <- as.data.frame(env_matrix_annual)
 rownames(env_matrix_annual) <- env_matrix_annual[, 1]
@@ -84,7 +85,6 @@ triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$PDO), ]
 triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$NPGO), ]
 triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$julian), ]
 triennial_trawl <- triennial_trawl[!is.na(triennial_trawl$grain_size), ]
-triennial_trawl <- triennial_trawl[complete.cases(triennial_trawl), ]
 
 # Can create a subsetted matrix if necessary
 # set.seed(1)
@@ -99,9 +99,10 @@ triennial_filtered$NPGO <- triennial_trawl$NPGO[match_id]
 triennial_filtered$julian <- triennial_trawl$julian[match_id]
 triennial_filtered$bottom_temp <- triennial_trawl$bottom_temp[match_id]
 triennial_filtered$grain_size <- triennial_trawl$grain_size[match_id]
+triennial_filtered$lithology <- triennial_trawl$lithology[match_id]
 
 # Remove unselected samples
-triennial_subset <- triennial_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22)]
+triennial_subset <- triennial_filtered[c(1, 5, 6, 12, 14, 16, 19, 20, 21, 22, 23, 24)]
 triennial_subset <- triennial_subset[complete.cases(triennial_subset),]
 
 # Make matrices ----
@@ -119,7 +120,7 @@ species_matrix_triennial <- as.data.frame(t(triennial_matrix))
 # Environmental matrix
 env_filter_triennial <- c(unique(triennial_subset$trawl_id))
 triennial_trawl <- filter(triennial_trawl, trawl_id %in% env_filter_triennial)
-triennial_env <- select(triennial_trawl,
+triennial_env <- dplyr::select(triennial_trawl,
                      trawl_id,
                      bottom_temp,
                      PDO,
@@ -128,7 +129,8 @@ triennial_env <- select(triennial_trawl,
                      latitude,
                      year,
                      julian,
-                     grain_size)
+                     grain_size,
+                     lithology)
 env_matrix_triennial <- triennial_env[complete.cases(triennial_env),]
 env_matrix_triennial <- as.data.frame(env_matrix_triennial)
 rownames(env_matrix_triennial) <- env_matrix_triennial[, 1]
