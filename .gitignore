@@ -11,6 +11,7 @@
 manuscripts/
 /Environmental_data/sediment
 /Environmental_data/lithology
+/NMFS_data/species_data_raw.csv
 
 # Example code in package build process
 *-Ex.R
