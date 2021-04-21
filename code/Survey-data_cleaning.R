@@ -21,19 +21,22 @@ species_data <- read.csv("../data/NMFS_data/species_data_raw.csv", na.strings = 
 scientific_name_id <- read.csv("../data/NMFS_data/Scientific_id.csv", header = T)
 species_pacfin <- read.csv("../data/NMFS_data/Fish_class.csv", header = T)
 trawl_data <- read.csv("../data/NMFS_data/trawl_characteristics.csv", header = T)
+load('../data/Environmental_data/lith_df.Rdata')
+load('../data/Environmental_data/grain_df.Rdata')
 
 # Clean survey sample and species data ----
 # Limit to less than 200 m depth
 species_depth <- filter(species_data, depth_m <= 200.0)
 
 #removed certain columns, add classification (if wanted)
-species_limited <- select(species_depth,
+species_limited <- dplyr::select(species_depth,
                           common_name,
                           date_yyyymmdd,
                           depth_m,
                           latitude_dd,
                           longitude_dd,
                           performance,
+                          project,
                           scientific_name,
                           total_catch_numbers,
                           total_catch_wt_kg,
@@ -47,7 +50,7 @@ species_identified <- species_limited[!is.na(species_limited$scientific_name), ]
 
 # Remove extraneous surveys
 # Limit to Oregon fishing grounds
-unique(species_oregon$project)
+unique(species_identified$project)
 species_oregon <- filter(species_identified,
                          latitude_dd >= 41.0000,
                          latitude_dd <= 48.0000,
@@ -64,7 +67,6 @@ species_oregon <- filter(species_identified,
                          project != "Opportunistic Bottom Sampling",
                          project != "AFSC/RACE Slope Survey",
                          project != "Fishing Power Comparative Study",
-                         program != "AFSC/RACE Triennial Shelf Survey (by NWFSC/FRAM)",
                          scientific_name != "Merluccius productus",
                          performance != "Unsatisfactory")
 
@@ -73,25 +75,12 @@ species_oregon$lncpue <- log(species_oregon$cpue_kg_per_ha_der + 1)
 species_oregon$lncpue_n <- log(species_oregon$cpue_numbers_per_ha_der + 1)
 
 # Create separate fish and invertebrate datasets, keep only fish
-combined <- sort(union(levels(species_oregon$scientific_name),
-                       levels(scientific_name_id$scientific_name)))
-OR_labeled <- left_join(mutate(spp_OR,
-                               scientific_name=factor(scientific_name,
-                                                      levels=combined)),
-                        mutate(scientific_name_id,
-                               scientific_name=factor(scientific_name,
-                                                      levels = combined)))
-OR_fish1 <- filter(OR_labeled, ID == 'fish')
-OR_fish1$ID <- NULL
-
-combined1 <- sort(union(levels(OR_fish1$scientific_name),
-                        levels(fish_pacfin$scientific_name)))
-OR_fish <- left_join(mutate(OR_fish1,
-                            scientific_name = factor(scientific_name,
-                                                     levels=combined1)),
-                     mutate(fish_pacfin,
-                            scientific_name = factor(scientific_name,
-                                                     levels = combined1)))
+species_oregon$ID <- scientific_name_id$ID[match(species_oregon$scientific_name,
+                                                 scientific_name_id$scientific_name)]
+OR_fish <- filter(species_oregon, ID == 'fish')
+OR_fish$ID <- NULL
+OR_fish$Class <- species_pacfin$Class[match(OR_fish$scientific_name,
+                                                 species_pacfin$scientific_name)]
 OR_fish$cpue_kg_per_ha_der[is.na(OR_fish$cpue_kg_per_ha_der)] <- 0
 
 #rename columns
@@ -101,16 +90,12 @@ names(OR_fish)[names(OR_fish)=="latitude_dd"] <- "latitude"
 names(OR_fish)[names(OR_fish)=="longitude_dd"] <- "longitude"
 names(OR_fish)[names(OR_fish)=="pacfin_spid"] <- "pacfin"
 
-# remove unnecessary columns
-OR_fish <- OR_fish[-c(1, 9, 10, 11, 14, 15, 17, 18, 19, 22, 23, 25, 28, 31)]
-
 # Save to text file
-save(OR_fish, file = "OR_fish")
-write.table(OR_fish, "OR_fish.txt",sep="\t", row.names=FALSE)
+save(OR_fish, file = "../data/NMFS_data/OR_fish")
+write.table(OR_fish, "../data/NMFS_data/OR_fish.txt",sep="\t", row.names=FALSE)
 
 #Clean up trawl dataset
-
-trawl_data_lat <- filter(trawl_dat, latitude_dd >= 41.0000, latitude_dd <= 48.0000,
+trawl_data_lat <- filter(trawl_data, latitude_dd >= 41.0000, latitude_dd <= 48.0000,
                          project != "Groundfish Slope Survey",
                          project != "Hypoxia Study",
                          project != "Groundfish Shelf Survey",
@@ -135,7 +120,6 @@ names(trawl_data)[names(trawl_data)=="temperature_at_gear_c_der"] <- "bottom_tem
 
 match_id<-match(trawl_data$trawl_id,OR_fish$trawl_id)
 trawl_data$program<-OR_fish$program[match_id]
-trawl_data <- filter(trawl_data, program != "AFSC/RACE Triennial Shelf Survey (by NWFSC/FRAM)")
 
 # add year-day by creating fake dates to set numbers for seasonality
 trawl_data$date <- ymd(trawl_data$date_yyyymmdd)
@@ -146,11 +130,36 @@ trawl_data$day <- format(trawl_data$date, '%d')
 trawl_data$date_fake <- as.Date(trawl_data$date_fake)
 trawl_data$julian <- julian((trawl_data$date_fake), format = "%Y%m%d")
 # remove extra unnecessary columns
-trawl_data <- trawl_data[-c(3,5,6,7,8,9,10,11,13, 15, 16, 17, 18,19,20,22,23,24,25,27,29,31,32,33,34,35,38,39,40)]
+trawl_data <- trawl_data[-c(5:11, 13, 37:40)]
 
 # add climate indices
+# PDO
+setnames(PDO, old=c("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"),
+         new = c("01","02","03","04","05","06", "07", "08", "09", "10", "11", "12"))
+PDO <- as.data.frame(PDO)
+rownames(PDO) <- PDO$YEAR
+PDO$YEAR <- NULL
+PDO <- PDO[-c(120),]
+pdo <- as.matrix(PDO)
+
+months <- format(seq.Date(as.Date("2018-01-01"), as.Date("2018-12-12"), by = "month"), format = "%b")
+PDO$Year <- seq(1900, 2018)
+PDO <- melt(PDO, id.vars = "Year")
+PDO$Date <- as.Date(paste(PDO$Year, PDO$variable, "01", sep = "-"),
+                    format = ("%Y-%b"))
+PDO <- PDO[order(PDO$Date),]
+PDO$Date <- as.yearmon(paste(PDO$Year, PDO$variable), "%Y%m")
+PDO$date <- as.Date(PDO$Date)
+PDO$date <- format(PDO$date, '%Y%m')
+
+PDO <- PDO[-c(1)]
+PDO <- PDO[-c(1)]
+PDO <- PDO[-c(2)]
+
+save(PDO, file = '../data/Environmental_data/PDO_column')
+
 trawl_data$year_month <- format(trawl_data$date, '%Y%m')
-match_id<-match(trawl_data$year_month,PDO$date)
+match_id<-match(trawl_data$year_month, PDO$date)
 trawl_data$PDO<-PDO$value[match_id]
 trawl_data$PDO[is.na(trawl_data$PDO)]<-0
 
@@ -160,10 +169,16 @@ match_id<-match(trawl_data$year_month,NPGO$Date)
 trawl_data$NPGO<-NPGO$NPGO[match_id]
 
 # Add the grain size to trawl data
-trawl_data[, c(17, 18)] <- as.data.frame(RANN::nn2(grain_df[, c(3, 2)], trawl_data[, c(4, 5)], k = 1))
-trawl_data[, 19] <- grain_df[trawl_data[, 17], 1]
-trawl_data <- trawl_data[- c(17, 18)]
-colnames(trawl_data)[17] <- "grain_size"
+trawl_data[, c(33, 34)] <- as.data.frame(RANN::nn2(grain_df[, c(3, 2)], trawl_data[, c(5, 6)], k = 1))
+trawl_data[, 35] <- grain_df[trawl_data[, 33], 1]
+trawl_data <- trawl_data[- c(33, 34)]
+colnames(trawl_data)[33] <- "grain_size"
+
+# Add the lithology size to trawl data
+trawl_data[, c(34, 35)] <- as.data.frame(RANN::nn2(lith_df[, c(3, 2)], trawl_data[, c(5, 6)], k = 1))
+trawl_data[, 36] <- lith_df[trawl_data[, 34], 1]
+trawl_data <- trawl_data[- c(34, 35)]
+colnames(trawl_data)[34] <- "lithology"
 
 save(trawl_data, file = "../data/NMFS_data/trawl_data")
 write.table(trawl_data,"../data/NMFS_data/trawl_data.txt",sep="\t",row.names=FALSE)
