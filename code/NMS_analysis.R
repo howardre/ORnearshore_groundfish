@@ -160,8 +160,8 @@ windows()
 par(family = "serif")
 ordiplot(annual_mds,
          type = "n",
-         xlim = c(-1.5, 1.8),
-         ylim = c(-2.1, 0.5),
+         xlim = c(-1.9, 1.8),
+         ylim = c(-2, 0.5),
          xlab = "Axis 1",
          ylab = "Axis 2",
          main = "Annual Survey")
@@ -270,6 +270,14 @@ annual_mrpp_year <- with(env_matrix_a,
 layout(matrix(1:2, nr = 1))
 annual_mrpp_year
 
+# Lithology
+annual_mrpp_lith <- with(env_matrix_a,
+                         mrpp(species_matrix_a,
+                              lithology,
+                              distance = "bray"))
+layout(matrix(1:2, nr = 1))
+annual_mrpp_lith
+
 ##############################################################################################################################
 ##############################################################################################################################
 
@@ -345,6 +353,7 @@ triennial_mds_iso <- metaMDS(species_matrix_t,
 
 ##############################################################################################################################
 # Fit environmental data to the ordination ----
+triennial_mds <- triennial_mds_mono
 ef_t <- envfit(triennial_mds,
                env_matrix_t,
                permu = 999)
@@ -466,3 +475,11 @@ triennial_mrpp_year <- with(env_matrix_t,
                              distance = "bray"))
 layout(matrix(1:2, nr = 1))
 triennial_mrpp_year
+
+# Lithology
+triennial_mrpp_lith <- with(env_matrix_t,
+                         mrpp(species_matrix_t,
+                              lithology,
+                              distance = "bray"))
+layout(matrix(1:2, nr = 1))
+triennial_mrpp_lith
