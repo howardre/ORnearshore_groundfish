@@ -368,6 +368,66 @@ pred_map <- function(species_subset, species_dist, species_CI, bathy.dat, bathy.
          cex = 2.4,
          inset = c(0.01, 0.2))
 }
+tgam_map_poly <- function(species_subset, tgam, longitude, latitude, threshold, title, bathy.dat, bathy.mat, polygon){
+  myvis_gam(tgam[[2]],
+            view = c('longitude', 'latitude'),
+            too.far = 0.025,
+            plot.type = 'contour',
+            color = 'jet',
+            type = 'response',
+            cond = list(thr = threshold),
+            main = title,
+            contour.col = "gray35",
+            xlim = range(species_subset$longitude, na.rm = TRUE) + c(-0.3, .8),
+            ylim = range(species_subset$latitude, na.rm = TRUE) + c(-0.5, 0.5),
+            cex.lab = 3.5,
+            cex.axis = 3,
+            cex.main = 3.4,
+            xlab = longitude,
+            ylab = latitude)
+  with(polygon, reset = F)
+  contour(unique(bathy.dat$lon),
+          sort(unique(bathy.dat$lat)),
+          bathy.mat,
+          levels = -seq(200, 200, by = 200),
+          labcex = 1.1,
+          add = T,
+          col = 'black',
+          labels = NULL,
+          lwd = 1.95)
+  maps::map('worldHires',
+            add = T,
+            col = 'peachpuff3',
+            fill = T)
+  points(-124.0535, 44.6368, pch = 20)
+  text(-124.0535,
+       44.6368,
+       "Newport",
+       adj = c(0, 1.2),
+       cex = 3)
+  points(-123.8313, 46.1879, pch = 20)
+  text(-123.88028,
+       46.13361,
+       "Astoria",
+       adj = c(0, 1.2),
+       cex = 3)
+  points(-124.3, 43.3, pch = 20)
+  text(-124.3,
+       43.3,
+       "Charleston",
+       adj = c(0, 1.2),
+       cex = 3)
+  image.plot(legend.only = T,
+             zlim = c(0, 1),
+             col = jet.colors(100),
+             legend.shrink = 0.2,
+             smallplot = c(.2, .22, .1, .25),
+             legend.cex = 1.8,
+             legend.lab = "presence",
+             axis.args = list(cex.axis = 2),
+             legend.width = 1,
+             legend.line = 4)
+}
 
 # Arrowtooth Flounder ----
 # ***Validate the results ----
@@ -513,9 +573,10 @@ arrowtooth_dist$diff <- arrowtooth_dist$mean_after - arrowtooth_dist$mean_before
 arrowtooth_dist$diff[is.na(arrowtooth_dist$diff)] <- 0
 arrowtooth_dist$diff[arrowtooth_dist$dist > 10000] <- NA
 
-pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
-    width = 17,
-    height = 12)
+# Map with symbols and three panels
+#pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
+#    width = 17,
+#    height = 12)
 par(
   mfrow = c(1, 3),
   family = 'serif',
@@ -556,6 +617,42 @@ mtext("Arrowtooth Flounder",
       outer = T,
       cex = 3)
 dev.off()
+
+# Map with two panels and polygons
+pdf("../results/TGAM/arrowtooth_flounder/arrowtooth_threshold.pdf",
+        width = 12,
+        height = 12)
+windows()
+par(
+  mfrow = c(1, 2),
+  family = 'serif',
+  mar = c(6.4, 7.2, 3, 0.6) + 0.1,
+  oma = c(1, 1, 6, 1),
+  mgp = c(5, 2, 0))
+jet.colors <- colorRampPalette(c("#F7FCFD", "#E0ECF4", "#BFD3E6", "#9EBCDA",
+                                 "#8C96C6", "#8C6BB1", "#88419D", "#6E016B"))
+tgam_map(
+  arrowtooth_subset,
+  arrowtooth_tgam,
+  threshold = "before",
+  title = "Before 2007",
+  longitude = " ",
+  latitude = "Latitude °N",
+  bathy.dat,
+  bathy.mat
+)
+tgam_map_poly(
+  arrowtooth_subset,
+  arrowtooth_tgam,
+  threshold = "after",
+  title = "After 2007",
+  longitude = "Longitude °W",
+  latitude = " ",
+  bathy.dat,
+  bathy.mat,
+  test
+)
+
 
 # English Sole ----
 # ***Validate the results ----
