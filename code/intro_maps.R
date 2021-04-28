@@ -249,7 +249,7 @@ tgam_map <- function(species_subset, tgam, latitude, threshold, title, bathy.dat
             cex.main = 2.5,
             cex.axis = 1.8,
             ylab = latitude,
-            xlab = "Longitude °W")
+            xlab = "Longitude Â°W")
   contour(unique(bathy.dat$lon),
           sort(unique(bathy.dat$lat)),
           bathy.mat,
@@ -287,33 +287,33 @@ tiff("../final_figs/Figure_3.tiff", width = 11, height = 12, units = "in", res =
 par(mfrow=c(1, 2),
     family = 'serif',
     mar=c(4, 5, 3, .2) + .1)
-tgam_map(trawl_data, temp_tgam, "Latitude °N", "before", "Before 1992", bathy.dat, bathy.mat)
+tgam_map(trawl_data, temp_tgam, "Latitude Â°N", "before", "Before 1992", bathy.dat, bathy.mat)
 image.plot(legend.only = T,
            zlim = c(4, 10),
            col = jet.colors(100),
            legend.shrink = 0.2,
            smallplot = c(.25, .27, .1, .25),
            legend.cex = 2,
-           legend.lab = "temperature (°C)",
+           legend.lab = "temperature (Â°C)",
            axis.args = list(cex.axis = 1.8),
            legend.width = 1,
            legend.line = 3.3)
 tgam_map(trawl_data, temp_tgam, " ", "after", "After 1992", bathy.dat, bathy.mat)
-points(temp_dist$longitude[significant_low],
-       temp_dist$latitude[significant_low],
-       pch = 2,
-       cex = .9)
-points(temp_dist$longitude[significant_high],
-       temp_dist$latitude[significant_high],
-       pch = 16,
-       cex = 1.1)
-legend("bottomleft",
-       legend = c("Decrease", "Increase"),
-       pch = c(2, 16),
-       bty = "n",
-       pt.cex = 2.5,
-       cex = 1.7,
-       inset = c(0.01, 0.001))
+# points(temp_dist$longitude[significant_low],
+#        temp_dist$latitude[significant_low],
+#        pch = 2,
+#        cex = .9)
+# points(temp_dist$longitude[significant_high],
+#        temp_dist$latitude[significant_high],
+#        pch = 16,
+#        cex = 1.1)
+# legend("bottomleft",
+#        legend = c("Decrease", "Increase"),
+#        pch = c(2, 16),
+#        bty = "n",
+#        pt.cex = 2.5,
+#        cex = 1.7,
+#        inset = c(0.01, 0.001))
 dev.off()
 
 # Presentation Location map ----
