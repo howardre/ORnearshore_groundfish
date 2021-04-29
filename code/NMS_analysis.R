@@ -220,13 +220,12 @@ with(env_matrix_a,
 #        inset = c(0.01, 0.05))
 
 # Move labels
-plot(envfit(annual_mds, env_matrix_a[, -c(2:3, 5:7)]),
+plot(envfit(annual_mds, env_matrix_a[, -c(2:4, 5:7)]),
      col = "firebrick4",
      cex = 0.01,
      labels = F)
 text(locator(1), "richness", cex = 0.9, col = "firebrick4")
 text(locator(1), "diversity", cex = 0.9, col = "firebrick4")
-text(locator(1), "depth_m", cex = 0.9, col = "firebrick4")
 text(locator(1), "bottom_temp", cex = 0.9, col = "firebrick4")
 text(locator(1), "grain_size", cex = 0.9, col = "firebrick4")
 point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
@@ -425,13 +424,12 @@ with(env_matrix_t,
               col = "green4",
               cex = 4,
               labcex = .7)) # depth contours
-plot(envfit(triennial_mds, env_matrix_t[, -c(1:3, 5:7)]),
+plot(envfit(triennial_mds, env_matrix_t[, -c(1:7)]),
      col = "firebrick4",
      cex = 0.01,
      labels = F)
 text(locator(1), "richness", cex = 0.9, col = "firebrick4")
 text(locator(1), "diversity", cex = 0.9, col = "firebrick4")
-text(locator(1), "depth_m", cex = 0.9, col = "firebrick4")
 text(locator(1), "grain_size", cex = 0.9, col = "firebrick4")
 point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
 legend("bottomleft",
@@ -483,3 +481,7 @@ triennial_mrpp_lith <- with(env_matrix_t,
                               distance = "bray"))
 layout(matrix(1:2, nr = 1))
 triennial_mrpp_lith
+
+
+
+######################################################################################################################################
