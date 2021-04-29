@@ -59,7 +59,7 @@ ZIP_selection <- function(species_subset){
       s(year, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m) +
+      s(depth_m, k = 5) +
       s(grain_size, k = 5),
     ~ offset(log(area_swept)) +
       s(year, k = 5) +
@@ -73,7 +73,7 @@ ZIP_selection <- function(species_subset){
       s(year, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m) +
+      s(depth_m, k = 5) +
       s(grain_size, k = 5) +
       s(bottom_temp, k = 5),
     ~ offset(log(area_swept)) +
@@ -88,7 +88,7 @@ ZIP_selection <- function(species_subset){
       s(PDO, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m) +
+      s(depth_m, k = 5) +
       s(grain_size, k = 5),
     ~ offset(log(area_swept)) +
       s(PDO, k = 5) +
@@ -102,7 +102,7 @@ ZIP_selection <- function(species_subset){
       s(PDO, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m) +
+      s(depth_m, k = 5) +
       s(grain_size, k = 5) +
       s(bottom_temp, k = 5),
     ~ offset(log(area_swept)) +
@@ -117,7 +117,7 @@ ZIP_selection <- function(species_subset){
       s(NPGO, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m) +
+      s(depth_m, k = 5) +
       s(grain_size, k = 5),
     ~ offset(log(area_swept)) +
       s(NPGO, k = 5) +
@@ -131,7 +131,7 @@ ZIP_selection <- function(species_subset){
       s(NPGO, k = 5) +
       s(julian, k = 5) +
       s(latitude, longitude) +
-      s(depth_m) +
+      s(depth_m, k = 5) +
       s(grain_size, k = 5) +
       s(bottom_temp, k = 5),
     ~ offset(log(area_swept)) +
@@ -151,7 +151,7 @@ ZIP_test <- function(species_subset) {
                 s(year, k = 5) +
                 s(julian, k = 5) +
                 s(latitude, longitude) +
-                s(depth_m) +
+                s(depth_m, k = 5) +
                 s(grain_size, k = 5),
               family = poisson, data = species_subset[species_subset$count > 0,])
   test <- gam(count ~ offset(log(area_swept)) +
