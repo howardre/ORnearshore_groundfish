@@ -141,7 +141,7 @@ ZIP_selection <- function(species_subset){
   data = species_subset,
   family = ziplss)
 
-  ziplss_list <- list(year_ziplss, yeartemp_ziplss, PDOtemp_ziplss, PDO_ziplss, NPGO_ziplss, NPGOtemp_ziplss)
+  ziplss_list <- list(year_ziplss, yeartemp_ziplss, PDO_ziplss, PDOtemp_ziplss, NPGO_ziplss, NPGOtemp_ziplss)
   best_ziplss <- ziplss_list[[which.min(sapply(1:length(ziplss_list),
                                          function(x) min(ziplss_list[[x]]$aic)))]] # would like to also select by AIC
   return_list <- list(ziplss_list, best_ziplss)
