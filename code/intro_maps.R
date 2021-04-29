@@ -299,21 +299,21 @@ image.plot(legend.only = T,
            legend.width = 1,
            legend.line = 3.3)
 tgam_map(trawl_data, temp_tgam, " ", "after", "After 1992", bathy.dat, bathy.mat)
-# points(temp_dist$longitude[significant_low],
-#        temp_dist$latitude[significant_low],
-#        pch = 2,
-#        cex = .9)
-# points(temp_dist$longitude[significant_high],
-#        temp_dist$latitude[significant_high],
-#        pch = 16,
-#        cex = 1.1)
-# legend("bottomleft",
-#        legend = c("Decrease", "Increase"),
-#        pch = c(2, 16),
-#        bty = "n",
-#        pt.cex = 2.5,
-#        cex = 1.7,
-#        inset = c(0.01, 0.001))
+points(temp_dist$longitude[significant_low],
+       temp_dist$latitude[significant_low],
+       pch = 2,
+       cex = .9)
+points(temp_dist$longitude[significant_high],
+       temp_dist$latitude[significant_high],
+       pch = 16,
+       cex = 1.1)
+legend("bottomleft",
+       legend = c("Decrease", "Increase"),
+       pch = c(2, 16),
+       bty = "n",
+       pt.cex = 2.5,
+       cex = 1.7,
+       inset = c(0.01, 0.001))
 dev.off()
 
 # Presentation Location map ----
