@@ -21,6 +21,7 @@ load('../data/NMFS_data/annual_tows')
 load('../data/NMFS_data/triennial_samples')
 load('../data/NMFS_data/triennial_tows')
 triennial_trawl <- triennial_trawl[triennial_trawl$bottom_temp < 10, ]
+triennial_trawl <- triennial_trawl[triennial_trawl$year < 2004, ]
 load("../data/bathy.dat")
 load("../data/bathy.mat")
 source("functions/subset_species.R")
@@ -606,7 +607,7 @@ pdf("../results/ZIP/english_sole/depth_annual.pdf",
     height = 12)
 english_a_depth <- plot_variable(english_annualzip,
                                covariate = 4,
-                               bounds = c(-1, 1),
+                               bounds = c(-1.5, 1),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -617,7 +618,7 @@ pdf("../results/ZIP/english_sole/temp_annual.pdf",
     height = 12)
 english_a_temp <- plot_variable(english_annualzip,
                               covariate = 6,
-                              bounds = c(-1, 1),
+                              bounds = c(-1.5, 1),
                               "Temperature (C)",
                               "",
                               "n")
@@ -628,7 +629,7 @@ pdf("../results/ZIP/english_sole/grain_annual.pdf",
     height = 12)
 english_a_grain <- plot_variable(english_annualzip,
                               covariate = 5,
-                              bounds = c(-1, 1),
+                              bounds = c(-1.5, 1),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -837,7 +838,7 @@ range(predict(lingcod_triennialzip[[2]]))
 range(predict(lingcod_triennialcheck))
 
 # Create manuscript figures
-# Year variable
+# NPGO variable
 pdf("../results/ZIP/lingcod/NPGO_triennial.pdf",
     width = 12,
     height = 12)
@@ -924,14 +925,14 @@ range(predict(sanddab_annualzip[[2]]))
 range(predict(sanddab_annualcheck))
 
 # Create manuscript figures
-# Year variable
-pdf("../results/ZIP/pacific_sanddab/PDO_annual.pdf",
+# NPGO variable
+pdf("../results/ZIP/pacific_sanddab/NPGO_annual.pdf",
     width = 12,
     height = 12)
-sanddab_a_PDO <- plot_variable(sanddab_annualzip,
+sanddab_a_NPGO <- plot_variable(sanddab_annualzip,
                               covariate = 1,
-                              bounds = c(-7, 2),
-                              "PDO",
+                              bounds = c(-5.6, 1.2),
+                              "NPGO",
                               " ",
                               "n")
 dev.off()
@@ -952,7 +953,7 @@ pdf("../results/ZIP/pacific_sanddab/depth_annual.pdf",
     height = 12)
 sanddab_a_depth <- plot_variable(sanddab_annualzip,
                                covariate = 4,
-                               bounds = c(-7, 2),
+                               bounds = c(-5.6, 1.2),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -963,7 +964,7 @@ pdf("../results/ZIP/pacific_sanddab/temp_annual.pdf",
     height = 12)
 sanddab_a_temp <- plot_variable(sanddab_annualzip,
                               covariate = 6,
-                              bounds = c(-7, 2),
+                              bounds = c(-5.6, 1.2),
                               "Temperature (C)",
                               "",
                               "n")
@@ -974,7 +975,7 @@ pdf("../results/ZIP/pacific_sanddab/grain_annual.pdf",
     height = 12)
 sanddab_a_grain <- plot_variable(sanddab_annualzip,
                               covariate = 5,
-                              bounds = c(-7, 2),
+                              bounds = c(-5.6, 1.2),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1038,7 +1039,7 @@ pdf("../results/ZIP/pacific_sanddab/depth_triennial.pdf",
     height = 12)
 sanddab_t_depth <- plot_variable(sanddab_triennialzip,
                                covariate = 4,
-                               bounds = c(-5, 2),
+                               bounds = c(-6.7, 2),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1049,7 +1050,7 @@ pdf("../results/ZIP/pacific_sanddab/temp_triennial.pdf",
     height = 12)
 sanddab_t_temp <- plot_variable(sanddab_triennialzip,
                               covariate = 6,
-                              bounds = c(-5, 2),
+                              bounds = c(-6.7, 2),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1060,7 +1061,7 @@ pdf("../results/ZIP/pacific_sanddab/grain_triennial.pdf",
     height = 12)
 sanddab_t_grain <- plot_variable(sanddab_triennialzip,
                               covariate = 5,
-                              bounds = c(-5, 2),
+                              bounds = c(-6.7, 2),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1470,7 +1471,7 @@ pdf("../results/ZIP/sablefish/depth_annual.pdf",
     height = 12)
 sablefish_a_depth <- plot_variable(sablefish_annualzip,
                                covariate = 4,
-                               bounds = c(-7.5, 1),
+                               bounds = c(-6, 1),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1481,7 +1482,7 @@ pdf("../results/ZIP/sablefish/temp_annual.pdf",
     height = 12)
 sablefish_a_temp <- plot_variable(sablefish_annualzip,
                               covariate = 6,
-                              bounds = c(-7.5, 1),
+                              bounds = c(-6, 1),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1492,7 +1493,7 @@ pdf("../results/ZIP/sablefish/grain_annual.pdf",
     height = 12)
 sablefish_a_grain <- plot_variable(sablefish_annualzip,
                               covariate = 5,
-                              bounds = c(-7.5, 1),
+                              bounds = c(-6, 1),
                               "Grain Size (phi)",
                               "",
                               "n")
@@ -1528,13 +1529,13 @@ range(predict(sablefish_triennialzip[[2]]))
 range(predict(sablefish_triennialcheck))
 
 # Create manuscript figures
-# Year variable
+# NPGO variable
 pdf("../results/ZIP/sablefish/NPGO_triennial.pdf",
     width = 12,
     height = 12)
 sablefish_t_NPGO <- plot_variable(sablefish_triennialzip,
                               covariate = 1,
-                              bounds = c(-8, 4),
+                              bounds = c(-25, 2.3),
                               "NPGO",
                               " ",
                               "n")
@@ -1556,7 +1557,7 @@ pdf("../results/ZIP/sablefish/depth_triennial.pdf",
     height = 12)
 sablefish_t_depth <- plot_variable(sablefish_triennialzip,
                                covariate = 4,
-                               bounds = c(-8, 4),
+                               bounds = c(-25, 2.3),
                                "Depth (m)",
                                "Species Abundance Anomalies",
                                "s")
@@ -1567,7 +1568,7 @@ pdf("../results/ZIP/sablefish/temp_triennial.pdf",
     height = 12)
 sablefish_t_temp <- plot_variable(sablefish_triennialzip,
                               covariate = 6,
-                              bounds = c(-8, 4),
+                              bounds = c(-25, 2.3),
                               "Temperature (C)",
                               "",
                               "n")
@@ -1578,7 +1579,7 @@ pdf("../results/ZIP/sablefish/grain_triennial.pdf",
     height = 12)
 sablefish_t_grain <- plot_variable(sablefish_triennialzip,
                               covariate = 5,
-                              bounds = c(-8, 4),
+                              bounds = c(-25, 2.3),
                               "Grain Size (phi)",
                               "",
                               "n")
