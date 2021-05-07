@@ -28,6 +28,6 @@ proj4string(lith_proj)
 lith_proj@data <- data.frame(lith_proj@data, long = coordinates(lith_proj)[,1],
                              lat = coordinates(lith_proj)[,2])
 lith_df <- as.data.frame(lith_proj)
-lith_df <- lith_df[c(12, 26, 27)]
+lith_df <- lith_df[c(5, 26, 27)]
 
 save(lith_df, file = "lith_df.Rdata")
