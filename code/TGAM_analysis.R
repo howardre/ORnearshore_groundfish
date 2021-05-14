@@ -289,7 +289,7 @@ tgam_map <- function(species_subset, tgam, longitude, latitude, threshold, title
              legend.width = 1,
              legend.line = 4)
 }
-tgam_map_pred <- function(species_subset, species_dist, tgam, longitude, latitude, threshold, title, bathy.dat, bathy.mat){
+tgam_map_pred <- function(species_subset, species_dist, species_CI, tgam, longitude, latitude, threshold, title, bathy.dat, bathy.mat){
   myvis_gam(tgam[[2]],
             view = c('longitude', 'latitude'),
             too.far = 0.025,
@@ -315,6 +315,8 @@ tgam_map_pred <- function(species_subset, species_dist, tgam, longitude, latitud
           col = 'black',
           labels = NULL,
           lwd = 1.95)
+  significant_high <- species_CI[[1]]
+  significant_low <- species_CI[[2]]
   points(species_dist$longitude[significant_low],
          species_dist$latitude[significant_low],
          pch = 2,
@@ -612,6 +614,7 @@ tgam_map(
 tgam_map_pred(
   arrowtooth_subset,
   arrowtooth_dist,
+  arrowtooth_CI,
   arrowtooth_tgam,
   threshold = "after",
   title = "After 2007",
@@ -742,6 +745,7 @@ tgam_map(
 tgam_map_pred(
   english_subset,
   english_dist,
+  english_CI,
   english_tgam,
   threshold = "after",
   title = "After 1995",
@@ -844,6 +848,7 @@ tgam_map(
 tgam_map_pred(
   sanddab_subset,
   sanddab_dist,
+  sanddab_CI,
   sanddab_tgam,
   threshold = "after",
   title = "After 1989",
@@ -962,6 +967,7 @@ tgam_map(
 tgam_map_pred(
   dover_subset,
   dover_dist,
+  dover_CI,
   dover_tgam,
   threshold = "after",
   title = "After 1995",
@@ -1064,6 +1070,7 @@ tgam_map(
 tgam_map_pred(
   rex_subset,
   rex_dist,
+  rex_CI,
   rex_tgam,
   threshold = "after",
   title = "After 1989",
@@ -1167,6 +1174,7 @@ tgam_map(
 tgam_map_pred(
   lingcod_subset,
   lingcod_dist,
+  lingcod_CI,
   lingcod_tgam,
   threshold = "after",
   title = "After 2009",
@@ -1285,6 +1293,7 @@ tgam_map(
 tgam_map_pred(
   petrale_subset,
   petrale_dist,
+  petrale_CI,
   petrale_tgam,
   threshold = "after",
   title = "After 2011",
@@ -1387,6 +1396,7 @@ tgam_map(
 tgam_map_pred(
   sablefish_subset,
   sablefish_dist,
+  sablefish_CI,
   sablefish_tgam,
   threshold = "after",
   title = "After 2003",
