@@ -334,4 +334,4 @@ tickets_filtered$code <- species_index$code[match_id]
 
 # Filter out non-FMP species
 tickets_final <- tickets_filtered[!(tickets_filtered$code == "non-FMP"), ]
-save(tickets_final, file  = "fish_tickets_final")
+save(tickets_final, file  = "../data/ODFW_data/fish_tickets_final")
