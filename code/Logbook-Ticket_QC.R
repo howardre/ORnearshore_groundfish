@@ -81,16 +81,16 @@ logbooks_species <- logbooks_trawls %>% dplyr::select(Trawl_ID,
 logbooks_characteristics <- logbooks_trawls %>% dplyr::select(Trawl_ID,
                                                               c(1:22),
                                                               c(132:141)) # Dataframe with just the haul characteristics
-logbooks_characteristics <- logbook_characteristics %>% dplyr::select(Trawl_ID,
-                                        TICKET,
-                                        lon,
-                                        lat,
-                                        depth.pred,
-                                        TOWDATE,
-                                        year,
-                                        DURATION,
-                                        GEAR,
-                                        DOCNUM)
+logbooks_characteristics <- logbooks_characteristics %>% dplyr::select(Trawl_ID,
+                                                                       TICKET,
+                                                                       lon,
+                                                                       lat,
+                                                                       depth.pred,
+                                                                       TOWDATE,
+                                                                       year,
+                                                                       DURATION,
+                                                                       GEAR,
+                                                                       DOCNUM)
 logbooks_species <- melt(logbooks_species, id = "Trawl_ID")
 
 ###############################################################################################################
@@ -109,18 +109,18 @@ colnames(logbooks_expanded)[12] <- "species_weight"
 ###############################################################################################################
 # Raw data map to filter out any extra points on land ----
 # ***Create a species subset ----
-species_subset<-logbooks_expanded[logbooks_expanded$species == 'PTRL_ADJ', ] # Choose any species for this since species are now rows
+species_subset <- logbooks_expanded[logbooks_expanded$species == 'PTRL_ADJ', ] # Choose any species for this since species are now rows
 
 # ***Create bathymetry matrix -----
-bathy.mat<-matrix(bathy.dat$depth, nrow = length(unique(bathy.dat$lon)),
-                  ncol = length(unique(bathy.dat$lat)))[,order(unique(bathy.dat$lat))]
+bathy.mat <- matrix(bathy.dat$depth, nrow = length(unique(bathy.dat$lon)),
+                  ncol = length(unique(bathy.dat$lat)))[, order(unique(bathy.dat$lat))]
 
 # ***Map each decade to identify any points on land ----
 tow_plot <- function(lower_yr, upper_yr) {
         plot(1, 1, xlim = range(species_subset$lon, na.rm = TRUE) + c(-.5, .2),
                 ylim = range(species_subset$lat, na.rm = TRUE) + c(-.2, .2),
-                ylab = "latitude °N",
-                xlab = "longitude °W",
+                ylab = "latitude ?N",
+                xlab = "longitude ?W",
                 main = paste(lower_yr, 's', sep = ""))
         map("worldHires",
             fill = T,
