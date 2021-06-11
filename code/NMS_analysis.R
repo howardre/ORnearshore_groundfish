@@ -165,35 +165,35 @@ ordiplot(annual_mds,
          xlab = "Axis 1",
          ylab = "Axis 2",
          main = "Annual Survey")
-ordipointlabel(annual_mds, display = "spec", cex = 0.7, col = "black", add = T)
+# ordipointlabel(annual_mds, display = "spec", cex = 0.7, col = "black", add = T)
 points(annual_mds,
        display = "spec",
        select = index_annual$group == "other",
-       cex = 1, col = "darkorchid4",
+       cex = 1.2, col = "darkorchid4",
        bg = "darkorchid4",
        pch = 25)
 points(annual_mds,
        display = "spec",
        select = index_annual$group == "roundfish",
-       cex = 1.2,
+       cex = 1.4,
        col = "darkgreen",
        pch = 18)
 points(annual_mds,
        display = "spec",
        select = index_annual$group == "elasmobranch",
-       cex = 1,
+       cex = 1.2,
        col = "goldenrod4",
        pch = 17)
 points(annual_mds,
        display = "spec",
        select = index_annual$group == "rockfish",
-       cex = 1,
+       cex = 1.4,
        col = "navy",
-       pch = 19)
+       pch = 16)
 points(annual_mds,
        display = "spec",
        select = index_annual$group == "flatfish",
-       cex = 1,
+       cex = 1.2,
        col = "firebrick4",
        pch = 15)
 # with environmental variables
@@ -226,8 +226,8 @@ plot(envfit(annual_mds, env_matrix_a[, -c(2:4, 5:7)]),
      labels = F)
 text(locator(1), "richness", cex = 0.9, col = "firebrick4")
 text(locator(1), "diversity", cex = 0.9, col = "firebrick4")
-text(locator(1), "bottom_temp", cex = 0.9, col = "firebrick4")
-text(locator(1), "grain_size", cex = 0.9, col = "firebrick4")
+text(locator(1), "temperature", cex = 0.9, col = "firebrick4")
+text(locator(1), "grain size", cex = 0.9, col = "firebrick4")
 point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
 legend("bottomleft",
        legend = c("Flatfish", "Rockfish", "Roundfish", "Elasmobranch", "Other"),
@@ -238,7 +238,6 @@ legend("bottomleft",
        pt.cex = 1,
        cex = 0.9,
        inset = c(0.01, 0.01))
-
 ##############################################################################################################################
 # Multi-response permutation procedure (MRPP)
 # Create categories for climate indices
@@ -384,36 +383,36 @@ ordiplot(triennial_mds,
          xlab = "Axis 1",
          ylab = "Axis 2",
          main = "Triennial Survey")
-ordipointlabel(triennial_mds, display = "spec", cex = 0.7, col = "black", add = T)
+# ordipointlabel(triennial_mds, display = "spec", cex = 0.7, col = "black", add = T)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "other",
-       cex = 1,
+       cex = 1.2,
        col = "darkorchid4",
        bg = "darkorchid4",
        pch = 25)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "roundfish",
-       cex = 1.2,
+       cex = 1.4,
        col = "darkgreen",
        pch = 18)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "elasmobranch",
-       cex = 1,
+       cex = 1.2,
        col = "goldenrod4",
        pch = 17)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "rockfish",
-       cex = 1,
+       cex = 1.4,
        col = "navy",
-       pch = 19)
+       pch = 16)
 points(triennial_mds,
        display = "spec",
        select = index_triennial$group == "flatfish",
-       cex = 1,
+       cex = 1.2,
        col = "firebrick4",
        pch = 15)
 # with environmental variables
@@ -430,7 +429,7 @@ plot(envfit(triennial_mds, env_matrix_t[, -c(1:7)]),
      labels = F)
 text(locator(1), "richness", cex = 0.9, col = "firebrick4")
 text(locator(1), "diversity", cex = 0.9, col = "firebrick4")
-text(locator(1), "grain_size", cex = 0.9, col = "firebrick4")
+text(locator(1), "grain size", cex = 0.9, col = "firebrick4")
 point_colors <- c("firebrick4", "navy", "darkgreen", "goldenrod4", "darkorchid4")
 legend("bottomleft",
        legend = c("Flatfish", "Rockfish", "Roundfish", "Elasmobranch", "Other"),

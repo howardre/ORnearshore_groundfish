@@ -163,9 +163,9 @@ ZIP_test <- function(species_subset) {
 }
 plot_variable <- function(zip, covariate, bounds, variable, ylabel, yvalues){
   par(
-    mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+    mar = c(6.4, 7.6, .5, 0.6) + 0.1,
     oma = c(1, 1, 1, 1),
-    mgp = c(5, 2, 0))
+    mgp = c(5, 1.7, 0))
   plot(zip[[2]],
        pages = 0,
        select = covariate, # 1 = year/PDO/NPGO, 2 = lat/lon, 3 = depth, 4 = julian, 5 = temp
@@ -177,16 +177,16 @@ plot_variable <- function(zip, covariate, bounds, variable, ylabel, yvalues){
        yaxt = yvalues,
        seWithMean = T,
        scale = 0,
-       cex.axis = 3,
-       cex.lab = 3,
+       cex.axis = 4,
+       cex.lab = 4.5,
        family = "serif",
        lwd = 2)
 }
 location_plot <- function(zip, species_subset) {
   par(
-    mar = c(6.4, 7.2, .5, 0.6) + 0.1,
+    mar = c(1, 7.2, .5, 0.6) + 0.1,
     oma = c(1, 1, 1, 1),
-    mgp = c(5, 2, 0))
+    mgp = c(5, 1, 0))
   myvis_gam(
     zip[[2]],
     view = c('longitude', 'latitude'),
@@ -198,11 +198,13 @@ location_plot <- function(zip, species_subset) {
     xlim = c(-125.7, -123.6),
     ylim = range(species_subset$latitude, na.rm = TRUE) + c(-.4, .5),
     family = "serif",
-    xlab = "Longitude",
+    xlab = " ",
     ylab = "Latitude",
     main = " ",
-    cex.lab = 2,
-    cex.axis = 2)
+    tck = 0,
+    xaxt = "n",
+    cex.lab = 3.5,
+    cex.axis = 3.5)
   maps::map('worldHires',
             add = T,
             col = 'antiquewhite4',
