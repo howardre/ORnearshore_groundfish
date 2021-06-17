@@ -1,4 +1,4 @@
-grid_map <- function(lat_res, lon_res, data, z_matrix, title, bathy_dat, bathy_mat) {
+grid_map <- function(lat_res, lon_res, year1, year2, zmax, data, z_matrix, title, bathy_dat, bathy_mat) {
   nlat = lat_res # determine resolution of grid
   nlon = lon_res
   latd = seq(42, 47, length.out = nlat)
@@ -7,34 +7,30 @@ grid_map <- function(lat_res, lon_res, data, z_matrix, title, bathy_dat, bathy_m
   zlon <- (lond[1:(length(lond) - 1)] + lond[2:length(lond)]) / 2
   data_subset <- length(unique(data$year[data$year > year1 &
                                            data$year < year2]))
-  z_matrix <- matrix(nstations,
-                     ncol = length(zlat),
-                     nrow = length(zlon),
-                     byrow = F) / data_subset
-  z_matrix <- ifelse(z_matrix == 0, NA, z_matrix)
   image(zlon,
         zlat,
-        z_matrix1,
-        col = hcl.colors(40, "RdYlBu", rev = T),
+        z_matrix,
+        col = hcl.colors(40, "YlOrRd", rev = T),
         xlim = c(-125,-123.6),
         ylim = c(42, 47),
         main = title,
         ylab = expression(paste("Latitude (" ^ 0, 'N)')),
         xlab = expression(paste("Longitude (" ^ 0, 'W)')),
-        zlim = c(0, 230))
+        zlim = c(0, zmax))
   map("worldHires",
       fill = T,
       col = "grey",
       add = T)
   image.plot(legend.only = T,
-             col = hcl.colors(40, "RdYlBu", rev = T),
+             col = hcl.colors(40, "YlOrRd", rev = T),
              legend.shrink = 0.2,
-             smallplot = c(.76, .81, .09, .25),
-             legend.cex = 0.7,
-             axis.args = list(cex.axis = 0.9),
+             smallplot = c(.72, .77, .1, .28),
+             legend.cex = 1,
+             axis.args = list(cex.axis = 1.2),
              legend.width = 1,
-             zlim = c(0, 230),
-             legend.lab = "avg. number of tows")
+             zlim = c(0, zmax),
+             legend.lab = "avg. number of tows",
+             line = 3)
   contour(unique(bathy_dat$lon),
           sort(unique(bathy_dat$lat)),
           bathy_mat,
