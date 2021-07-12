@@ -135,12 +135,15 @@ cpue_map(eighties_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale 
 cpue_map(nineties_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 1990s", bathy_dat, bathy_mat)
 cpue_map(thousands_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 2010s", bathy_dat, bathy_mat)
+dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel.tiff",
+         width = 15, height = 9, units = "in", res = 200)
+dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1989, "BuPu", "1980s")
-logs_nineties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1999, "BuPu", "1990s")
-logs_thousands_depth_ptrl <- depth_contours(subset_petrale_logbook, 2009, "BuPu", "2000s")
-logs_tens_depth_ptrl <- depth_contours(subset_petrale_logbook, 2017, "BuPu", "2010s")
+logs_eighties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1989, "1980s")
+logs_nineties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1999, "1990s")
+logs_thousands_depth_ptrl <- depth_contours(subset_petrale_logbook, 2009, "2000s")
+logs_tens_depth_ptrl <- depth_contours(subset_petrale_logbook, 2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_ptrl,
@@ -150,8 +153,11 @@ grid.arrange(logs_eighties_depth_ptrl,
              ncol = 2,
              top = textGrob("Petrale Sole Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
-                                      cex = 1,
+                                      cex = 0.8,
                                       fontface = "bold")))
+dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth.tiff",
+         width = 4, height = 4, units = "in", res = 200)
+dev.off()
 
 ## Catch over time
 catch_petrale <- tickets_final %>% filter(common_name == 'Petrale Sole') %>%
@@ -176,7 +182,7 @@ ggplot(data = catch_petrale,
   labs(x = "Year",
        y = "Total Catch (1000s of lbs)",
        title = "Petrale Sole Total Nearshore Catch")
-dev.copy(tiff, "../results/logbook_survey_maps/petrale_sole_catch.tiff",
+dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_catch.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
 
@@ -201,7 +207,7 @@ ggplot(data = logbook_petrale_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "Year",
        y = "CPUE (kg/hr)",
        title = "Mean CPUE of Nearshore Petrale Sole Caught in Groundfish Fishery")
-dev.copy(tiff, "../results/logbook_survey_maps/petrale_sole_change.tiff",
+dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_change.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
 
@@ -246,10 +252,10 @@ cpue_map(thousands_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "L
 cpue_map(tens_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Logbook Petrale Sole 2010s", bathy_dat, bathy_mat)
 
 ## Depth distribution by year (winter)
-logs_eighties_depth_ptrlw <- depth_contours(subset_petrale_logbook, 1989, "BuPu", "1980s")
-logs_nineties_depth_ptrlw <- depth_contours(subset_petrale_logbook, 1999, "BuPu", "1990s")
-logs_thousands_depth_ptrlw <- depth_contours(subset_petrale_logbook, 2009, "BuPu", "2000s")
-logs_tens_depth_ptrlw <- depth_contours(subset_petrale_logbook, 2017, "BuPu", "2010s")
+logs_eighties_depth_ptrlw <- depth_contours(winter_petrale, 1989, "1980s")
+logs_nineties_depth_ptrlw <- depth_contours(winter_petrale, 1999, "1990s")
+logs_thousands_depth_ptrlw <- depth_contours(winter_petrale, 2009, "2000s")
+logs_tens_depth_ptrlw <- depth_contours(winter_petrale, 2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_ptrlw,
@@ -257,11 +263,11 @@ grid.arrange(logs_eighties_depth_ptrlw,
              logs_thousands_depth_ptrlw,
              logs_tens_depth_ptrlw,
              ncol = 2,
-             top = textGrob("Petrale Sole Logbook Depth Distribution",
+             top = textGrob("Petrale Sole Logbook Winter Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
                                       fontface = "bold")))
-dev.copy(tiff, "../results/logbook_survey_maps/petrale_sole_depth.tiff",
+dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth_winter.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
 
@@ -315,10 +321,10 @@ cpue_map(thousands_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petral
 cpue_map(tens_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale Sole 2010s", bathy_dat, bathy_mat)
 
 ## Depth distribution by year
-survey_eighties_depth_ptrl <- depth_contours(subset_petrale_survey, 1989, "BuPu", "1980s")
-survey_nineties_depth_ptrl <- depth_contours(subset_petrale_survey, 1999, "BuPu", "1990s")
-survey_thousands_depth_ptrl <- depth_contours(subset_petrale_survey, 2009, "BuPu", "2000s")
-survey_tens_depth_ptrl <- depth_contours(subset_petrale_survey, 2018, "BuPu", "2010s")
+survey_eighties_depth_ptrl <- depth_contours(subset_petrale_survey, 1989, "1980s")
+survey_nineties_depth_ptrl <- depth_contours(subset_petrale_survey, 1999, "1990s")
+survey_thousands_depth_ptrl <- depth_contours(subset_petrale_survey, 2009, "2000s")
+survey_tens_depth_ptrl <- depth_contours(subset_petrale_survey, 2018, "2010s")
 
 windows()
 grid.arrange(survey_eighties_depth_ptrl,
@@ -353,7 +359,7 @@ ggplot(data = survey_petrale_cpue, aes(x = year, y = cpue_mean)) +
 
 ## Manuscript Maps
 # Manuscript Figure
-pdf("../results/logbook_survey_maps/petrale_sole_maps.pdf",
+pdf("../final_figs/manuscript2_fig_tables/petrale_sole_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
