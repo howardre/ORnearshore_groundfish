@@ -4,8 +4,9 @@
 
 ## Load libraries and data ----
 setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
-logbooks_final <- load("../data/ODFW_data/logbooks_corrected")
-survey_data <- load('../data/NMFS_data/survey_data')
+load("../data/ODFW_data/logbooks_corrected")
+load('../data/NMFS_data/trawl_data')
+survey_data <- trawl_data
 source("functions/grid_fill.R")
 source("functions/grid_data.R")
 source("functions/grid_map.R")
@@ -89,6 +90,7 @@ plot(trawl_counts$lon,
 grid_fill(30, 25, 2009, 2019, trawl_counts)
 
 ## decades
+# This is the average effort per year for each decade
 eighties_logbook <- grid_data(20, 15, 1980, 1990, trawl_counts)
 nineties_logbook <- grid_data(20, 15, 1989, 2000, trawl_counts)
 thousands_logbook <- grid_data(20, 15, 1999, 2010, trawl_counts)
@@ -151,6 +153,7 @@ zlat <- (latd[1:(length(latd) - 1)] + latd[2:length(latd)]) / 2
 zlon <- (lond[1:(length(lond) - 1)] + lond[2:length(lond)]) / 2
 
 # Decades
+# This is the average effort per year for each decade
 eighties_survey <- grid_data(20, 15, 1980, 1990, survey_data)
 nineties_survey <- grid_data(20, 15, 1989, 2000, survey_data)
 thousands_survey <- grid_data(20, 15, 1999, 2010, survey_data)
