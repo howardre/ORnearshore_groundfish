@@ -159,22 +159,26 @@ catch_petrale <- tickets_final %>% filter(common_name == 'Petrale Sole') %>%
   summarise(species_weight_sum = sum(TIK_LBS))
 
 # Plot
-windows(width = 20, height = 10)
-par(mfrow = c(1, 1))
+windows(width = 200, height = 100)
 ggplot(data = catch_petrale,
        aes(x = YEAR, y = species_weight_sum / 1000)) +
   geom_bar(stat = "identity",
            position = position_dodge()) +
-  geom_col(fill = "blue4") +
+  geom_col(fill = "orangered4") +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
-        plot.title = element_text(hjust = 0.5)) +
+        plot.title = element_text(hjust = 0.5, size = 9),
+        axis.title = element_text(size = 8),
+        axis.text = element_text(size = 7)) +
   labs(x = "Year",
        y = "Total Catch (1000s of lbs)",
        title = "Petrale Sole Total Nearshore Catch")
+dev.copy(tiff, "../results/logbook_survey_maps/petrale_sole_catch.tiff",
+         width = 4, height = 2, units = "in", res = 200)
+dev.off()
 
 ## Average CPUE over time
 logbook_petrale_cpue <- subset_petrale_logbook %>% group_by(year) %>%
@@ -184,17 +188,22 @@ logbook_petrale_cpue <- subset_petrale_logbook %>% group_by(year) %>%
 windows(width = 20, height = 10)
 par(mfrow = c(1, 1))
 ggplot(data = logbook_petrale_cpue, aes(x = year, y = cpue_mean)) +
-  geom_path() +
-  geom_point() +
+  geom_path(color = "orangered4", size = 0.5) +
+  geom_point(size = 0.9) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
-        plot.title = element_text(hjust = 0.5)) +
+        plot.title = element_text(hjust = 0.5, size = 8),
+        axis.title = element_text(size = 7.5),
+        axis.text = element_text(size = 7)) +
   labs(x = "Year",
-       y = "Cpue (kg/hr)",
+       y = "CPUE (kg/hr)",
        title = "Mean CPUE of Nearshore Petrale Sole Caught in Groundfish Fishery")
+dev.copy(tiff, "../results/logbook_survey_maps/petrale_sole_change.tiff",
+         width = 4, height = 2, units = "in", res = 200)
+dev.off()
 
 ## Seasonality
 # Create winter subset
@@ -250,8 +259,11 @@ grid.arrange(logs_eighties_depth_ptrlw,
              ncol = 2,
              top = textGrob("Petrale Sole Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
-                                      cex = 1,
+                                      cex = 0.8,
                                       fontface = "bold")))
+dev.copy(tiff, "../results/logbook_survey_maps/petrale_sole_depth.tiff",
+         width = 4, height = 4, units = "in", res = 200)
+dev.off()
 
 ### Survey Maps ----
 subset_petrale_survey <- OR_fish[OR_fish$scientific_name == 'Eopsetta jordani', ]
@@ -336,7 +348,7 @@ ggplot(data = survey_petrale_cpue, aes(x = year, y = cpue_mean)) +
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5)) +
   labs(x = "Year",
-       y = "Cpue (kg/hr)",
+       y = "CPUE (kg/ha)",
        title = "Mean CPUE of Nearshore Petrale Sole Caught in Groundfish Fishery")
 
 ## Manuscript Maps
@@ -351,7 +363,7 @@ species_grid_pdf(1980, 1990, eighties_logbooks_ptrl,
                  tens_logbooks_ptrl, "Logbook Petrale Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = viridis(100, option = "E", direction = -1),
+           col = viridis(100, option = "F", direction = -1),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .09, .24),
            legend.cex = 1.6,
@@ -368,7 +380,7 @@ species_grid_pdf(1980, 1990, eighties_surveys_ptrl,
          eighties_surveys_ptrl, "Survey Petrale Sole 1980s",
          bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = viridis(100, option = "E", direction = -1),
+           col = viridis(100, option = "F", direction = -1),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .09, .24),
            legend.cex = 1.6,
