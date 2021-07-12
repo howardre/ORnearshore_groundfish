@@ -1,6 +1,6 @@
 ## Depth distribution by year
 
-depth_contours <- function(subset, year_upper, color, title){
+depth_contours <- function(subset, year_upper, title){
   subset %>% filter(year <= year_upper) %>% filter(CPUE > 0) %>%
     ggplot(aes(x = depth, y = lat)) +
     stat_density_2d(aes(fill = stat(level)),
