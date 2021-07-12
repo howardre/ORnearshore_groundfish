@@ -186,7 +186,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, 230),
-           legend.args = list("avg. number \n of tows",
+           legend.args = list("avg. annual number \n of tows",
                               side = 2, cex = 1.4))
 grid_pdf(20, 15, 2009, 2018, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
 grid_pdf(20, 15, 1980, 1990, 4.5, survey_data, eighties_survey, "Survey Effort 1980s", bathy_dat, bathy_mat)
@@ -199,7 +199,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, 4.5),
-           legend.args = list("avg. number \n of tows",
+           legend.args = list("avg. annual number \n of tows",
                               side = 2, cex = 1.4))
 grid_pdf(20, 15, 2009, 2018, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
 dev.off()
