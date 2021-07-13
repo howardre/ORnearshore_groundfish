@@ -135,7 +135,7 @@ cpue_map(eighties_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale 
 cpue_map(nineties_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 1990s", bathy_dat, bathy_mat)
 cpue_map(thousands_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 2010s", bathy_dat, bathy_mat)
-dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel.tiff",
+dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel_logs.tiff",
          width = 15, height = 9, units = "in", res = 200)
 dev.off()
 
@@ -250,6 +250,9 @@ cpue_map(eighties_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Lo
 cpue_map(nineties_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Logbook Petrale Sole 1990s", bathy_dat, bathy_mat)
 cpue_map(thousands_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Logbook Petrale Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Logbook Petrale Sole 2010s", bathy_dat, bathy_mat)
+dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel_winter.tiff",
+         width = 15, height = 9, units = "in", res = 200)
+dev.off()
 
 ## Depth distribution by year (winter)
 logs_eighties_depth_ptrlw <- depth_contours(winter_petrale, 1989, "1980s")
@@ -319,6 +322,9 @@ cpue_map(eighties_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale
 cpue_map(nineties_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale Sole 1990s", bathy_dat, bathy_mat)
 cpue_map(thousands_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale Sole 2010s", bathy_dat, bathy_mat)
+dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel_survey.tiff",
+         width = 15, height = 9, units = "in", res = 200)
+dev.off()
 
 ## Depth distribution by year
 survey_eighties_depth_ptrl <- depth_contours(subset_petrale_survey, 1989, "1980s")
@@ -336,6 +342,9 @@ grid.arrange(survey_eighties_depth_ptrl,
                             gp = gpar(fontfamily = "serif",
                                       cex = 1,
                                       fontface = "bold")))
+dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth_survey.tiff",
+         width = 4, height = 4, units = "in", res = 200)
+dev.off()
 
 ## Average CPUE over time
 survey_petrale_cpue <- subset_petrale_survey %>% group_by(year) %>%
@@ -358,7 +367,7 @@ ggplot(data = survey_petrale_cpue, aes(x = year, y = cpue_mean)) +
        title = "Mean CPUE of Nearshore Petrale Sole Caught in Groundfish Fishery")
 
 ## Manuscript Maps
-# Manuscript Figure
+# Four panel maps
 pdf("../final_figs/manuscript2_fig_tables/petrale_sole_maps.pdf",
     width = 7.5,
     height = 18)
@@ -398,4 +407,46 @@ image.plot(legend.only = T,
                               side = 2, cex = 1.4))
 species_grid_pdf(2009, 2018, tens_surveys_ptrl,
          eighties_surveys_ptrl, "Survey Petrale Sole 2010s", bathy_dat, bathy_mat)
+dev.off()
+
+# Winter maps (logbooks only)
+pdf("../final_figs/manuscript2_fig_tables/petrale_sole_winter.pdf",
+    width = 7.5,
+    height = 18)
+par(mfrow = c(2, 2),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+species_grid_pdf(1980, 1990, eighties_logbooks_ptrl,
+                 tens_logbooks_ptrl, "Logbook Petrale Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .09, .24),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.6),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_ptrl, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.4))
+species_grid_pdf(2009, 2018, tens_logbooks_ptrl,
+                 tens_logbooks_ptrl, "Logbook Petrale Sole 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_pdf(1980, 1990, eighties_surveys_ptrl,
+                 eighties_surveys_ptrl, "Survey Petrale Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .09, .24),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.6),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, 4.5),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.4))
+species_grid_pdf(2009, 2018, tens_surveys_ptrl,
+                 eighties_surveys_ptrl, "Survey Petrale Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
