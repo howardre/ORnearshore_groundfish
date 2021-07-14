@@ -156,7 +156,17 @@ grid.arrange(logs_eighties_depth_ptrl,
              top = textGrob("Petrale Sole Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -271,7 +281,17 @@ grid.arrange(logs_eighties_depth_ptrlw,
              top = textGrob("Petrale Sole Logbook Winter Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth_winter.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -353,7 +373,17 @@ grid.arrange(survey_eighties_depth_ptrl,
              top = textGrob("Petrale Sole Survey Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth_survey.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -666,7 +696,17 @@ grid.arrange(logs_eighties_depth_dovr,
              top = textGrob("Dover Sole Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_depth.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -781,7 +821,17 @@ grid.arrange(logs_eighties_depth_dovrw,
              top = textGrob("Dover Sole Logbook Winter Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_depth_winter.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -862,7 +912,17 @@ grid.arrange(survey_eighties_depth_dovr,
              top = textGrob("Dover Sole Survey Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_depth_survey.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -1174,7 +1234,17 @@ grid.arrange(logs_eighties_depth_sdab,
              top = textGrob("Pacific Sanddab Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_depth.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -1307,7 +1377,17 @@ grid.arrange(survey_eighties_depth_sdab,
              top = textGrob("Pacific Sanddab Survey Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_depth_survey.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -1514,7 +1594,17 @@ grid.arrange(logs_eighties_depth_engl,
              top = textGrob("English Sole Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_depth.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -1647,7 +1737,17 @@ grid.arrange(survey_eighties_depth_engl,
              top = textGrob("English Sole Survey Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_depth_survey.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -1854,7 +1954,17 @@ grid.arrange(logs_eighties_depth_ssol,
              top = textGrob("Sand Sole Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_depth.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -1987,7 +2097,17 @@ grid.arrange(survey_eighties_depth_ssol,
              top = textGrob("Sand Sole Survey Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_depth_survey.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -2195,7 +2315,17 @@ grid.arrange(logs_eighties_depth_stry,
              top = textGrob("Starry Flounder Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_depth.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
@@ -2328,7 +2458,17 @@ grid.arrange(survey_eighties_depth_stry,
              top = textGrob("Starry Flounder Survey Depth Distribution",
                             gp = gpar(fontfamily = "serif",
                                       cex = 0.8,
-                                      fontface = "bold")))
+                                      fontface = "bold")),
+             bottom = textGrob("Depth (m)",
+                               gp = gpar(fontfamily = "serif",
+                                         cex = 0.8,
+                                         fontface = "bold")),
+             left = textGrob("Latitude",
+                             rot = 90,
+                             gp = gpar(fontfamily = "serif",
+                                       cex = 0.8,
+                                       fontface = "bold",
+                                       vjust = 1)))
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_depth_survey.tiff",
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
