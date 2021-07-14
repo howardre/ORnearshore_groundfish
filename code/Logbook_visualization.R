@@ -275,7 +275,7 @@ dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth_winter.t
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
 
-### Survey Maps ----
+### Survey ----
 subset_petrale <- OR_fish[OR_fish$scientific_name == 'Eopsetta jordani', ]
 subset_petrale <- subset_petrale[subset_petrale$catch <= 300, ] # filter out outlier large hauls
 match_id <- match(survey_data$trawl_id, subset_petrale$trawl_id)
@@ -390,7 +390,7 @@ pdf("../final_figs/manuscript2_fig_tables/petrale_sole_maps.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_ptrl,
+species_grid_pdf(eighties_logbooks_ptrl,
                  tens_logbooks_ptrl, "Logbook Petrale Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -404,10 +404,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_ptrl, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_ptrl,
+species_grid_pdf(tens_logbooks_ptrl,
          tens_logbooks_ptrl, "Logbook Petrale Sole 2010s",
          bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_surveys_ptrl,
+species_grid_pdf(eighties_surveys_ptrl,
          eighties_surveys_ptrl, "Survey Petrale Sole 1980s",
          bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -421,7 +421,7 @@ image.plot(legend.only = T,
            zlim = c(0, max(eighties_surveys_ptrl, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_surveys_ptrl,
+species_grid_pdf(tens_surveys_ptrl,
          eighties_surveys_ptrl, "Survey Petrale Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
@@ -432,7 +432,7 @@ pdf("../final_figs/manuscript2_fig_tables/petrale_sole_winter.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_ptrl_winter,
+species_grid_pdf(eighties_logbooks_ptrl_winter,
                  tens_logbooks_ptrl_winter, "Winter Petrale Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -446,10 +446,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_ptrl_winter,
+species_grid_pdf(tens_logbooks_ptrl_winter,
                  tens_logbooks_ptrl_winter, "Winter Petrale Sole 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_logbooks_ptrl,
+species_grid_pdf(eighties_logbooks_ptrl,
                  tens_logbooks_ptrl_winter, "Summer Petrale Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -463,7 +463,7 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_ptrl,
+species_grid_pdf(tens_logbooks_ptrl,
                  tens_logbooks_ptrl_winter, "Summer Petrale Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
@@ -657,7 +657,7 @@ dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_depth_winter.tif
          width = 4, height = 4, units = "in", res = 200)
 dev.off()
 
-### Survey Maps ----
+### Survey ----
 subset_dover <- OR_fish[OR_fish$scientific_name == 'Microstomus pacificus', ]
 match_id <- match(survey_data$trawl_id, subset_dover$trawl_id)
 survey_data$lncpue <- subset_dover$lncpue[match_id]
@@ -771,7 +771,7 @@ pdf("../final_figs/manuscript2_fig_tables/dover_sole_maps.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_dovr,
+species_grid_pdf(eighties_logbooks_dovr,
                  tens_logbooks_dovr, "Logbook Dover Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -785,10 +785,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_dovr, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_dovr,
+species_grid_pdf(tens_logbooks_dovr,
                  tens_logbooks_dovr, "Logbook Dover Sole 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_surveys_dovr,
+species_grid_pdf(eighties_surveys_dovr,
                  thousands_surveys_dovr, "Survey Dover Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -802,7 +802,7 @@ image.plot(legend.only = T,
            zlim = c(0, max(thousands_surveys_dovr, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_surveys_dovr,
+species_grid_pdf(tens_surveys_dovr,
                  thousands_surveys_dovr, "Survey Dover Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
@@ -975,7 +975,7 @@ dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_change.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
 
-### Survey Maps ----
+### Survey ----
 subset_sanddab <- OR_fish[OR_fish$scientific_name == 'Citharichthys sordidus', ]
 match_id <- match(survey_data$trawl_id, subset_sanddab$trawl_id)
 survey_data$lncpue <- subset_sanddab$lncpue[match_id]
@@ -1089,7 +1089,7 @@ pdf("../final_figs/manuscript2_fig_tables/sanddab_maps.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_sdab,
+species_grid_pdf(eighties_logbooks_sdab,
                  nineties_logbooks_sdab, "Logbook Pacific Sanddab \n 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1103,10 +1103,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(nineties_logbooks_sdab, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_sdab,
+species_grid_pdf(tens_logbooks_sdab,
                  nineties_logbooks_sdab, "Logbook Pacific Sanddab \n 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_surveys_sdab,
+species_grid_pdf(eighties_surveys_sdab,
                  nineties_surveys_sdab, "Survey Pacific Sanddab \n 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1120,7 +1120,7 @@ image.plot(legend.only = T,
            zlim = c(0, max(nineties_surveys_sdab, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_surveys_sdab,
+species_grid_pdf(tens_surveys_sdab,
                  nineties_surveys_sdab, "Survey Pacific Sanddab \n 2010s", bathy_dat, bathy_mat)
 dev.off()
 
@@ -1251,7 +1251,7 @@ dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_change.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
 
-### Survey Maps ----
+### Survey ----
 subset_english <- OR_fish[OR_fish$scientific_name == 'Parophrys vetulus', ]
 match_id <- match(survey_data$trawl_id, subset_english$trawl_id)
 survey_data$lncpue <- subset_english$lncpue[match_id]
@@ -1365,7 +1365,7 @@ pdf("../final_figs/manuscript2_fig_tables/english_maps.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_engl,
+species_grid_pdf(eighties_logbooks_engl,
                  tens_logbooks_engl, "Logbook English Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1379,10 +1379,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_engl, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_engl,
+species_grid_pdf(tens_logbooks_engl,
                  tens_logbooks_engl, "Logbook English Sole 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_surveys_engl,
+species_grid_pdf(eighties_surveys_engl,
                  eighties_surveys_engl, "Survey English Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1396,7 +1396,7 @@ image.plot(legend.only = T,
            zlim = c(0, max(eighties_surveys_engl, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_surveys_engl,
+species_grid_pdf(tens_surveys_engl,
                  eighties_surveys_engl, "Survey English Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
@@ -1527,7 +1527,7 @@ dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_change.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
 
-### Survey Maps ----
+### Survey ----
 subset_sandsole <- OR_fish[OR_fish$scientific_name == 'Psettichthys melanostictus', ]
 match_id <- match(survey_data$trawl_id, subset_sandsole$trawl_id)
 survey_data$lncpue <- subset_sandsole$lncpue[match_id]
@@ -1641,7 +1641,7 @@ pdf("../final_figs/manuscript2_fig_tables/sand_sole_maps.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_ssol,
+species_grid_pdf(eighties_logbooks_ssol,
                  tens_logbooks_ssol, "Logbook Sand Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1655,10 +1655,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_ssol, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_ssol,
+species_grid_pdf(tens_logbooks_ssol,
                  tens_logbooks_ssol, "Logbook Sand Sole 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_surveys_ssol,
+species_grid_pdf(eighties_surveys_ssol,
                  thousands_surveys_ssol, "Survey Sand Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1672,7 +1672,7 @@ image.plot(legend.only = T,
            zlim = c(0, max(thousands_surveys_ssol, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_surveys_ssol,
+species_grid_pdf(tens_surveys_ssol,
                  thousands_surveys_ssol, "Survey Sand Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
@@ -1803,7 +1803,7 @@ dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_change.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
 
-### Survey Maps ----
+### Survey ----
 subset_starry <- OR_fish[OR_fish$scientific_name == 'Platichthys stellatus', ]
 match_id <- match(survey_data$trawl_id, subset_starry$trawl_id)
 survey_data$lncpue <- subset_starry$lncpue[match_id]
@@ -1917,7 +1917,7 @@ pdf("../final_figs/manuscript2_fig_tables/starry_maps.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_ssol,
+species_grid_pdf(eighties_logbooks_ssol,
                  thousands_logbooks_ssol, "Logbook Starry Flounder \n 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1931,10 +1931,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(thousands_logbooks_ssol, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_ssol,
+species_grid_pdf(tens_logbooks_ssol,
                  thousands_logbooks_ssol, "Logbook Starry Flounder \n 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_surveys_ssol,
+species_grid_pdf(eighties_surveys_ssol,
                  thousands_surveys_ssol, "Survey Starry Flounder \n 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -1948,6 +1948,6 @@ image.plot(legend.only = T,
            zlim = c(0, max(thousands_surveys_ssol, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_surveys_ssol,
+species_grid_pdf(tens_surveys_ssol,
                  thousands_surveys_ssol, "Survey Starry Flounder \n 2010s", bathy_dat, bathy_mat)
 dev.off()
