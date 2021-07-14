@@ -31,7 +31,9 @@ loc_collocfn <- function(prey, pred) {
 }
 source("functions/biomass_fillpts.R")
 source("functions/biomass_grid.R")
-source("functions/overlap_map.R")
+source("functions/lic_map.R")
+source("functions/lic_sup.R")
+source("functions/spatial_lic.R")
 
 # For depth, import data and show contour on a map
 # .xyz option no longer available for download
