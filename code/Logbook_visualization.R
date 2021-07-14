@@ -30,6 +30,7 @@ source("functions/cpue_grid.R")
 source("functions/cpue_map.R")
 source("functions/depth_contours.R")
 source("functions/species_grid_pdf.R")
+source("functions/species_grid_sup.R")
 
 # For depth, import data and show contour on a map
 # .xyz option no longer available for download
@@ -467,6 +468,134 @@ species_grid_pdf(tens_logbooks_ptrl,
                  tens_logbooks_ptrl_winter, "Summer Petrale Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
+### Supplement Maps ----
+# Eight panel logbooks and surveys
+pdf("../final_figs/manuscript2_fig_tables/petrale_sole_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_ptrl,
+                 tens_logbooks_ptrl,
+                 "Logbook Petrale Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_ptrl, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_ptrl,
+                 tens_logbooks_ptrl,
+                 "Logbook Petrale Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_ptrl,
+                 tens_logbooks_ptrl,
+                 "Logbook Petrale Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_ptrl,
+                 tens_logbooks_ptrl,
+                 "Logbook Petrale Sole 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_surveys_ptrl,
+                 eighties_surveys_ptrl,
+                 "Survey Petrale Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_surveys_ptrl, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_surveys_ptrl,
+                 eighties_surveys_ptrl,
+                 "Survey Petrale Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_surveys_ptrl,
+                 eighties_surveys_ptrl,
+                 "Survey Petrale Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_surveys_ptrl,
+                 eighties_surveys_ptrl,
+                 "Survey Petrale Sole 2010s",
+                 bathy_dat, bathy_mat)
+dev.off()
+
+# Eight panel seasonality
+pdf("../final_figs/manuscript2_fig_tables/petrale_seasonal_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_ptrl_winter,
+                 tens_logbooks_ptrl_winter,
+                 "Winter Petrale Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_ptrl_winter,
+                 tens_logbooks_ptrl_winter,
+                 "Winter Petrale Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_ptrl_winter,
+                 tens_logbooks_ptrl_winter,
+                 "Winter Petrale Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_ptrl_winter,
+                 tens_logbooks_ptrl_winter,
+                 "Winter Petrale Sole 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_logbooks_ptrl,
+                 tens_logbooks_ptrl_winter,
+                 "Summer Petrale Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_ptrl,
+                 tens_logbooks_ptrl_winter,
+                 "Summer Petrale Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_ptrl,
+                 tens_logbooks_ptrl_winter,
+                 "Summer Petrale Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_ptrl,
+                 tens_logbooks_ptrl_winter,
+                 "Summer Petrale Sole 2010s",
+                 bathy_dat, bathy_mat)
+dev.off()
+
+
 ## Dover Sole ----
 ### Logbooks ----
 # Filter to just dover and survey months
@@ -813,7 +942,7 @@ pdf("../final_figs/manuscript2_fig_tables/dover_sole_winter.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(1980, 1990, eighties_logbooks_dovr_winter,
+species_grid_pdf(eighties_logbooks_dovr_winter,
                  tens_logbooks_dovr_winter, "Winter Dover Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -827,10 +956,10 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_dovr_winter,
+species_grid_pdf(tens_logbooks_dovr_winter,
                  tens_logbooks_dovr_winter, "Winter Dover Sole 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(1980, 1990, eighties_logbooks_dovr,
+species_grid_pdf(eighties_logbooks_dovr,
                  tens_logbooks_dovr_winter, "Summer Dover Sole 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -844,8 +973,135 @@ image.plot(legend.only = T,
            zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(2009, 2018, tens_logbooks_dovr,
+species_grid_pdf(tens_logbooks_dovr,
                  tens_logbooks_dovr_winter, "Summer Dover Sole 2010s", bathy_dat, bathy_mat)
+dev.off()
+
+### Supplement Maps ----
+# Eight panel logbooks and surveys
+pdf("../final_figs/manuscript2_fig_tables/dover_sole_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_dovr,
+                 tens_logbooks_dovr,
+                 "Logbook Dover Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_dovr, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_dovr,
+                 tens_logbooks_dovr,
+                 "Logbook Dover Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_dovr,
+                 tens_logbooks_dovr,
+                 "Logbook Dover Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_dovr,
+                 tens_logbooks_dovr,
+                 "Logbook Dover Sole 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_surveys_dovr,
+                 thousands_surveys_dovr,
+                 "Survey Dover Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(thousands_surveys_dovr, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_surveys_dovr,
+                 thousands_surveys_dovr,
+                 "Survey Dover Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_surveys_dovr,
+                 thousands_surveys_dovr,
+                 "Survey Dover Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_surveys_dovr,
+                 thousands_surveys_dovr,
+                 "Survey Dover Sole 2010s",
+                 bathy_dat, bathy_mat)
+dev.off()
+
+# Eight panel seasonality
+pdf("../final_figs/manuscript2_fig_tables/dover_seasonal_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_dovr_winter,
+                 tens_logbooks_dovr_winter,
+                 "Winter Dover Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_dovr_winter,
+                 tens_logbooks_dovr_winter,
+                 "Winter Dover Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_dovr_winter,
+                 tens_logbooks_dovr_winter,
+                 "Winter Dover Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_dovr_winter,
+                 tens_logbooks_dovr_winter,
+                 "Winter Dover Sole 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_logbooks_dovr,
+                 tens_logbooks_dovr_winter,
+                 "Summer Dover Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_dovr,
+                 tens_logbooks_dovr_winter,
+                 "Summer Dover Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_dovr,
+                 tens_logbooks_dovr_winter,
+                 "Summer Dover Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_dovr,
+                 tens_logbooks_dovr_winter,
+                 "Summer Dover Sole 2010s",
+                 bathy_dat, bathy_mat)
 dev.off()
 
 ## Pacific Sanddab ----
@@ -1124,6 +1380,70 @@ species_grid_pdf(tens_surveys_sdab,
                  nineties_surveys_sdab, "Survey Pacific Sanddab \n 2010s", bathy_dat, bathy_mat)
 dev.off()
 
+### Supplement Maps ----
+# Eight panel logbooks and surveys
+pdf("../final_figs/manuscript2_fig_tables/sanddab_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_sdab,
+                 nineties_logbooks_sdab,
+                 "Logbook Pacific Sanddab 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(nineties_logbooks_sdab, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_sdab,
+                 nineties_logbooks_sdab,
+                 "Logbook Pacific Sanddab 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_sdab,
+                 nineties_logbooks_sdab,
+                 "Logbook Pacific Sanddab 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_sdab,
+                 nineties_logbooks_sdab,
+                 "Logbook Pacific Sanddab 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_surveys_sdab,
+                 nineties_surveys_sdab,
+                 "Survey Pacific Sanddab 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(nineties_surveys_sdab, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_surveys_sdab,
+                 nineties_surveys_sdab,
+                 "Survey Pacific Sanddab 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_surveys_sdab,
+                 nineties_surveys_sdab,
+                 "Survey Pacific Sanddab 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_surveys_sdab,
+                 nineties_surveys_sdab,
+                 "Survey Pacific Sanddab 2010s",
+                 bathy_dat, bathy_mat)
+dev.off()
+
 ## English Sole ----
 ### Logbooks ----
 # Filter to just English sole and survey months
@@ -1400,6 +1720,70 @@ species_grid_pdf(tens_surveys_engl,
                  eighties_surveys_engl, "Survey English Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
+### Supplement Maps ----
+# Eight panel logbooks and surveys
+pdf("../final_figs/manuscript2_fig_tables/english_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_engl,
+                 tens_logbooks_engl,
+                 "Logbook English Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_engl, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_engl,
+                 tens_logbooks_engl,
+                 "Logbook English Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_engl,
+                 tens_logbooks_engl,
+                 "Logbook English Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_engl,
+                 tens_logbooks_engl,
+                 "Logbook English Sole 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_surveys_engl,
+                 eighties_surveys_engl,
+                 "Survey English Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_surveys_engl, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_surveys_engl,
+                 eighties_surveys_engl,
+                 "Survey English Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_surveys_engl,
+                 eighties_surveys_engl,
+                 "Survey English Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_surveys_engl,
+                 eighties_surveys_engl,
+                 "Survey English Sole 2010s",
+                 bathy_dat, bathy_mat)
+dev.off()
+
 ## Sand Sole ----
 ### Logbooks ----
 # Filter to just sand sole and survey months
@@ -1635,7 +2019,7 @@ dev.off()
 
 ### Manuscript Maps ----
 # Four panel maps
-pdf("../final_figs/manuscript2_fig_tables/sand_sole_maps.pdf",
+pdf("../final_figs/manuscript2_fig_tables/sandsole_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -1676,6 +2060,71 @@ species_grid_pdf(tens_surveys_ssol,
                  thousands_surveys_ssol, "Survey Sand Sole 2010s", bathy_dat, bathy_mat)
 dev.off()
 
+### Supplement Maps ----
+# Eight panel logbooks and surveys
+pdf("../final_figs/manuscript2_fig_tables/sandsole_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_ssol,
+                 tens_logbooks_ssol,
+                 "Logbook Sand Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(tens_logbooks_ssol, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_ssol,
+                 tens_logbooks_ssol,
+                 "Logbook Sand Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_ssol,
+                 tens_logbooks_ssol,
+                 "Logbook Sand Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_ssol,
+                 tens_logbooks_ssol,
+                 "Logbook Sand Sole 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_surveys_ssol,
+                 thousands_surveys_ssol,
+                 "Survey Sand Sole 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(thousands_surveys_ssol, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_surveys_ssol,
+                 thousands_surveys_ssol,
+                 "Survey Sand Sole 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_surveys_ssol,
+                 thousands_surveys_ssol,
+                 "Survey Sand Sole 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_surveys_ssol,
+                 thousands_surveys_ssol,
+                 "Survey Sand Sole 2010s",
+                 bathy_dat, bathy_mat)
+dev.off()
+
+
 ## Starry Flounder ----
 ### Logbooks ----
 # Filter to just Starry Flounder and survey months
@@ -1707,41 +2156,41 @@ cpue_fillpts(subset_starry_logbook, 2010, 2017)
 
 ## Decade data
 # Make sure grid chunk has been run
-eighties_logbooks_ssol <- cpue_grid(subset_starry_logbook, 1981, 1989)
-nineties_logbooks_ssol <- cpue_grid(subset_starry_logbook, 1990, 1999)
-thousands_logbooks_ssol <- cpue_grid(subset_starry_logbook, 2000, 2009)
-tens_logbooks_ssol <- cpue_grid(subset_starry_logbook, 2010, 2017)
+eighties_logbooks_stry <- cpue_grid(subset_starry_logbook, 1981, 1989)
+nineties_logbooks_stry <- cpue_grid(subset_starry_logbook, 1990, 1999)
+thousands_logbooks_stry <- cpue_grid(subset_starry_logbook, 2000, 2009)
+tens_logbooks_stry <- cpue_grid(subset_starry_logbook, 2010, 2017)
 
 ## Make maps
 # Change legend depending on maximum lncpue - use matrix with highest CPUE
-max(eighties_logbooks_ssol, na.rm = T)
-max(nineties_logbooks_ssol, na.rm = T)
-max(thousands_logbooks_ssol, na.rm = T) # max
-max(tens_logbooks_ssol, na.rm = T)
+max(eighties_logbooks_stry, na.rm = T)
+max(nineties_logbooks_stry, na.rm = T)
+max(thousands_logbooks_stry, na.rm = T) # max
+max(tens_logbooks_stry, na.rm = T)
 
 windows(width = 15, height = 9)
 par(mfrow = c(1, 4),
     family = 'serif',
     mar = c(4, 5, 3, .3) + .1)
-cpue_map(eighties_logbooks_ssol, thousands_logbooks_ssol, "PurpOr", "Logbook Starry Flounder 1980s", bathy_dat, bathy_mat)
-cpue_map(nineties_logbooks_ssol, thousands_logbooks_ssol, "PurpOr", "Logbook Starry Flounder 1990s", bathy_dat, bathy_mat)
-cpue_map(thousands_logbooks_ssol, thousands_logbooks_ssol, "PurpOr", "Logbook Starry Flounder 2000s", bathy_dat, bathy_mat)
-cpue_map(tens_logbooks_ssol, thousands_logbooks_ssol, "PurpOr", "Logbook Starry Flounder 2010s", bathy_dat, bathy_mat)
+cpue_map(eighties_logbooks_stry, thousands_logbooks_stry, "PurpOr", "Logbook Starry Flounder 1980s", bathy_dat, bathy_mat)
+cpue_map(nineties_logbooks_stry, thousands_logbooks_stry, "PurpOr", "Logbook Starry Flounder 1990s", bathy_dat, bathy_mat)
+cpue_map(thousands_logbooks_stry, thousands_logbooks_stry, "PurpOr", "Logbook Starry Flounder 2000s", bathy_dat, bathy_mat)
+cpue_map(tens_logbooks_stry, thousands_logbooks_stry, "PurpOr", "Logbook Starry Flounder 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/starry_fourpanel_logs.tiff",
          width = 15, height = 9, units = "in", res = 200)
 dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_ssol <- depth_contours(subset_starry_logbook, 1989, "1980s")
-logs_nineties_depth_ssol <- depth_contours(subset_starry_logbook, 1999, "1990s")
-logs_thousands_depth_ssol <- depth_contours(subset_starry_logbook, 2009, "2000s")
-logs_tens_depth_ssol <- depth_contours(subset_starry_logbook, 2017, "2010s")
+logs_eighties_depth_stry <- depth_contours(subset_starry_logbook, 1989, "1980s")
+logs_nineties_depth_stry <- depth_contours(subset_starry_logbook, 1999, "1990s")
+logs_thousands_depth_stry <- depth_contours(subset_starry_logbook, 2009, "2000s")
+logs_tens_depth_stry <- depth_contours(subset_starry_logbook, 2017, "2010s")
 
 windows()
-grid.arrange(logs_eighties_depth_ssol,
-             logs_nineties_depth_ssol,
-             logs_thousands_depth_ssol,
-             logs_tens_depth_ssol,
+grid.arrange(logs_eighties_depth_stry,
+             logs_nineties_depth_stry,
+             logs_thousands_depth_stry,
+             logs_tens_depth_stry,
              ncol = 2,
              top = textGrob("Starry Flounder Logbook Depth Distribution",
                             gp = gpar(fontfamily = "serif",
@@ -1840,41 +2289,41 @@ cpue_fillpts(subset_starry_survey, 2010, 2018)
 
 ## Decade data
 # Make sure grid chunk has been run
-eighties_surveys_ssol <- cpue_grid(subset_starry_survey, 1980, 1989)
-nineties_surveys_ssol <- cpue_grid(subset_starry_survey, 1990, 1999)
-thousands_surveys_ssol <- cpue_grid(subset_starry_survey, 2000, 2009)
-tens_surveys_ssol <- cpue_grid(subset_starry_survey, 2010, 2018)
+eighties_surveys_stry <- cpue_grid(subset_starry_survey, 1980, 1989)
+nineties_surveys_stry <- cpue_grid(subset_starry_survey, 1990, 1999)
+thousands_surveys_stry <- cpue_grid(subset_starry_survey, 2000, 2009)
+tens_surveys_stry <- cpue_grid(subset_starry_survey, 2010, 2018)
 
 ## Make maps
 # Change legend depending on maximum lncpue - use matrix with highest CPUE
-max(eighties_surveys_ssol, na.rm = T)
-max(nineties_surveys_ssol, na.rm = T)
-max(thousands_surveys_ssol, na.rm = T) # max
-max(tens_surveys_ssol, na.rm = T)
+max(eighties_surveys_stry, na.rm = T)
+max(nineties_surveys_stry, na.rm = T)
+max(thousands_surveys_stry, na.rm = T) # max
+max(tens_surveys_stry, na.rm = T)
 
 windows(width = 15, height = 9)
 par(mfrow = c(1, 4),
     family = 'serif',
     mar = c(4, 5, 3, .3) + .1)
-cpue_map(eighties_surveys_ssol, thousands_surveys_ssol, "PurpOr", "Survey Starry Flounder 1980s", bathy_dat, bathy_mat)
-cpue_map(nineties_surveys_ssol, thousands_surveys_ssol, "PurpOr", "Survey Starry Flounder 1990s", bathy_dat, bathy_mat)
-cpue_map(thousands_surveys_ssol, thousands_surveys_ssol, "PurpOr", "Survey Starry Flounder 2000s", bathy_dat, bathy_mat)
-cpue_map(tens_surveys_ssol, thousands_surveys_ssol, "PurpOr", "Survey Starry Flounder 2010s", bathy_dat, bathy_mat)
+cpue_map(eighties_surveys_stry, thousands_surveys_stry, "PurpOr", "Survey Starry Flounder 1980s", bathy_dat, bathy_mat)
+cpue_map(nineties_surveys_stry, thousands_surveys_stry, "PurpOr", "Survey Starry Flounder 1990s", bathy_dat, bathy_mat)
+cpue_map(thousands_surveys_stry, thousands_surveys_stry, "PurpOr", "Survey Starry Flounder 2000s", bathy_dat, bathy_mat)
+cpue_map(tens_surveys_stry, thousands_surveys_stry, "PurpOr", "Survey Starry Flounder 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/starry_fourpanel_survey.tiff",
          width = 15, height = 9, units = "in", res = 200)
 dev.off()
 
 ## Depth distribution by year
-survey_eighties_depth_ssol <- depth_contours(subset_starry_survey, 1989, "1980s")
-survey_nineties_depth_ssol <- depth_contours(subset_starry_survey, 1999, "1990s")
-survey_thousands_depth_ssol <- depth_contours(subset_starry_survey, 2009, "2000s")
-survey_tens_depth_ssol <- depth_contours(subset_starry_survey, 2018, "2010s")
+survey_eighties_depth_stry <- depth_contours(subset_starry_survey, 1989, "1980s")
+survey_nineties_depth_stry <- depth_contours(subset_starry_survey, 1999, "1990s")
+survey_thousands_depth_stry <- depth_contours(subset_starry_survey, 2009, "2000s")
+survey_tens_depth_stry <- depth_contours(subset_starry_survey, 2018, "2010s")
 
 windows()
-grid.arrange(survey_eighties_depth_ssol,
-             survey_nineties_depth_ssol,
-             survey_thousands_depth_ssol,
-             survey_tens_depth_ssol,
+grid.arrange(survey_eighties_depth_stry,
+             survey_nineties_depth_stry,
+             survey_thousands_depth_stry,
+             survey_tens_depth_stry,
              ncol = 2,
              top = textGrob("Starry Flounder Survey Depth Distribution",
                             gp = gpar(fontfamily = "serif",
@@ -1917,8 +2366,8 @@ pdf("../final_figs/manuscript2_fig_tables/starry_maps.pdf",
 par(mfrow = c(2, 2),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-species_grid_pdf(eighties_logbooks_ssol,
-                 thousands_logbooks_ssol, "Logbook Starry Flounder \n 1980s",
+species_grid_pdf(eighties_logbooks_stry,
+                 thousands_logbooks_stry, "Logbook Starry Flounder \n 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
            col = viridis(100, option = "F", direction = -1),
@@ -1928,14 +2377,14 @@ image.plot(legend.only = T,
            axis.args = list(cex.axis = 1.6),
            legend.width = 0.5,
            legend.mar = 6,
-           zlim = c(0, max(thousands_logbooks_ssol, na.rm = T)),
+           zlim = c(0, max(thousands_logbooks_stry, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(tens_logbooks_ssol,
-                 thousands_logbooks_ssol, "Logbook Starry Flounder \n 2010s",
+species_grid_pdf(tens_logbooks_stry,
+                 thousands_logbooks_stry, "Logbook Starry Flounder \n 2010s",
                  bathy_dat, bathy_mat)
-species_grid_pdf(eighties_surveys_ssol,
-                 thousands_surveys_ssol, "Survey Starry Flounder \n 1980s",
+species_grid_pdf(eighties_surveys_stry,
+                 thousands_surveys_stry, "Survey Starry Flounder \n 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
            col = viridis(100, option = "F", direction = -1),
@@ -1945,9 +2394,73 @@ image.plot(legend.only = T,
            axis.args = list(cex.axis = 1.6),
            legend.width = 0.5,
            legend.mar = 6,
-           zlim = c(0, max(thousands_surveys_ssol, na.rm = T)),
+           zlim = c(0, max(thousands_surveys_stry, na.rm = T)),
            legend.args = list("ln(CPUE+1)",
                               side = 2, cex = 1.4))
-species_grid_pdf(tens_surveys_ssol,
-                 thousands_surveys_ssol, "Survey Starry Flounder \n 2010s", bathy_dat, bathy_mat)
+species_grid_pdf(tens_surveys_stry,
+                 thousands_surveys_stry, "Survey Starry Flounder \n 2010s", bathy_dat, bathy_mat)
+dev.off()
+
+### Supplement Maps ----
+# Eight panel logbooks and surveys
+pdf("../final_figs/manuscript2_fig_tables/starry_supplement.pdf",
+    width = 15,
+    height = 17)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+species_grid_sup(eighties_logbooks_stry,
+                 thousands_logbooks_stry,
+                 "Logbook Starry Flounder 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(thousands_logbooks_stry, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_logbooks_stry,
+                 thousands_logbooks_stry,
+                 "Logbook Starry Flounder 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_logbooks_stry,
+                 thousands_logbooks_stry,
+                 "Logbook Starry Flounder 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_logbooks_stry,
+                 thousands_logbooks_stry,
+                 "Logbook Starry Flounder 2010s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(eighties_surveys_stry,
+                 thousands_surveys_stry,
+                 "Survey Starry Flounder 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "F", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.79, .85, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(thousands_surveys_stry, na.rm = T)),
+           legend.args = list("ln(CPUE+1)",
+                              side = 2, cex = 1.2))
+species_grid_sup(nineties_surveys_stry,
+                 thousands_surveys_stry,
+                 "Survey Starry Flounder 1990s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(thousands_surveys_stry,
+                 thousands_surveys_stry,
+                 "Survey Starry Flounder 2000s",
+                 bathy_dat, bathy_mat)
+species_grid_sup(tens_surveys_stry,
+                 thousands_surveys_stry,
+                 "Survey Starry Flounder 2010s",
+                 bathy_dat, bathy_mat)
 dev.off()
