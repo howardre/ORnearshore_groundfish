@@ -1,3 +1,8 @@
+### Title: Local Index of Collocation
+### Purpose: Determine overlap of the data sets
+### Date Created: 07/09/2020
+
+## Load libraries, functions, and data ----
 library(dplyr)
 library(tidyr)
 library(reshape)
@@ -7,326 +12,796 @@ library(mapdata)
 library(sgeostat)
 library(fields)
 
-setwd("C:/Users/howar/Documents/Oregon State/Thesis/Logbook Data/Logbook")
-load("logbooks_corrected")
+# Data
+setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
+load("../data/ODFW_data/logbooks_corrected")
+load("../data/ODFW_data/fish_tickets_final")
+load('../data/NMFS_data/trawl_data')
+load('../data/NMFS_data/OR_fish')
+survey_data <- trawl_data
+remove(trawl_data)
 
-bathy.dat<-read.table('etopo1.xyz',sep='')
-names(bathy.dat)<-c('lon','lat','depth')
-bathy.dat$depth[bathy.dat$depth>0]<-NA
-head(bathy.dat)
-bathy.mat<-matrix(bathy.dat$depth,nrow=length(unique(bathy.dat$lon)),ncol=length(unique(bathy.dat$lat)))[,order(unique(bathy.dat$lat))]
-
-#### Logbooks
-
-#Filter to just starry and create p/a and year columns
-subset_starry<-combined[combined$species=='STRY_ADJ',]
-
-# Filter to just survey months
-subset_starry$month_day <- as.numeric(format(subset_starry$TOWDATE, '%m%d'))
-subset_starry <- subset_starry[subset_starry$month_day>=517&subset_starry$month_day<= 929,]
-subset_starry <- subset_starry[subset_starry$depth<=-5,]
-subset_starry$kg_caught <- subset_starry$species_weight*0.4535924
-subset_starry <- subset_starry[!subset_starry$DURATION==0,]
-subset_starry$CPUE <- subset_starry$kg_caught/subset_starry$DURATION
-
-nlat=20#determine resolution of grid
-nlon=15
-latd=seq(42,47,length.out=nlat)
-lond=seq(-125,-123.9,length.out=nlon)
-
-grid.lon=data.frame(
-  lon1=rep(lond[-length(lond)],(nlat-1)),
-  lon2=rep(lond[-1],(nlat-1)),
-  lon3=rep(lond[-1],(nlat-1)),
-  lon4=rep(lond[-length(lond)],(nlat-1)))#make dataframe of just longitude
-
-grid.lat=data.frame(
-  lat1=sort(rep(latd[-length(latd)],(nlon-1))),
-  lat2=sort(rep(latd[-length(latd)],(nlon-1))),
-  lat3=sort(rep(latd[-1],(nlon-1))),
-  lat4=sort(rep(latd[-1],(nlon-1))))#lat dataframe
-
-## Decades
-# 80s
-dev.new(width=4,height=10)
-plot(subset_starry$lon[subset_starry$year>1980&subset_starry$year<1990],subset_starry$lat[subset_starry$year>1980&subset_starry$year<1990],
-     pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations1=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations1)){
-  tmp=in.chull(subset_starry$lon[subset_starry$year>1980&subset_starry$year<1990],
-               subset_starry$lat[subset_starry$year>1980&subset_starry$year<1990],grid.lon[i,],grid.lat[i,])
-  n.stations1[i]=(sum(subset_starry$CPUE[subset_starry$year>1980&subset_starry$year<1990]*tmp)/sum(1*tmp))/
-    (sum(subset_starry$CPUE[subset_starry$year>1980&subset_starry$year<1990])) #This gives proportion of biomass per grid cell (divide avg. weight for cell by biomass for that decade)
-  points(subset_starry$longitude[tmp],subset_starry$latitude[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-# 90s
-dev.new(width=4,height=10)
-plot(subset_starry$lon[subset_starry$year>1989&subset_starry$year<2000],subset_starry$lat[subset_starry$year>1989&subset_starry$year<2000],
-     pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations2=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations2)){
-  tmp=in.chull(subset_starry$lon[subset_starry$year>1989&subset_starry$year<2000],
-               subset_starry$lat[subset_starry$year>1989&subset_starry$year<2000],grid.lon[i,],grid.lat[i,])
-  n.stations2[i]=(sum(subset_starry$CPUE[subset_starry$year>1989&subset_starry$year<2000]*tmp)/sum(1*tmp))/
-    (sum(subset_starry$CPUE[subset_starry$year>1989&subset_starry$year<2000])) #This gives proportion of biomass per grid cell
-  points(subset_starry$lon[tmp],subset_starry$lat[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-# 00s
-dev.new(width=4,height=10)
-plot(subset_starry$lon[subset_starry$year>1999&subset_starry$year<2010],subset_starry$lat[subset_starry$year>1999&subset_starry$year<2010],
-     pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations3=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations3)){
-  tmp=in.chull(subset_starry$lon[subset_starry$year>1999&subset_starry$year<2010],
-               subset_starry$lat[subset_starry$year>1999&subset_starry$year<2010],grid.lon[i,],grid.lat[i,])
-  n.stations3[i]=(sum(subset_starry$CPUE[subset_starry$year>1999&subset_starry$year<2010]*tmp)/sum(1*tmp))/
-    (sum(subset_starry$CPUE[subset_starry$year>1999&subset_starry$year<2010])) #This gives proportion of biomass per grid cell
-  points(subset_starry$lon[tmp],subset_starry$lat[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-# 10s
-dev.new(width=4,height=10)
-plot(subset_starry$lon[subset_starry$year>2009&subset_starry$year<2018],subset_starry$lat[subset_starry$year>2009&subset_starry$year<2018],
-     pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations4=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations4)){
-  tmp=in.chull(subset_starry$lon[subset_starry$year>2009&subset_starry$year<2018],
-               subset_starry$lat[subset_starry$year>2009&subset_starry$year<2018],grid.lon[i,],grid.lat[i,])
-  n.stations4[i]=(sum(subset_starry$CPUE[subset_starry$year>2009&subset_starry$year<2018]*tmp)/sum(1*tmp))/
-    (sum(subset_starry$CPUE[subset_starry$year>2009&subset_starry$year<2018])) #This gives proportion of biomass per grid cell
-  points(subset_starry$lon[tmp],subset_starry$lat[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-
-# decades
-z.lat<-(latd[1:(length(latd)-1)]+latd[2:length(latd)])/2
-z.lon<-(lond[1:(length(lond)-1)]+lond[2:length(lond)])/2
-eighties.data.logbooks<-length(unique(subset_starry$year[subset_starry$year>1980&subset_starry$year<1990]))
-z.matrix1.logbooks<-matrix(n.stations1,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/eighties.data.logbooks
-nineties.data.logbooks<-length(unique(subset_starry$year[subset_starry$year>1989&subset_starry$year<2000]))
-z.matrix2.logbooks<-matrix(n.stations2,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/nineties.data.logbooks
-thousands.data.logbooks<-length(unique(subset_starry$year[subset_starry$year>1999&subset_starry$year<2010]))
-z.matrix3.logbooks<-matrix(n.stations3,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/thousands.data.logbooks
-tens.data.logbooks<-length(unique(subset_starry$year[subset_starry$year>2009&subset_starry$year<2018]))
-z.matrix4.logbooks<-matrix(n.stations4,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/tens.data.logbooks
-
-
-#### Survey
-load('/Users/howar/Documents/Oregon State/Thesis/Data Visualization/trawl_data')
-load('/Users/howar/Documents/Oregon State/Thesis/Data Visualization/OR_fish')
-
-subset_starry.1<-OR_fish[OR_fish$scientific_name=='Platichthys stellatus',]
-match_id<-match(trawl_data$trawl_id,subset_starry.1$trawl_id)
-trawl_data$CPUE<-subset_starry.1$cpue_kg[match_id]
-subset_starry.1 <- trawl_data
-subset_starry.1$CPUE[is.na(subset_starry.1$CPUE)]<-0
-
-# Grids
-nlat=20#determine resolution of grid
-nlon=15
-latd=seq(42,47,length.out=nlat)
-lond=seq(-125,-123.9,length.out=nlon)
-
-
-grid.lon=data.frame(
-  lon1=rep(lond[-length(lond)],(nlat-1)),
-  lon2=rep(lond[-1],(nlat-1)),
-  lon3=rep(lond[-1],(nlat-1)),
-  lon4=rep(lond[-length(lond)],(nlat-1)))#make dataframe of just longitude
-
-grid.lat=data.frame(
-  lat1=sort(rep(latd[-length(latd)],(nlon-1))),
-  lat2=sort(rep(latd[-length(latd)],(nlon-1))),
-  lat3=sort(rep(latd[-1],(nlon-1))),
-  lat4=sort(rep(latd[-1],(nlon-1))))#lat dataframe
-
-### pres
-### Used log(x+1) pres for kilograms
-dev.new(width=4,height=10)
-plot(subset_starry.1$longitude[subset_starry.1$year>1979&subset_starry.1$year<1990],subset_starry.1$latitude[subset_starry.1$year>1979&subset_starry.1$year<1990],
-     pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations5=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations5)){
-  tmp=in.chull(subset_starry.1$longitude[subset_starry.1$year>1979&subset_starry.1$year<1990],
-               subset_starry.1$latitude[subset_starry.1$year>1979&subset_starry.1$year<1990],grid.lon[i,],grid.lat[i,])
-  n.stations5[i]=(sum(subset_starry.1$CPUE[subset_starry.1$year>1979&subset_starry.1$year<1990]*tmp)/sum(1*tmp))/
-    (sum(subset_starry.1$CPUE[subset_starry.1$year>1979&subset_starry.1$year<1990]))#This decides what goes into each grid pixel
-  points(subset_starry.1$longitude[tmp],subset_starry.1$latitude[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-## 90s
-dev.new(width=4,height=10)
-plot(subset_starry.1$longitude[subset_starry.1$year>1989&subset_starry.1$year<2000],subset_starry.1$latitude[subset_starry.1$year>1989&subset_starry.1$year<2000],
-     pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations6=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations6)){
-  tmp=in.chull(subset_starry.1$longitude[subset_starry.1$year>1989&subset_starry.1$year<2000],
-               subset_starry.1$latitude[subset_starry.1$year>1989&subset_starry.1$year<2000],grid.lon[i,],grid.lat[i,])
-  n.stations6[i]=(sum(subset_starry.1$CPUE[subset_starry.1$year>1989&subset_starry.1$year<2000]*tmp)/sum(1*tmp))/
-    (sum(subset_starry.1$CPUE[subset_starry.1$year>1989&subset_starry.1$year<2000]))#This decides what goes into each grid pixel
-  points(subset_starry.1$longitude[tmp],subset_starry.1$latitude[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-## 00s
-dev.new(width=4,height=10)
-plot(subset_starry.1$longitude[subset_starry.1$year>1999&subset_starry.1$year<2010],subset_starry.1$latitude[subset_starry.1$year>1999&subset_starry.1$year<2010],pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations7=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations7)){
-  tmp=in.chull(subset_starry.1$longitude[subset_starry.1$year>1999&subset_starry.1$year<2010],
-               subset_starry.1$latitude[subset_starry.1$year>1999&subset_starry.1$year<2010],grid.lon[i,],grid.lat[i,])
-  n.stations7[i]=(sum(subset_starry.1$CPUE[subset_starry.1$year>1999&subset_starry.1$year<2010]*tmp)/sum(1*tmp))/
-    (sum(subset_starry.1$CPUE[subset_starry.1$year>1999&subset_starry.1$year<2010]))#This decides what goes into each grid pixel
-  points(subset_starry.1$longitude[tmp],subset_starry.1$latitude[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-## 10s
-dev.new(width=4,height=10)
-plot(subset_starry.1$longitude[subset_starry.1$year>2009&subset_starry.1$year<2018],subset_starry.1$latitude[subset_starry.1$year>2009&subset_starry.1$year<2018],pch='.',ylim=c(42,47),xlim=c(-125,-123.9))
-n.stations8=NA*(1:nrow(grid.lon))
-
-for(i in 1:length(n.stations8)){
-  tmp=in.chull(subset_starry.1$longitude[subset_starry.1$year>2009&subset_starry.1$year<2018],
-               subset_starry.1$latitude[subset_starry.1$year>2009&subset_starry.1$year<2018],grid.lon[i,],grid.lat[i,])
-  n.stations8[i]=(sum(subset_starry.1$CPUE[subset_starry.1$year>2009&subset_starry.1$year<2018]*tmp)/sum(1*tmp))/
-    (sum(subset_starry.1$CPUE[subset_starry.1$year>2009&subset_starry.1$year<2018]))#This decides what goes into each grid pixel
-  points(subset_starry.1$longitude[tmp],subset_starry.1$latitude[tmp],col=i,pch=16)
-  polygon(grid.lon[i,],grid.lat[i,])
-}
-
-##ALL YEARS
-years.data<-length(unique(subset_starry.1$year))
-z.lat<-(latd[1:(length(latd)-1)]+latd[2:length(latd)])/2
-z.lon<-(lond[1:(length(lond)-1)]+lond[2:length(lond)])/2
-
-## decades
-eighties.data.survey<-length(unique(subset_starry.1$year[subset_starry.1$year>1980&subset_starry.1$year<1990]))
-z.matrix1.survey<-matrix(n.stations5,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/eighties.data.survey
-nineties.data.survey<-length(unique(subset_starry.1$year[subset_starry.1$year>1989&subset_starry.1$year<2000]))
-z.matrix2.survey<-matrix(n.stations6,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/nineties.data.survey
-thousands.data.survey<-length(unique(subset_starry.1$year[subset_starry.1$year>1999&subset_starry.1$year<2010]))
-z.matrix3.survey<-matrix(n.stations7,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/thousands.data.survey
-tens.data.survey<-length(unique(subset_starry.1$year[subset_starry.1$year>2009&subset_starry.1$year<2018]))
-z.matrix4.survey<-matrix(n.stations8,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/tens.data.survey
-
-
-#### Spatial indicators
+# Functions
 # local index of collocation function (just gives singular value)
 loc_collocfn <- function(prey, pred) {
-  p_prey <- prey/sum(prey, na.rm = T)
-  p_pred <- pred/sum(pred, na.rm = T)
-  sum(p_prey*p_pred, na.rm = T)/(sqrt(sum(p_prey^2, na.rm = T)*sum(p_pred^2, na.rm = T)))
+  p_prey <- prey / sum(prey, na.rm = T)
+  p_pred <- pred / sum(pred, na.rm = T)
+  sum(p_prey * p_pred, na.rm = T) / (sqrt(sum(p_prey ^ 2, na.rm = T) * sum(p_pred ^
+                                                                             2, na.rm = T)))
 }
+source("functions/biomass_fillpts.R")
+source("functions/biomass_grid.R")
+source("functions/overlap_map.R")
 
-# local index of collocation per decade for starry sole overall
-loc_collocfn(z.matrix1.logbooks, z.matrix1.survey)
-loc_collocfn(z.matrix2.logbooks, z.matrix2.survey)
-loc_collocfn(z.matrix3.logbooks, z.matrix3.survey)
-loc_collocfn(z.matrix4.logbooks, z.matrix4.survey)
+# For depth, import data and show contour on a map
+# .xyz option no longer available for download
+bathy_dat <- read.table("../data/etopo1.xyz", sep = '')
+names(bathy_dat) <- c('lon', 'lat', 'depth')
+bathy_dat$depth[bathy_dat$depth > 0] <- NA # Avoid points above water
+bathy_mat <- matrix(bathy_dat$depth,
+                    nrow = length(unique(bathy_dat$lon)),
+                    ncol = length(unique(bathy_dat$lat)))[, order(unique(bathy_dat$lat))]
 
-# Map out cell values for LIC
-eighties.lic <- as.matrix(z.matrix1.logbooks*z.matrix1.survey, na.rm = T)/(sqrt(sum(z.matrix1.logbooks^2, na.rm = T)*sum(z.matrix1.survey^2, na.rm = T)))
-nineties.lic <- as.matrix(z.matrix2.logbooks*z.matrix2.survey, na.rm = T)/(sqrt(sum(z.matrix2.logbooks^2, na.rm = T)*sum(z.matrix2.survey^2, na.rm = T)))
-thousands.lic <- as.matrix(z.matrix3.logbooks*z.matrix3.survey, na.rm = T)/(sqrt(sum(z.matrix3.logbooks^2, na.rm = T)*sum(z.matrix3.survey^2, na.rm = T)))
-tens.lic <- as.matrix(z.matrix4.logbooks*z.matrix4.survey, na.rm = T)/(sqrt(sum(z.matrix4.logbooks^2, na.rm = T)*sum(z.matrix4.survey^2, na.rm = T)))
+## Prepare data and grids ----
+# Logbooks: convert CPUE to kg/hr and ln(x+1), add other necessary columns
+logbooks_final$kg_caught <- logbooks_final$species_weight * 0.4535924
+logbooks_final <- logbooks_final[!logbooks_final$DURATION == 0, ] # remove tows with no trawl duration
+logbooks_final$CPUE <- logbooks_final$kg_caught / logbooks_final$DURATION
+logbooks_final <- logbooks_final[!is.na(logbooks_final$CPUE), ]
+logbooks_final$lncpue <- log(logbooks_final$CPUE + 1)
+logbooks_final <- logbooks_final[logbooks_final$depth <= -5, ] # remove unreasonably shallow tows
+logbooks_final$pres <- 1 * (logbooks_final$species_weight > 0)
+logbooks_final$month_day <- as.numeric(format(logbooks_final$TOWDATE, '%m%d'))
+logbooks_final <- logbooks_final[logbooks_final$month_day >= 517 &
+                                 logbooks_final$month_day <= 929, ]
 
-n.stations1<-matrix(n.stations1,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/eighties.data.logbooks
-n.stations2<-matrix(n.stations2,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/nineties.data.logbooks
-n.stations3<-matrix(n.stations3,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/thousands.data.logbooks
-n.stations4<-matrix(n.stations4,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/tens.data.logbooks
-n.stations5<-matrix(n.stations5,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/eighties.data.survey
-n.stations6<-matrix(n.stations6,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/nineties.data.survey
-n.stations7<-matrix(n.stations7,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/thousands.data.survey
-n.stations8<-matrix(n.stations8,ncol=length(z.lat),nrow=length(z.lon),byrow=F)/tens.data.survey
+# Survey: fill any NAs with 0s, rename columns to match logbooks, filter out columns
+OR_fish$lncpue[is.na(OR_fish$lncpue)] <- 0
+OR_fish$cpue_kg[is.na(OR_fish$cpue_kg)] <- 0
+OR_fish$total_catch_wt_kg[is.na(OR_fish$total_catch_wt_kg)] <- 0
+names(OR_fish)[names(OR_fish) == "total_catch_wt_kg"] <- "catch"
+names(OR_fish)[names(OR_fish) == "cpue_kg"] <- "CPUE"
+OR_fish <- select(OR_fish, scientific_name, catch, CPUE, lncpue, year, trawl_id)
+OR_fish$pres <- 1 * (OR_fish$catch > 0)
 
-eighties.lic[is.nan(n.stations5)]<- 0
-eighties.lic[is.nan(n.stations1)]<- NA
-nineties.lic[is.nan(n.stations6)]<- 0
-nineties.lic[is.nan(n.stations2)]<- NA
-thousands.lic[is.nan(n.stations7)]<- 0
-thousands.lic[is.nan(n.stations3)]<- NA
-tens.lic[is.nan(n.stations8)]<- 0
-tens.lic[is.nan(n.stations4)]<- NA
+names(survey_data)[names(survey_data) == "longitude"] <- "lon"
+names(survey_data)[names(survey_data) == "latitude"] <- "lat"
+names(survey_data)[names(survey_data) == "depth_m"] <- "depth"
+survey_data$depth <- -abs(survey_data$depth)
 
+# Make grid for the map panels
+nlat = 20 # determine resolution of grid
+nlon = 15
+latd = seq(42, 47, length.out = nlat)
+lond = seq(-125, -123.9, length.out = nlon)
 
-windows(width=15,height=9)
-par(mfrow=c(1,4),family = 'serif', mar=c(4,5,3,.3)+.1)
+grid_lon = data.frame(
+  lon1 = rep(lond[-length(lond)], (nlat - 1)),
+  lon2 = rep(lond[-1], (nlat - 1)),
+  lon3 = rep(lond[-1], (nlat - 1)),
+  lon4 = rep(lond[-length(lond)], (nlat - 1))) # make dataframe of just longitude
 
-image(z.lon,z.lat,eighties.lic,col=hcl.colors(40, "viridis", rev=F),xlim=c(-125,-123.6),ylim=c(42,47), main="LIC 1980s",
-           ylab=expression(paste("Latitude ("^0,'N)')), xlab=expression(paste("Longitude ("^0,'W)')), zlim = c(0,0.035))
-map("worldHires",fill=T,col="grey",add=T)
-image.plot(legend.only=T, col=hcl.colors(40, "viridis", rev=F), legend.shrink = 0.2, smallplot = c(.76,.81,.09,.25), 
-           legend.cex = 0.7, axis.args=list(cex.axis = 0.9), legend.width = 1, zlim = c(0,0.035), legend.lab = "LIC")
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-55,col= "gray40",add=T)
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-200,col= "gray40",add=T)
-points(-124.0535,44.6368, pch=20)
-text(-124.0535,44.6368,"Newport", adj=c(0,1.2))
-points(-123.8313,46.1879, pch=20)
-text(-123.88028,46.13361,"Astoria", adj=c(0,1.2))
-points(-124.3,43.3, pch=20)
-text(-124.3,43.3,"Charleston", adj=c(0,1.2))
+grid_lat = data.frame(
+  lat1 = sort(rep(latd[-length(latd)], (nlon - 1))),
+  lat2 = sort(rep(latd[-length(latd)], (nlon - 1))),
+  lat3 = sort(rep(latd[-1], (nlon - 1))),
+  lat4 = sort(rep(latd[-1], (nlon - 1)))) # lat dataframe
 
-image(z.lon,z.lat,nineties.lic,col=hcl.colors(40, "viridis", rev=F), ylab=expression(paste("Latitude ("^0,'N)')), xlab=expression(paste("Longitude ("^0,'W)')),
-           xlim=c(-125,-123.6),ylim=c(42,47), main="LIC 1990s", zlim = c(0,0.035))
-map("worldHires",fill=T,col="grey",add=T)
-image.plot(legend.only=T, col=hcl.colors(40, "viridis", rev=F), legend.shrink = 0.2, smallplot = c(.76,.81,.09,.25), 
-           legend.cex = 0.7, axis.args=list(cex.axis = 0.9), legend.width = 1, zlim = c(0,0.035), legend.lab = "LIC")
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-55,col= "gray40",add=T)
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-200,col= "gray40",add=T)
-points(-124.0535,44.6368, pch=20)
-text(-124.0535,44.6368,"Newport", adj=c(0,1.2))
-points(-123.8313,46.1879, pch=20)
-text(-123.88028,46.13361,"Astoria", adj=c(0,1.2))
-points(-124.3,43.3, pch=20)
-text(-124.3,43.3,"Charleston", adj=c(0,1.2))
+zlat <- (latd[1:(length(latd) - 1)] + latd[2:length(latd)]) / 2
+zlon <- (lond[1:(length(lond) - 1)] + lond[2:length(lond)]) / 2
 
-image(z.lon,z.lat,thousands.lic,col=hcl.colors(40, "viridis", rev=F), ylab=expression(paste("Latitude ("^0,'N)')), xlab=expression(paste("Longitude ("^0,'W)')),
-           xlim=c(-125,-123.6),ylim=c(42,47), main="LIC 2000s", zlim = c(0,0.035))
-map("worldHires",fill=T,col="grey",add=T)
-image.plot(legend.only=T, col=hcl.colors(40, "viridis", rev=F), legend.shrink = 0.2, smallplot = c(.76,.81,.09,.25), 
-           legend.cex = 0.7, axis.args=list(cex.axis = 0.9), legend.width = 1, zlim = c(0,0.035), legend.lab = "LIC")
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-55,col= "gray40",add=T)
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-200,col= "gray40",add=T)
-points(-124.0535,44.6368, pch=20)
-text(-124.0535,44.6368,"Newport", adj=c(0,1.2))
-points(-123.8313,46.1879, pch=20)
-text(-123.88028,46.13361,"Astoria", adj=c(0,1.2))
-points(-124.3,43.3, pch=20)
-text(-124.3,43.3,"Charleston", adj=c(0,1.2))
+## Petrale Sole ----
+# Filter to just petrale
+logbook_petrale <- logbooks_final[logbooks_final$species == 'PTRL_ADJ', ]
 
-image(z.lon,z.lat,tens.lic,col=hcl.colors(40, "viridis", rev=F), ylab=expression(paste("Latitude ("^0,'N)')), xlab=expression(paste("Longitude ("^0,'W)')),
-           xlim=c(-125,-123.6),ylim=c(42,47), main="LIC 2010s", zlim = c(0,0.035))
-map("worldHires",fill=T,col="grey",add=T)
-image.plot(legend.only=T, col=hcl.colors(40, "viridis", rev=F), legend.shrink = 0.2, smallplot = c(.76,.81,.09,.25), 
-           legend.cex = 0.7, axis.args=list(cex.axis = 0.9), legend.width = 1, zlim = c(0,0.035), legend.lab = "LIC")
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-55,col= "gray40",add=T)
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat, lwd=1, 
-        levels=-200,col= "gray40",add=T)
-points(-124.0535,44.6368, pch=20)
-text(-124.0535,44.6368,"Newport", adj=c(0,1.2))
-points(-123.8313,46.1879, pch=20)
-text(-123.88028,46.13361,"Astoria", adj=c(0,1.2))
-points(-124.3,43.3, pch=20)
-text(-124.3,43.3,"Charleston", adj=c(0,1.2))
+subset_petrale <- OR_fish[OR_fish$scientific_name == 'Eopsetta jordani', ]
+match_id <- match(survey_data$trawl_id, subset_petrale$trawl_id)
+survey_data$CPUE <- subset_petrale$CPUE[match_id]
+survey_petrale <- survey_data
+survey_petrale$CPUE[is.na(survey_petrale$CPUE)] <- 0
+
+### Logbooks
+# Decade grids fill with proportion of biomass in each cell for corresponding points
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_petrale, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_petrale, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_petrale, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_petrale, 2010, 2017)
+
+# Fill decade grids with data
+eighties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1981, 1989)
+nineties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1990, 1999)
+thousands_logbooks_ptrl <- biomass_grid(logbook_petrale, 2000, 2009)
+tens_logbooks_ptrl <- biomass_grid(logbook_petrale, 2010, 2017)
+
+### Survey
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_petrale, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_petrale, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_petrale, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_petrale, 2010, 2017)
+
+# Fill decade grids with data
+eighties_survey_ptrl <- biomass_grid(survey_petrale, 1980, 1989)
+nineties_survey_ptrl <- biomass_grid(survey_petrale, 1990, 1999)
+thousands_survey_ptrl <- biomass_grid(survey_petrale, 2000, 2009)
+tens_survey_ptrl <- biomass_grid(survey_petrale, 2010, 2018)
+
+### Spatial indicators
+# local index of collocation per decade for petrale sole overall
+loc_collocfn(eighties_logbooks_ptrl, eighties_survey_ptrl)
+loc_collocfn(nineties_logbooks_ptrl, nineties_survey_ptrl)
+loc_collocfn(thousands_logbooks_ptrl, thousands_survey_ptrl)
+loc_collocfn(tens_logbooks_ptrl, tens_survey_ptrl)
+
+# Fill cell values for LIC
+eighties_petrale <- spatial_lic(eighties_logbooks_ptrl, logbook_petrale,
+                               eighties_survey_ptrl, survey_petrale, 1980, 1989)
+nineties_petrale <- spatial_lic(nineties_logbooks_ptrl, logbook_petrale,
+                               nineties_survey_ptrl, survey_petrale, 1990, 1999)
+thousands_petrale <- spatial_lic(thousands_logbooks_ptrl, logbook_petrale,
+                                thousands_survey_ptrl, survey_petrale, 2000, 2009)
+tens_petrale <- spatial_lic(tens_logbooks_ptrl, logbook_petrale,
+                           tens_survey_ptrl, survey_petrale, 2010, 2018)
+
+# Determine maximum value to scale appropriately
+max(eighties_petrale, na.rm = T)
+max(nineties_petrale, na.rm = T)
+max(thousands_petrale, na.rm = T) # max
+max(tens_petrale, na.rm = T)
+
+# Create map
+pdf("../final_figs/manuscript2_fig_tables/petrale_overlap.pdf",
+    width = 7.5,
+    height = 9)
+par(mfrow = c(1, 2),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+lic_map(eighties_petrale, thousands_petrale, "Petrale Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.73, .79, .11, .25),
+           legend.cex = 1.4,
+           axis.args = list(cex.axis = 1.2),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(thousands_petrale, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_map(tens_petrale, thousands_petrale, "Petrale Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+# Supplement figure
+pdf("../final_figs/manuscript2_fig_tables/petrale_overlap_supplement.pdf",
+    width = 15,
+    height = 8.5)
+par(mfrow = c(1, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+lic_sup(eighties_petrale, eighties_petrale, "Petrale Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_petrale, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_sup(nineties_petrale, eighties_petrale, "Petrale Sole 1990s",
+        bathy_dat, bathy_mat)
+lic_sup(thousands_petrale, eighties_petrale, "Petrale Sole 2000s",
+        bathy_dat, bathy_mat)
+lic_sup(tens_petrale, eighties_petrale, "Petrale Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+## Dover Sole ----
+# Filter to just dover
+logbook_dover <- logbooks_final[logbooks_final$species == 'DOVR_ADJ', ]
+
+subset_dover <- OR_fish[OR_fish$scientific_name == 'Microstomus pacificus', ]
+match_id <- match(survey_data$trawl_id, subset_dover$trawl_id)
+survey_data$CPUE <- subset_dover$CPUE[match_id]
+survey_dover <- survey_data
+survey_dover$CPUE[is.na(survey_dover$CPUE)] <- 0
+
+### Logbooks
+# Decade grids fill with proportion of biomass in each cell for corresponding points
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_dover, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_dover, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_dover, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_dover, 2010, 2017)
+
+# Fill decade grids with data
+eighties_logbooks_dovr <- biomass_grid(logbook_dover, 1981, 1989)
+nineties_logbooks_dovr <- biomass_grid(logbook_dover, 1990, 1999)
+thousands_logbooks_dovr <- biomass_grid(logbook_dover, 2000, 2009)
+tens_logbooks_dovr <- biomass_grid(logbook_dover, 2010, 2017)
+
+### Survey
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_dover, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_dover, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_dover, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_dover, 2010, 2017)
+
+# Fill decade grids with data
+eighties_survey_dovr <- biomass_grid(survey_dover, 1980, 1989)
+nineties_survey_dovr <- biomass_grid(survey_dover, 1990, 1999)
+thousands_survey_dovr <- biomass_grid(survey_dover, 2000, 2009)
+tens_survey_dovr <- biomass_grid(survey_dover, 2010, 2018)
+
+### Spatial indicators
+# local index of collocation per decade for dover sole overall
+loc_collocfn(eighties_logbooks_dovr, eighties_survey_dovr)
+loc_collocfn(nineties_logbooks_dovr, nineties_survey_dovr)
+loc_collocfn(thousands_logbooks_dovr, thousands_survey_dovr)
+loc_collocfn(tens_logbooks_dovr, tens_survey_dovr)
+
+# Fill cell values for LIC
+eighties_dover <- spatial_lic(eighties_logbooks_dovr, logbook_dover,
+                                eighties_survey_dovr, survey_dover, 1980, 1989)
+nineties_dover <- spatial_lic(nineties_logbooks_dovr, logbook_dover,
+                                nineties_survey_dovr, survey_dover, 1990, 1999)
+thousands_dover <- spatial_lic(thousands_logbooks_dovr, logbook_dover,
+                                 thousands_survey_dovr, survey_dover, 2000, 2009)
+tens_dover <- spatial_lic(tens_logbooks_dovr, logbook_dover,
+                            tens_survey_dovr, survey_dover, 2010, 2018)
+
+# Determine maximum value to scale appropriately
+max(eighties_dover, na.rm = T) # max
+max(nineties_dover, na.rm = T)
+max(thousands_dover, na.rm = T)
+max(tens_dover, na.rm = T)
+
+# Create map
+# Manuscript figure
+pdf("../final_figs/manuscript2_fig_tables/dover_overlap.pdf",
+    width = 7.5,
+    height = 9)
+par(mfrow = c(1, 2),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+lic_map(eighties_dover, eighties_dover, "Dover Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.73, .79, .11, .25),
+           legend.cex = 1.4,
+           axis.args = list(cex.axis = 1.2),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_dover, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_map(tens_dover, eighties_dover, "Dover Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+# Supplement figure
+pdf("../final_figs/manuscript2_fig_tables/dover_overlap_supplement.pdf",
+    width = 15,
+    height = 8.5)
+par(mfrow = c(1, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+lic_sup(eighties_dover, eighties_dover, "Dover Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_dover, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_sup(nineties_dover, eighties_dover, "Dover Sole 1990s",
+        bathy_dat, bathy_mat)
+lic_sup(thousands_dover, eighties_dover, "Dover Sole 2000s",
+        bathy_dat, bathy_mat)
+lic_sup(tens_dover, eighties_dover, "Dover Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+## English Sole ----
+# Filter to just English
+logbook_english <- logbooks_final[logbooks_final$species == 'EGLS_ADJ', ]
+
+subset_english <- OR_fish[OR_fish$scientific_name == 'Parophrys vetulus', ]
+match_id <- match(survey_data$trawl_id, subset_english$trawl_id)
+survey_data$CPUE <- subset_english$CPUE[match_id]
+survey_english <- survey_data
+survey_english$CPUE[is.na(survey_english$CPUE)] <- 0
+
+### Logbooks
+# Decade grids fill with proportion of biomass in each cell for corresponding points
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_english, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_english, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_english, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_english, 2010, 2017)
+
+# Fill decade grids with data
+eighties_logbooks_egls <- biomass_grid(logbook_english, 1981, 1989)
+nineties_logbooks_egls <- biomass_grid(logbook_english, 1990, 1999)
+thousands_logbooks_egls <- biomass_grid(logbook_english, 2000, 2009)
+tens_logbooks_egls <- biomass_grid(logbook_english, 2010, 2017)
+
+### Survey
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_english, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_english, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_english, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_english, 2010, 2017)
+
+# Fill decade grids with data
+eighties_survey_egls <- biomass_grid(survey_english, 1980, 1989)
+nineties_survey_egls <- biomass_grid(survey_english, 1990, 1999)
+thousands_survey_egls <- biomass_grid(survey_english, 2000, 2009)
+tens_survey_egls <- biomass_grid(survey_english, 2010, 2018)
+
+### Spatial indicators
+# local index of collocation per decade for English Sole overall
+loc_collocfn(eighties_logbooks_egls, eighties_survey_egls)
+loc_collocfn(nineties_logbooks_egls, nineties_survey_egls)
+loc_collocfn(thousands_logbooks_egls, thousands_survey_egls)
+loc_collocfn(tens_logbooks_egls, tens_survey_egls)
+
+# Fill cell values for LIC
+eighties_english <- spatial_lic(eighties_logbooks_egls, logbook_english,
+                              eighties_survey_egls, survey_english, 1980, 1989)
+nineties_english <- spatial_lic(nineties_logbooks_egls, logbook_english,
+                              nineties_survey_egls, survey_english, 1990, 1999)
+thousands_english <- spatial_lic(thousands_logbooks_egls, logbook_english,
+                               thousands_survey_egls, survey_english, 2000, 2009)
+tens_english <- spatial_lic(tens_logbooks_egls, logbook_english,
+                          tens_survey_egls, survey_english, 2010, 2018)
+
+# Determine maximum value to scale appropriately
+max(eighties_english, na.rm = T) # max
+max(nineties_english, na.rm = T)
+max(thousands_english, na.rm = T)
+max(tens_english, na.rm = T)
+
+# Create map
+# Manuscript figure
+pdf("../final_figs/manuscript2_fig_tables/english_overlap.pdf",
+    width = 7.5,
+    height = 9)
+par(mfrow = c(1, 2),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+lic_map(eighties_english, eighties_english, "English Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.73, .79, .11, .25),
+           legend.cex = 1.4,
+           axis.args = list(cex.axis = 1.2),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_english, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_map(tens_english, eighties_english, "English Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+# Supplement figure
+pdf("../final_figs/manuscript2_fig_tables/english_overlap_supplement.pdf",
+    width = 15,
+    height = 8.5)
+par(mfrow = c(1, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+lic_sup(eighties_english, eighties_english, "English Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_english, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_sup(nineties_english, eighties_english, "English Sole 1990s",
+        bathy_dat, bathy_mat)
+lic_sup(thousands_english, eighties_english, "English Sole 2000s",
+        bathy_dat, bathy_mat)
+lic_sup(tens_english, eighties_english, "English Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+## Pacific Sanddab ----
+# Filter to just sanddab
+logbook_sanddab <- logbooks_final[logbooks_final$species == 'SDAB_ADJ', ]
+
+subset_sanddab <- OR_fish[OR_fish$scientific_name == 'Citharichthys sordidus', ]
+match_id <- match(survey_data$trawl_id, subset_sanddab$trawl_id)
+survey_data$CPUE <- subset_sanddab$CPUE[match_id]
+survey_sanddab <- survey_data
+survey_sanddab$CPUE[is.na(survey_sanddab$CPUE)] <- 0
+
+### Logbooks
+# Decade grids fill with proportion of biomass in each cell for corresponding points
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sanddab, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sanddab, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sanddab, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sanddab, 2010, 2017)
+
+# Fill decade grids with data
+eighties_logbooks_egls <- biomass_grid(logbook_sanddab, 1981, 1989)
+nineties_logbooks_egls <- biomass_grid(logbook_sanddab, 1990, 1999)
+thousands_logbooks_egls <- biomass_grid(logbook_sanddab, 2000, 2009)
+tens_logbooks_egls <- biomass_grid(logbook_sanddab, 2010, 2017)
+
+### Survey
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sanddab, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sanddab, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sanddab, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sanddab, 2010, 2017)
+
+# Fill decade grids with data
+eighties_survey_egls <- biomass_grid(survey_sanddab, 1980, 1989)
+nineties_survey_egls <- biomass_grid(survey_sanddab, 1990, 1999)
+thousands_survey_egls <- biomass_grid(survey_sanddab, 2000, 2009)
+tens_survey_egls <- biomass_grid(survey_sanddab, 2010, 2018)
+
+### Spatial indicators
+# local index of collocation per decade for Pacific Sanddab overall
+loc_collocfn(eighties_logbooks_egls, eighties_survey_egls)
+loc_collocfn(nineties_logbooks_egls, nineties_survey_egls)
+loc_collocfn(thousands_logbooks_egls, thousands_survey_egls)
+loc_collocfn(tens_logbooks_egls, tens_survey_egls)
+
+# Fill cell values for LIC
+eighties_sanddab <- spatial_lic(eighties_logbooks_egls, logbook_sanddab,
+                                eighties_survey_egls, survey_sanddab, 1980, 1989)
+nineties_sanddab <- spatial_lic(nineties_logbooks_egls, logbook_sanddab,
+                                nineties_survey_egls, survey_sanddab, 1990, 1999)
+thousands_sanddab <- spatial_lic(thousands_logbooks_egls, logbook_sanddab,
+                                 thousands_survey_egls, survey_sanddab, 2000, 2009)
+tens_sanddab <- spatial_lic(tens_logbooks_egls, logbook_sanddab,
+                            tens_survey_egls, survey_sanddab, 2010, 2018)
+
+# Determine maximum value to scale appropriately
+max(eighties_sanddab, na.rm = T) # max
+max(nineties_sanddab, na.rm = T)
+max(thousands_sanddab, na.rm = T)
+max(tens_sanddab, na.rm = T)
+
+# Create map
+# Manuscript figure
+pdf("../final_figs/manuscript2_fig_tables/sanddab_overlap.pdf",
+    width = 7.5,
+    height = 9)
+par(mfrow = c(1, 2),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+lic_map(eighties_sanddab, eighties_sanddab, "Pacific Sanddab 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.73, .79, .11, .25),
+           legend.cex = 1.4,
+           axis.args = list(cex.axis = 1.2),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_sanddab, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_map(tens_sanddab, eighties_sanddab, "Pacific Sanddab 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+# Supplement figure
+pdf("../final_figs/manuscript2_fig_tables/sanddab_overlap_supplement.pdf",
+    width = 15,
+    height = 8.5)
+par(mfrow = c(1, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+lic_sup(eighties_sanddab, eighties_sanddab, "Pacific Sanddab 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_sanddab, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_sup(nineties_sanddab, eighties_sanddab, "Pacific Sanddab 1990s",
+        bathy_dat, bathy_mat)
+lic_sup(thousands_sanddab, eighties_sanddab, "Pacific Sanddab 2000s",
+        bathy_dat, bathy_mat)
+lic_sup(tens_sanddab, eighties_sanddab, "Pacific Sanddab 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+## Sand Sole ----
+# Filter to just sand sole
+logbook_sandsole <- logbooks_final[logbooks_final$species == 'SSOL_ADJ', ]
+
+subset_sandsole <- OR_fish[OR_fish$scientific_name == 'Psettichthys melanostictus', ]
+match_id <- match(survey_data$trawl_id, subset_sandsole$trawl_id)
+survey_data$CPUE <- subset_sandsole$CPUE[match_id]
+survey_sandsole <- survey_data
+survey_sandsole$CPUE[is.na(survey_sandsole$CPUE)] <- 0
+
+### Logbooks
+# Decade grids fill with proportion of biomass in each cell for corresponding points
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sandsole, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sandsole, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sandsole, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_sandsole, 2010, 2017)
+
+# Fill decade grids with data
+eighties_logbooks_egls <- biomass_grid(logbook_sandsole, 1981, 1989)
+nineties_logbooks_egls <- biomass_grid(logbook_sandsole, 1990, 1999)
+thousands_logbooks_egls <- biomass_grid(logbook_sandsole, 2000, 2009)
+tens_logbooks_egls <- biomass_grid(logbook_sandsole, 2010, 2017)
+
+### Survey
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sandsole, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sandsole, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sandsole, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_sandsole, 2010, 2017)
+
+# Fill decade grids with data
+eighties_survey_egls <- biomass_grid(survey_sandsole, 1980, 1989)
+nineties_survey_egls <- biomass_grid(survey_sandsole, 1990, 1999)
+thousands_survey_egls <- biomass_grid(survey_sandsole, 2000, 2009)
+tens_survey_egls <- biomass_grid(survey_sandsole, 2010, 2018)
+
+### Spatial indicators
+# local index of collocation per decade for Sand Sole overall
+loc_collocfn(eighties_logbooks_egls, eighties_survey_egls)
+loc_collocfn(nineties_logbooks_egls, nineties_survey_egls)
+loc_collocfn(thousands_logbooks_egls, thousands_survey_egls)
+loc_collocfn(tens_logbooks_egls, tens_survey_egls)
+
+# Fill cell values for LIC
+eighties_sandsole <- spatial_lic(eighties_logbooks_egls, logbook_sandsole,
+                                eighties_survey_egls, survey_sandsole, 1980, 1989)
+nineties_sandsole <- spatial_lic(nineties_logbooks_egls, logbook_sandsole,
+                                nineties_survey_egls, survey_sandsole, 1990, 1999)
+thousands_sandsole <- spatial_lic(thousands_logbooks_egls, logbook_sandsole,
+                                 thousands_survey_egls, survey_sandsole, 2000, 2009)
+tens_sandsole <- spatial_lic(tens_logbooks_egls, logbook_sandsole,
+                            tens_survey_egls, survey_sandsole, 2010, 2018)
+
+# Determine maximum value to scale appropriately
+max(eighties_sandsole, na.rm = T) # max
+max(nineties_sandsole, na.rm = T)
+max(thousands_sandsole, na.rm = T)
+max(tens_sandsole, na.rm = T)
+
+# Create map
+# Manuscript figure
+pdf("../final_figs/manuscript2_fig_tables/sandsole_overlap.pdf",
+    width = 7.5,
+    height = 9)
+par(mfrow = c(1, 2),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+lic_map(eighties_sandsole, eighties_sandsole, "Sand Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.73, .79, .11, .25),
+           legend.cex = 1.4,
+           axis.args = list(cex.axis = 1.2),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_sandsole, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_map(tens_sandsole, eighties_sandsole, "Sand Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+# Supplement figure
+pdf("../final_figs/manuscript2_fig_tables/sandsole_overlap_supplement.pdf",
+    width = 15,
+    height = 8.5)
+par(mfrow = c(1, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+lic_sup(eighties_sandsole, eighties_sandsole, "Sand Sole 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_sandsole, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_sup(nineties_sandsole, eighties_sandsole, "Sand Sole 1990s",
+        bathy_dat, bathy_mat)
+lic_sup(thousands_sandsole, eighties_sandsole, "Sand Sole 2000s",
+        bathy_dat, bathy_mat)
+lic_sup(tens_sandsole, eighties_sandsole, "Sand Sole 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
+
+## Starry Flounder ----
+# Filter to just starry
+logbook_starry <- logbooks_final[logbooks_final$species == 'STRY_ADJ', ]
+
+subset_starry <- OR_fish[OR_fish$scientific_name == 'Platichthys stellatus', ]
+match_id <- match(survey_data$trawl_id, subset_starry$trawl_id)
+survey_data$CPUE <- subset_starry$CPUE[match_id]
+survey_starry <- survey_data
+survey_starry$CPUE[is.na(survey_starry$CPUE)] <- 0
+
+### Logbooks
+# Decade grids fill with proportion of biomass in each cell for corresponding points
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_starry, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_starry, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_starry, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(logbook_starry, 2010, 2017)
+
+# Fill decade grids with data
+eighties_logbooks_stry <- biomass_grid(logbook_starry, 1981, 1989)
+nineties_logbooks_stry <- biomass_grid(logbook_starry, 1990, 1999)
+thousands_logbooks_stry <- biomass_grid(logbook_starry, 2000, 2009)
+tens_logbooks_stry <- biomass_grid(logbook_starry, 2010, 2017)
+
+### Survey
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_starry, 1981, 1989)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_starry, 1990, 1999)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_starry, 2000, 2009)
+dev.new(width = 4, height = 10)
+biomass_fillpts(survey_starry, 2010, 2017)
+
+# Fill decade grids with data
+eighties_survey_stry <- biomass_grid(survey_starry, 1980, 1989)
+nineties_survey_stry <- biomass_grid(survey_starry, 1990, 1999)
+thousands_survey_stry <- biomass_grid(survey_starry, 2000, 2009)
+tens_survey_stry <- biomass_grid(survey_starry, 2010, 2018)
+
+### Spatial indicators
+# local index of collocation per decade for Starry Flounder overall
+loc_collocfn(eighties_logbooks_stry, eighties_survey_stry)
+loc_collocfn(nineties_logbooks_stry, nineties_survey_stry)
+loc_collocfn(thousands_logbooks_stry, thousands_survey_stry)
+loc_collocfn(tens_logbooks_stry, tens_survey_stry)
+
+# Fill cell values for LIC
+eighties_starry <- spatial_lic(eighties_logbooks_stry, logbook_starry,
+                  eighties_survey_stry, survey_starry,
+                  eighties_starry, 1980, 1989)
+nineties_starry <- spatial_lic(nineties_logbooks_stry, logbook_starry,
+                          nineties_survey_stry, survey_starry,
+                          nineties_starry, 1990, 1999)
+thousands_starry <- spatial_lic(thousands_logbooks_stry, logbook_starry,
+                          thousands_survey_stry, survey_starry,
+                          thousands_starry, 2000, 2009)
+tens_starry <- spatial_lic(tens_logbooks_stry, logbook_starry,
+                          tens_survey_stry, survey_starry,
+                          tens_starry, 2010, 2018)
+
+# Determine maximum value to scale appropriately
+max(eighties_starry, na.rm = T) # max
+max(nineties_starry, na.rm = T)
+max(thousands_starry, na.rm = T)
+max(tens_starry, na.rm = T)
+
+# Create map
+pdf("../final_figs/manuscript2_fig_tables/starry_overlap.pdf",
+    width = 7.5,
+    height = 9)
+par(mfrow = c(1, 2),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+lic_map(eighties_starry, eighties_starry, "Starry Flounder 1980s",
+                 bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.73, .79, .11, .25),
+           legend.cex = 1.4,
+           axis.args = list(cex.axis = 1.2),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_starry, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_map(tens_starry, eighties_starry, "Starry Flounder 2010s",
+                 bathy_dat, bathy_mat)
+dev.off()
+
+# Supplement figure
+pdf("../final_figs/manuscript2_fig_tables/starry_overlap_supplement.pdf",
+    width = 15,
+    height = 8.5)
+par(mfrow = c(1, 4),
+    family = "serif",
+    mar = c(5.5, 6, 3, .3) + .1)
+lic_sup(eighties_starry, eighties_starry, "Starry Flounder 1980s",
+        bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = hcl.colors(100, "YlOrRd", rev = T),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .11, .25),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.8),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, max(eighties_starry, na.rm = T)),
+           legend.args = list("LIC",
+                              side = 2, cex = 1.2))
+lic_sup(nineties_starry, eighties_starry, "Starry Flounder 1990s",
+        bathy_dat, bathy_mat)
+lic_sup(thousands_starry, eighties_starry, "Starry Flounder 2000s",
+        bathy_dat, bathy_mat)
+lic_sup(tens_starry, eighties_starry, "Starry Flounder 2010s",
+        bathy_dat, bathy_mat)
+dev.off()
