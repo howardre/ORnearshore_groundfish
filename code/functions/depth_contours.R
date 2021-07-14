@@ -18,6 +18,6 @@ depth_contours <- function(subset, year_upper, title){
           axis.title = element_text(size = 8),
           axis.text = element_text(size = 8),
           text = element_text(family = "serif")) +
-    labs(x = "Depth (m)", y = "Latitude", title = title) +
+    labs(x = " ", y = " ", title = title) +
     coord_cartesian(ylim = c(42, 47), xlim = c(-200, 0))
 }
