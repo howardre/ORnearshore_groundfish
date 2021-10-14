@@ -107,7 +107,7 @@ plot_AIC(sablefish_tgam, years) # need to figure out how to select different thr
 # Validate the results and map the final product ----
 # Calculate distance of each grid point to closest 'positive observation'
 # Gives an index, then plot the true and false to get areas of sigificant increase or decrease
-subset_distances <- function(tgam, df, year) {
+subset_distances <- function(df, year) {
   nlat = 40 # determine the resolution of the grid
   nlon = 30
   latd = seq(41, 48, length.out = nlat)
