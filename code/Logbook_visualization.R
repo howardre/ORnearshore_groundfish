@@ -1993,17 +1993,18 @@ ggplot(data = catch_sanddab,
   geom_bar(stat = "identity",
            position = position_dodge()) +
   geom_col(fill = "orangered4") +
+  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5, size = 9),
-        axis.title = element_text(size = 8),
-        axis.text = element_text(size = 7)) +
-  labs(x = "Year",
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 10)) +
+  labs(x = "",
        y = "Total Catch (1000s of lbs)",
-       title = "Sand Sole Total Nearshore Catch")
+       title = "")
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_catch.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
@@ -2018,17 +2019,18 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_sand_sole_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
+  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5, size = 8),
-        axis.title = element_text(size = 7.5),
-        axis.text = element_text(size = 7)) +
-  labs(x = "Year",
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 10)) +
+  labs(x = "",
        y = "CPUE (kg/hr)",
-       title = "Mean CPUE of Nearshore Sand Sole Caught in Groundfish Fishery")
+       title = "")
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_change.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
@@ -2134,17 +2136,18 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_sand_sole_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
+  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5, size = 8),
-        axis.title = element_text(size = 7.5),
-        axis.text = element_text(size = 7)) +
-  labs(x = "Year",
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 10)) +
+  labs(x = "",
        y = "CPUE (kg/ha)",
-       title = "Mean CPUE of Nearshore Sand Sole Caught in Groundfish Fishery")
+       title = "")
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sandsole_change_survey.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
@@ -2354,17 +2357,18 @@ ggplot(data = catch_sanddab,
   geom_bar(stat = "identity",
            position = position_dodge()) +
   geom_col(fill = "orangered4") +
+  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5, size = 9),
-        axis.title = element_text(size = 8),
-        axis.text = element_text(size = 7)) +
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 10)) +
   labs(x = "Year",
        y = "Total Catch (1000s of lbs)",
-       title = "Starry Flounder Total Nearshore Catch")
+       title = "")
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_catch.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
@@ -2379,17 +2383,18 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_starry_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
+  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5, size = 8),
-        axis.title = element_text(size = 7.5),
-        axis.text = element_text(size = 7)) +
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 10)) +
   labs(x = "Year",
        y = "CPUE (kg/hr)",
-       title = "Mean CPUE of Nearshore Starry Flounder Caught in Groundfish Fishery")
+       title = "")
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_change.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
@@ -2495,17 +2500,18 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_starry_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
+  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         plot.title = element_text(hjust = 0.5, size = 8),
-        axis.title = element_text(size = 7.5),
-        axis.text = element_text(size = 7)) +
+        axis.title = element_text(size = 11),
+        axis.text = element_text(size = 10)) +
   labs(x = "Year",
        y = "CPUE (kg/ha)",
-       title = "Mean CPUE of Nearshore Starry Flounder Caught in Groundfish Fishery")
+       title = "")
 dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_change_survey.tiff",
          width = 4, height = 2, units = "in", res = 200)
 dev.off()
