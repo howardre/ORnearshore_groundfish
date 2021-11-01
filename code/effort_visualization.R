@@ -44,6 +44,10 @@ trawl_counts <- filtered[filtered$species == 'PTRL_ADJ', ] # use one species sin
 # These demonstrate the filling of grid cells
 # grid_fill just gives the plot, grid_data gives the matrix and plot
 # All years
+nlat = 20 # determine resolution of grid
+nlon = 15
+latd = seq(42, 47, length.out = nlat)
+lond = seq(-125, -123.9, length.out = nlon)
 years_data <- length(unique(trawl_counts$year))
 zlat <- (latd[1:(length(latd) - 1)] + latd[2:length(latd)]) / 2
 zlon <- (lond[1:(length(lond) - 1)] + lond[2:length(lond)]) / 2
@@ -108,7 +112,7 @@ grid_map(20, 15, 2009, 2018, 180, trawl_counts, teens_logbook, "Fishing Effort 2
 
 ## Survey ----
 ### Make a regular grid and count stations within each grid cell ----
-survey_data$hauls <- traw_data$month_day[survey_data$year_month > 0] <- 1
+survey_data$hauls <- trawl_data$month_day[survey_data$year_month > 0] <- 1
 
 # 80s
 dev.new(width = 4, height = 10)
@@ -173,10 +177,11 @@ grid_map(20, 15, 2009, 2018, 3, survey_data, teens_survey, "Survey Effort 2010s"
 pdf("../results/Gear/four_panel.pdf",
     width = 7.5,
     height = 18)
-par(mfrow = c(2, 2),
+par(mfrow = c(4, 4),
     family = "serif",
     mar = c(4, 5, 3, .3) + .1)
-grid_pdf(20, 15, 1980, 1990, 230, trawl_counts, eighties_logbook, "Fishing Effort 1980s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1980, 1990, 230, trawl_counts, eighties_logbook,
+         "Fishing Effort 1980s", bathy_dat, bathy_mat, "Latitude")
 image.plot(legend.only = T,
            col = viridis(100, option = "A", direction = -1),
            legend.shrink = 0.2,
@@ -202,4 +207,56 @@ image.plot(legend.only = T,
            legend.args = list("avg. annual number \n of tows",
                               side = 2, cex = 1.4))
 grid_pdf(20, 15, 2009, 2018, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
+dev.off()
+
+
+tiff("../results/Gear/eight_panel.tiff",
+    width = 15,
+    height = 17.5,
+    units = "in",
+    compression = "lzw",
+    res = 300)
+par(mfrow = c(2, 4),
+    family = "serif",
+    mar = c(4, 5, 3, .3) + .1)
+grid_pdf(20, 15, 1980, 1990, 230, trawl_counts, eighties_logbook, "Fishing Effort 1980s", bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "A", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .09, .24),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.6),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, 230),
+           legend.args = list("avg. annual \n number of tows",
+                              side = 2, cex = 1.4))
+grid_pdf(20, 15, 1989, 2000, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1999, 2010, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 2009, 2018, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1980, 1990, 4.5, survey_data, eighties_survey, "Survey Effort 1980s", bathy_dat, bathy_mat)
+image.plot(legend.only = T,
+           col = viridis(100, option = "A", direction = -1),
+           legend.shrink = 0.2,
+           smallplot = c(.76, .82, .09, .24),
+           legend.cex = 1.6,
+           axis.args = list(cex.axis = 1.6),
+           legend.width = 0.5,
+           legend.mar = 6,
+           zlim = c(0, 4.5),
+           legend.args = list("avg. annual \n number of tows",
+                              side = 2, cex = 1.4))
+grid_pdf(20, 15, 1989, 2000, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1999, 2010, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 2009, 2018, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
+mtext(expression(paste("Latitude ("^0,'N)')),
+      side = 2,
+      line = -2.3,
+      cex = 1.5,
+      outer = TRUE)
+mtext(expression(paste("Longitude ("^0, 'W)')),
+      side = 1,
+      line = -1.2,
+      cex = 1.5,
+      outer = TRUE)
 dev.off()
