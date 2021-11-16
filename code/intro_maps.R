@@ -42,8 +42,7 @@ plot.bathy(
   main = title,
   cex.lab = 2,
   cex.main = 2.5,
-  cex.axis = 1.8
-)
+  cex.axis = 1.8)
   points(-124.0535, 44.6368, pch = 20)
   text(-124.0535,
        44.6368,
@@ -62,56 +61,121 @@ plot.bathy(
        "Charleston",
        adj = c(0, 1.2),
        cex = 1.8)
-plot(
-  bathymetry,
-  deep = 0,
-  shallow = 0,
-  lwd = 1,
-  add = T
-)
-plot(
-  bathymetry,
-  deep = -50,
-  shallow = -50,
-  lwd = 0.4,
-  drawlabels = T,
-  add = T,
-  col = "slategrey"
-)
-plot(
-  bathymetry,
-  deep = -200,
-  shallow = -200,
-  lwd = 0.4,
-  drawlabels = T,
-  add = T,
-  col = "slategrey"
-)
+  plot(bathymetry,
+       deep = 0,
+       shallow = 0,
+       lwd = 1,
+       add =  T)
+  plot(bathymetry,
+       deep = -50,
+       shallow = -50,
+       lwd = 0.4,
+       drawlabels = T,
+       add = T,
+       col = "slategrey")
+  plot(bathymetry,
+       deep = -200,
+       shallow = -200,
+       lwd = 0.4,
+       drawlabels = T,
+       add = T,
+       col =  "slategrey")
 map.scale(-126., 40.3, cex = 1)
-points(
-  survey$longitude[survey$year == years],
-  survey$latitude[survey$year == years],
-  pch = 18,
-  col = 'black',
-  cex = 1.3
-)
-title(
-  outer = outer,
-  adj = .025,
-  main = letter,
-  cex.main = 2,
-  col = "black",
-  font = 2,
-  line = -2
-)
-
+points(survey$longitude[survey$year == years],
+       survey$latitude[survey$year == years],
+       pch = 18,
+       col = 'black',
+       cex = 1.3)
+title(outer = outer,
+      adj = .025,
+      main = letter,
+      cex.main = 2,
+      col = "black",
+      font = 2,
+      line = -2)
 }
+
 tiff("../final_figs/Figure_1.tiff", width = 11, height = 12, units = "in", res = 300)
 par(mfrow = c(1, 2),
     family = 'serif',
     mar = c(4, 5, 3, .2) + .15)
 survey_map("AFSC Triennial Survey", OR_bathy, trawl_data, 1995, "(A)")
 survey_map("NWFSC Annual Survey", OR_bathy, trawl_data, 2018, "(B)")
+dev.off()
+
+
+intro_map <- function(bathymetry){
+
+}
+
+OR_bathy1 <- getNOAA.bathy(lon1= -127, lon2= -121, lat1= 48, lat2= 39, resolution=1)
+tiff("../final_figs/manuscript2_fig_tables/Figure_1.tiff",
+     width = 5.5,
+     height = 12,
+     units = "in",
+     res = 300)
+par(mfrow = c(1, 1),
+    family = 'serif',
+    mar = c(4, 5, 3, .2) + .15)
+plot.bathy(
+  OR_bathy1,
+  image = T,
+  axes = T,
+  lwd = 0.03,
+  land = T,
+  n = 0,
+  bpal = list(c(0,
+                max(OR_bathy1),
+                greys),
+              c(min(OR_bathy1),
+                0,
+                blues)),
+  ylim = c(40.3, 47.2),
+  xlim = c(-125.5,-123.5),
+  ylab = "Latitude °N",
+  xlab = "Longitude °W",
+  main = "",
+  cex.lab = 2,
+  cex.main = 2.5,
+  cex.axis = 1.8)
+points(-124.0535, 44.6368, pch = 20)
+text(-124.0535,
+     44.6368,
+     "Newport",
+     adj = c(0, 1.2),
+     cex = 1.8)
+points(-123.8313, 46.1879, pch = 20)
+text(-123.88028,
+     46.13361,
+     "Astoria",
+     adj = c(0, 1.2),
+     cex = 1.8)
+points(-124.3, 43.3, pch = 20)
+text(-124.3,
+     43.3,
+     "Charleston",
+     adj = c(0, 1.2),
+     cex = 1.8)
+plot(OR_bathy1,
+     deep = 0,
+     shallow = 0,
+     lwd = 1,
+     add =  T)
+plot(OR_bathy1,
+     deep = -50,
+     shallow = -50,
+     lwd = 0.7,
+     drawlabels = T,
+     add = T,
+     col = "gray19")
+plot(OR_bathy1,
+     deep = -200,
+     shallow = -200,
+     lwd = 0.7,
+     drawlabels = T,
+     add = T,
+     col =  "gray19")
+map.scale(-126., 40.3, cex = 1)
 dev.off()
 
 ###########################################################################################################################################################
