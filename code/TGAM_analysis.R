@@ -41,22 +41,22 @@ sablefish_subset <- subset_species("Anoplopoma fimbria", OR_fish, trawl_data)
 # Find thresholds for all 8 species ----
 years <- sort(unique(arrowtooth_subset$year))[4:22]
 arrowtooth_tgam <- get_tgam(arrowtooth_subset, years)
-arrowtooth_subset$thr <-  ifelse(arrowtooth_subset$year <= arrowtooth_tgam[[3]], 'before', 'after')
+arrowtooth_subset$thr <- ifelse(arrowtooth_subset$year <= arrowtooth_tgam[[3]], 'before', 'after')
 english_tgam <- get_tgam(english_subset, years)
-english_subset$thr <-  ifelse(english_subset$year <= english_tgam[[3]], 'before', 'after')
+english_subset$thr <- ifelse(english_subset$year <= english_tgam[[3]], 'before', 'after')
 sanddab_tgam <- get_tgam(sanddab_subset, years)
-sanddab_subset$thr <-  ifelse(sanddab_subset$year <= sanddab_tgam[[3]], 'before', 'after')
+sanddab_subset$thr <- ifelse(sanddab_subset$year <= sanddab_tgam[[3]], 'before', 'after')
 dover_tgam <- get_tgam_woyear(dover_subset, years)
-dover_subset$thr <-  ifelse(dover_subset$year <= dover_tgam[[3]], 'before', 'after')
+dover_subset$thr <- ifelse(dover_subset$year <= dover_tgam[[3]], 'before', 'after')
 rex_tgam <- get_tgam_woyear(rex_subset, years)
-rex_subset$thr <-  ifelse(rex_subset$year <= rex_tgam[[3]], 'before', 'after')
+rex_subset$thr <- ifelse(rex_subset$year <= rex_tgam[[3]], 'before', 'after')
 lingcod_tgam <- get_tgam(lingcod_subset, years)
-lingcod_subset$thr <-  ifelse(lingcod_subset$year <= lingcod_tgam[[3]], 'before', 'after')
+lingcod_subset$thr <- ifelse(lingcod_subset$year <= lingcod_tgam[[3]], 'before', 'after')
 petrale_tgam <- get_tgam(petrale_subset, years)
-petrale_subset$thr <-  ifelse(petrale_subset$year <= petrale_tgam[[3]], 'before', 'after')
+petrale_subset$thr <- ifelse(petrale_subset$year <= petrale_tgam[[3]], 'before', 'after')
 sablefish_tgam <- get_tgam(sablefish_subset, years)
 sablefish_tgam[[3]] <- 2003
-sablefish_subset$thr <-  ifelse(sablefish_subset$year <= sablefish_tgam[[3]], 'before', 'after')
+sablefish_subset$thr <- ifelse(sablefish_subset$year <= sablefish_tgam[[3]], 'before', 'after')
 sablefish_tgam[[2]] <- gam(pres ~ factor(year) +
                         s(longitude, latitude, by = factor(thr)) +
                         s(julian),
