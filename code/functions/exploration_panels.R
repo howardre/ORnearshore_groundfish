@@ -7,10 +7,10 @@ plot(1,
      ylab = expression(paste("latitude (" ^ 0, 'N)')),
      xlab = expression(paste("longitude (" ^ 0, 'W)')),
      main = title)
-map("worldHires",
-    fill = T,
-    col = "grey",
-    add = T)
+  maps::map("worldHires",
+            fill = T,
+            col = "grey",
+            add = T)
 points(subset$lon[subset$year >= year1 &
                             subset$year <= year2 & subset$pres == 1],
        subset$lat[subset$year >= year1 &
