@@ -231,8 +231,8 @@ image.plot(legend.only = T,
            zlim = c(0, 230),
            legend.args = list("avg. annual \n number of tows",
                               side = 2, cex = 1.4))
-grid_pdf(20, 15, 1989, 2000, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
-grid_pdf(20, 15, 1999, 2010, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1989, 2000, 230, trawl_counts, nineties_logbook, "Fishing Effort 1990s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1999, 2010, 230, trawl_counts, thousands_logbook, "Fishing Effort 2000s", bathy_dat, bathy_mat)
 grid_pdf(20, 15, 2009, 2018, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
 grid_pdf(20, 15, 1980, 1990, 4.5, survey_data, eighties_survey, "Survey Effort 1980s", bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -246,8 +246,8 @@ image.plot(legend.only = T,
            zlim = c(0, 4.5),
            legend.args = list("avg. annual \n number of tows",
                               side = 2, cex = 1.4))
-grid_pdf(20, 15, 1989, 2000, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
-grid_pdf(20, 15, 1999, 2010, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1989, 2000, 3, survey_data, nineties_survey, "Survey Effort 1990s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1999, 2010, 3, survey_data, thousands_survey, "Survey Effort 2000s", bathy_dat, bathy_mat)
 grid_pdf(20, 15, 2009, 2018, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
 mtext(expression(paste("Latitude ("^0,'N)')),
       side = 2,
