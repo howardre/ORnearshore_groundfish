@@ -101,6 +101,21 @@ exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 1990, 1999, "Pe
 exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 2000, 2009, "Petrale Sole 2000s")
 exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 2010, 2017, "Petrale Sole 2010s")
 
+# All years
+windows(width = 4, height = 10)
+exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 1981, 2017, "Petrale Sole")
+x <-  subset_petrale_logbook$lon[subset_petrale_logbook$pres == 1]
+y <- subset_petrale_logbook$lat[subset_petrale_logbook$pres == 1]
+trawls <- data.frame(x, y)
+polygon <- trawls %>%
+  sf::st_as_sf(coords = c("x", "y")) %>%
+  sf::st_union() %>%
+  sf::st_convex_hull() %>%
+  smooth(method = "ksmooth", smoothness = 0.5, n = 2000)
+plot(polygon, col = "blue")
+plot(trawls)
+
+
 ## Decade maps
 # Make sure grid has been created (above)
 dev.new(width = 4, height = 10)
