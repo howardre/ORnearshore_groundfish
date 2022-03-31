@@ -168,7 +168,7 @@ par(mfrow = c(1, 2),
 lic_map(eighties_petrale, thousands_petrale, "Petrale Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.73, .79, .11, .25),
            legend.cex = 1.4,
@@ -192,7 +192,7 @@ par(mfrow = c(1, 4),
 lic_sup(eighties_petrale, eighties_petrale, "Petrale Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .11, .25),
            legend.cex = 1.6,
@@ -287,7 +287,7 @@ par(mfrow = c(1, 2),
 lic_map(eighties_dover, eighties_dover, "Dover Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.73, .79, .11, .25),
            legend.cex = 1.4,
@@ -311,7 +311,7 @@ par(mfrow = c(1, 4),
 lic_sup(eighties_dover, eighties_dover, "Dover Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .11, .25),
            legend.cex = 1.6,
@@ -406,7 +406,7 @@ par(mfrow = c(1, 2),
 lic_map(eighties_english, eighties_english, "English Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.73, .79, .11, .25),
            legend.cex = 1.4,
@@ -430,7 +430,7 @@ par(mfrow = c(1, 4),
 lic_sup(eighties_english, eighties_english, "English Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .11, .25),
            legend.cex = 1.6,
@@ -470,10 +470,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sanddab, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_egls <- biomass_grid(logbook_sanddab, 1981, 1989)
-nineties_logbooks_egls <- biomass_grid(logbook_sanddab, 1990, 1999)
-thousands_logbooks_egls <- biomass_grid(logbook_sanddab, 2000, 2009)
-tens_logbooks_egls <- biomass_grid(logbook_sanddab, 2010, 2017)
+eighties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1981, 1989)
+nineties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1990, 1999)
+thousands_logbooks_sdab <- biomass_grid(logbook_sanddab, 2000, 2009)
+tens_logbooks_sdab <- biomass_grid(logbook_sanddab, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -486,27 +486,27 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(survey_sanddab, 2010, 2017)
 
 # Fill decade grids with data
-eighties_survey_egls <- biomass_grid(survey_sanddab, 1980, 1989)
-nineties_survey_egls <- biomass_grid(survey_sanddab, 1990, 1999)
-thousands_survey_egls <- biomass_grid(survey_sanddab, 2000, 2009)
-tens_survey_egls <- biomass_grid(survey_sanddab, 2010, 2018)
+eighties_survey_sdab <- biomass_grid(survey_sanddab, 1980, 1989)
+nineties_survey_sdab <- biomass_grid(survey_sanddab, 1990, 1999)
+thousands_survey_sdab <- biomass_grid(survey_sanddab, 2000, 2009)
+tens_survey_sdab <- biomass_grid(survey_sanddab, 2010, 2018)
 
 ### Spatial indicators
 # local index of collocation per decade for Pacific Sanddab overall
-loc_collocfn(eighties_logbooks_egls, eighties_survey_egls)
-loc_collocfn(nineties_logbooks_egls, nineties_survey_egls)
-loc_collocfn(thousands_logbooks_egls, thousands_survey_egls)
-loc_collocfn(tens_logbooks_egls, tens_survey_egls)
+loc_collocfn(eighties_logbooks_sdab, eighties_survey_sdab)
+loc_collocfn(nineties_logbooks_sdab, nineties_survey_sdab)
+loc_collocfn(thousands_logbooks_sdab, thousands_survey_sdab)
+loc_collocfn(tens_logbooks_sdab, tens_survey_sdab)
 
 # Fill cell values for LIC
-eighties_sanddab <- spatial_lic(eighties_logbooks_egls, logbook_sanddab,
-                                eighties_survey_egls, survey_sanddab, 1980, 1989)
-nineties_sanddab <- spatial_lic(nineties_logbooks_egls, logbook_sanddab,
-                                nineties_survey_egls, survey_sanddab, 1990, 1999)
-thousands_sanddab <- spatial_lic(thousands_logbooks_egls, logbook_sanddab,
-                                 thousands_survey_egls, survey_sanddab, 2000, 2009)
-tens_sanddab <- spatial_lic(tens_logbooks_egls, logbook_sanddab,
-                            tens_survey_egls, survey_sanddab, 2010, 2018)
+eighties_sanddab <- spatial_lic(eighties_logbooks_sdab, logbook_sanddab,
+                                eighties_survey_sdab, survey_sanddab, 1980, 1989)
+nineties_sanddab <- spatial_lic(nineties_logbooks_sdab, logbook_sanddab,
+                                nineties_survey_sdab, survey_sanddab, 1990, 1999)
+thousands_sanddab <- spatial_lic(thousands_logbooks_sdab, logbook_sanddab,
+                                 thousands_survey_sdab, survey_sanddab, 2000, 2009)
+tens_sanddab <- spatial_lic(tens_logbooks_sdab, logbook_sanddab,
+                            tens_survey_sdab, survey_sanddab, 2010, 2018)
 
 # Determine maximum value to scale appropriately
 max(eighties_sanddab, na.rm = T) # max
@@ -525,7 +525,7 @@ par(mfrow = c(1, 2),
 lic_map(eighties_sanddab, eighties_sanddab, "Pacific Sanddab 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.73, .79, .11, .25),
            legend.cex = 1.4,
@@ -549,7 +549,7 @@ par(mfrow = c(1, 4),
 lic_sup(eighties_sanddab, eighties_sanddab, "Pacific Sanddab 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .11, .25),
            legend.cex = 1.6,
@@ -589,10 +589,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sandsole, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_egls <- biomass_grid(logbook_sandsole, 1981, 1989)
-nineties_logbooks_egls <- biomass_grid(logbook_sandsole, 1990, 1999)
-thousands_logbooks_egls <- biomass_grid(logbook_sandsole, 2000, 2009)
-tens_logbooks_egls <- biomass_grid(logbook_sandsole, 2010, 2017)
+eighties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1981, 1989)
+nineties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1990, 1999)
+thousands_logbooks_ssol <- biomass_grid(logbook_sandsole, 2000, 2009)
+tens_logbooks_ssol <- biomass_grid(logbook_sandsole, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -605,27 +605,27 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(survey_sandsole, 2010, 2017)
 
 # Fill decade grids with data
-eighties_survey_egls <- biomass_grid(survey_sandsole, 1980, 1989)
-nineties_survey_egls <- biomass_grid(survey_sandsole, 1990, 1999)
-thousands_survey_egls <- biomass_grid(survey_sandsole, 2000, 2009)
-tens_survey_egls <- biomass_grid(survey_sandsole, 2010, 2018)
+eighties_survey_ssol <- biomass_grid(survey_sandsole, 1980, 1989)
+nineties_survey_ssol <- biomass_grid(survey_sandsole, 1990, 1999)
+thousands_survey_ssol <- biomass_grid(survey_sandsole, 2000, 2009)
+tens_survey_ssol <- biomass_grid(survey_sandsole, 2010, 2018)
 
 ### Spatial indicators
 # local index of collocation per decade for Sand Sole overall
-loc_collocfn(eighties_logbooks_egls, eighties_survey_egls)
-loc_collocfn(nineties_logbooks_egls, nineties_survey_egls)
-loc_collocfn(thousands_logbooks_egls, thousands_survey_egls)
-loc_collocfn(tens_logbooks_egls, tens_survey_egls)
+loc_collocfn(eighties_logbooks_ssol, eighties_survey_ssol)
+loc_collocfn(nineties_logbooks_ssol, nineties_survey_ssol)
+loc_collocfn(thousands_logbooks_ssol, thousands_survey_ssol)
+loc_collocfn(tens_logbooks_ssol, tens_survey_ssol)
 
 # Fill cell values for LIC
-eighties_sandsole <- spatial_lic(eighties_logbooks_egls, logbook_sandsole,
-                                eighties_survey_egls, survey_sandsole, 1980, 1989)
-nineties_sandsole <- spatial_lic(nineties_logbooks_egls, logbook_sandsole,
-                                nineties_survey_egls, survey_sandsole, 1990, 1999)
-thousands_sandsole <- spatial_lic(thousands_logbooks_egls, logbook_sandsole,
-                                 thousands_survey_egls, survey_sandsole, 2000, 2009)
-tens_sandsole <- spatial_lic(tens_logbooks_egls, logbook_sandsole,
-                            tens_survey_egls, survey_sandsole, 2010, 2018)
+eighties_sandsole <- spatial_lic(eighties_logbooks_ssol, logbook_sandsole,
+                                eighties_survey_ssol, survey_sandsole, 1980, 1989)
+nineties_sandsole <- spatial_lic(nineties_logbooks_ssol, logbook_sandsole,
+                                nineties_survey_ssol, survey_sandsole, 1990, 1999)
+thousands_sandsole <- spatial_lic(thousands_logbooks_ssol, logbook_sandsole,
+                                 thousands_survey_ssol, survey_sandsole, 2000, 2009)
+tens_sandsole <- spatial_lic(tens_logbooks_ssol, logbook_sandsole,
+                            tens_survey_ssol, survey_sandsole, 2010, 2018)
 
 # Determine maximum value to scale appropriately
 max(eighties_sandsole, na.rm = T) # max
@@ -644,7 +644,7 @@ par(mfrow = c(1, 2),
 lic_map(eighties_sandsole, eighties_sandsole, "Sand Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.73, .79, .11, .25),
            legend.cex = 1.4,
@@ -668,7 +668,7 @@ par(mfrow = c(1, 4),
 lic_sup(eighties_sandsole, eighties_sandsole, "Sand Sole 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .11, .25),
            legend.cex = 1.6,
@@ -738,17 +738,13 @@ loc_collocfn(tens_logbooks_stry, tens_survey_stry)
 
 # Fill cell values for LIC
 eighties_starry <- spatial_lic(eighties_logbooks_stry, logbook_starry,
-                  eighties_survey_stry, survey_starry,
-                  eighties_starry, 1980, 1989)
+                                 eighties_survey_stry, survey_starry, 1980, 1989)
 nineties_starry <- spatial_lic(nineties_logbooks_stry, logbook_starry,
-                          nineties_survey_stry, survey_starry,
-                          nineties_starry, 1990, 1999)
+                                 nineties_survey_stry, survey_starry, 1990, 1999)
 thousands_starry <- spatial_lic(thousands_logbooks_stry, logbook_starry,
-                          thousands_survey_stry, survey_starry,
-                          thousands_starry, 2000, 2009)
+                                  thousands_survey_stry, survey_starry, 2000, 2009)
 tens_starry <- spatial_lic(tens_logbooks_stry, logbook_starry,
-                          tens_survey_stry, survey_starry,
-                          tens_starry, 2010, 2018)
+                             tens_survey_stry, survey_starry, 2010, 2018)
 
 # Determine maximum value to scale appropriately
 max(eighties_starry, na.rm = T) # max
@@ -766,7 +762,7 @@ par(mfrow = c(1, 2),
 lic_map(eighties_starry, eighties_starry, "Starry Flounder 1980s",
                  bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.73, .79, .11, .25),
            legend.cex = 1.4,
@@ -790,7 +786,7 @@ par(mfrow = c(1, 4),
 lic_sup(eighties_starry, eighties_starry, "Starry Flounder 1980s",
         bathy_dat, bathy_mat)
 image.plot(legend.only = T,
-           col = hcl.colors(100, "YlOrRd", rev = T),
+           col = hcl.colors(100, "YlOrRd", rev = F),
            legend.shrink = 0.2,
            smallplot = c(.76, .82, .11, .25),
            legend.cex = 1.6,
