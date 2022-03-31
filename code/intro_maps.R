@@ -108,7 +108,7 @@ intro_map <- function(bathymetry){
 
 }
 
-OR_bathy1 <- getNOAA.bathy(lon1= -127, lon2= -121, lat1= 48, lat2= 39, resolution=1)
+OR_bathy1 <- getNOAA.bathy(lon1 = -127, lon2 = -121, lat1 = 47.2, lat2 = 40.3, resolution = 1)
 tiff("../final_figs/manuscript2_fig_tables/Figure_1.tiff",
      width = 5.5,
      height = 12,
@@ -156,6 +156,16 @@ text(-124.3,
      "Charleston",
      adj = c(0, 1.2),
      cex = 1.8)
+text(-123.5,
+     46.8,
+     "WA",
+     adj = c(0, 1.2),
+     cex = 2.2)
+text(-123.5,
+     43.9,
+     "OR",
+     adj = c(0, 1.2),
+     cex = 2.2)
 plot(OR_bathy1,
      deep = 0,
      shallow = 0,
@@ -164,18 +174,20 @@ plot(OR_bathy1,
 plot(OR_bathy1,
      deep = -50,
      shallow = -50,
-     lwd = 0.7,
+     lwd = 2,
      drawlabels = T,
      add = T,
-     col = "gray19")
+     col = "gray19",
+     labcex = 1.5)
 plot(OR_bathy1,
      deep = -200,
      shallow = -200,
-     lwd = 0.7,
+     lwd = 2,
      drawlabels = T,
      add = T,
-     col =  "gray19")
-map.scale(-126., 40.3, cex = 1)
+     col =  "gray19",
+     labcex = 1.5)
+map.scale(-125.8, 40.3, cex = 1)
 dev.off()
 
 ###########################################################################################################################################################
