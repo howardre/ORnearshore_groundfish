@@ -25,4 +25,9 @@ cpue_fillpts <- function(subset, year1, year2){
            pch = 16)
     polygon(grid_lon[i,], grid_lat[i,])
   }
+  scaled_stations <- rescale(nstations)
+  matrix(scaled_stations,
+         ncol = length(zlat),
+         nrow = length(zlon),
+         byrow = F)
 }

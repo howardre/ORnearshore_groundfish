@@ -16,6 +16,7 @@ library(ggthemes)
 library(ineq)
 library(reldist)
 library(gridExtra)
+library(scales)
 
 setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
 load("../data/ODFW_data/logbooks_corrected")
@@ -97,23 +98,15 @@ subset_petrale_logbook <- subset_petrale_logbook[subset_petrale_logbook$month_da
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 1981, 1989, "Petrale Sole 1980s")
-exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 1990, 1999, "Petrale Sole 1990s")
-exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 2000, 2009, "Petrale Sole 2000s")
+exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 1990, 2001, "Petrale Sole 1990s")
+exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 2002, 2009, "Petrale Sole 2000s")
 exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 2010, 2017, "Petrale Sole 2010s")
 
 # All years
 windows(width = 4, height = 10)
 exploration_panels(subset_petrale_logbook, bathy_dat, bathy_mat, 1981, 2017, "Petrale Sole")
-x <-  subset_petrale_logbook$lon[subset_petrale_logbook$pres == 1]
-y <- subset_petrale_logbook$lat[subset_petrale_logbook$pres == 1]
-trawls <- data.frame(x, y)
-polygon <- trawls %>%
-  sf::st_as_sf(coords = c("x", "y")) %>%
-  sf::st_union() %>%
-  sf::st_convex_hull() %>%
-  smooth(method = "ksmooth", smoothness = 0.5, n = 2000)
-plot(polygon, col = "blue")
-plot(trawls)
+windows(width = 4, height = 10)
+exploration_panels(subset_petrale_survey, bathy_dat, bathy_mat, 1981, 2017, "Petrale Sole")
 
 
 ## Decade maps
@@ -122,10 +115,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_petrale_logbook, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_petrale_logbook, 1990, 1999)
+cpue_fillpts(subset_petrale_logbook, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_petrale_logbook, 2000, 2009)
+cpue_fillpts(subset_petrale_logbook, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_petrale_logbook, 2010, 2017)
@@ -133,8 +126,8 @@ cpue_fillpts(subset_petrale_logbook, 2010, 2017)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_logbooks_ptrl <- cpue_grid(subset_petrale_logbook, 1981, 1989)
-nineties_logbooks_ptrl <- cpue_grid(subset_petrale_logbook, 1990, 1999)
-thousands_logbooks_ptrl <- cpue_grid(subset_petrale_logbook, 2000, 2009)
+nineties_logbooks_ptrl <- cpue_grid(subset_petrale_logbook, 1990, 2001)
+thousands_logbooks_ptrl <- cpue_grid(subset_petrale_logbook, 2002, 2009)
 tens_logbooks_ptrl <- cpue_grid(subset_petrale_logbook, 2010, 2017)
 
 ## Make maps
@@ -197,7 +190,7 @@ ggplot(data = catch_petrale,
        aes(x = YEAR, y = species_weight_sum / 1000)) +
   geom_bar(stat = "identity",
            position = position_dodge()) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   geom_col(fill = "orangered4") +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
@@ -224,7 +217,7 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_petrale_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -250,18 +243,18 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(winter_petrale, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(winter_petrale, 1990, 1999)
+cpue_fillpts(winter_petrale, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(winter_petrale, 2000, 2009)
+cpue_fillpts(winter_petrale, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(winter_petrale, 2010, 2017)
 
 ## Decade data
 eighties_logbooks_ptrl_winter <- cpue_grid(winter_petrale, 1981, 1989)
-nineties_logbooks_ptrl_winter <- cpue_grid(winter_petrale, 1990, 1999)
-thousands_logbooks_ptrl_winter <- cpue_grid(winter_petrale, 2000, 2009)
+nineties_logbooks_ptrl_winter <- cpue_grid(winter_petrale, 1990, 2001)
+thousands_logbooks_ptrl_winter <- cpue_grid(winter_petrale, 2002, 2009)
 tens_logbooks_ptrl_winter <- cpue_grid(winter_petrale, 2010, 2017)
 
 ## Make maps
@@ -331,8 +324,8 @@ subset_petrale_survey$pres[is.na(subset_petrale_survey$pres)] <- 0
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_petrale_survey, bathy_dat, bathy_mat, 1980, 1989, "Petrale Sole 1980s")
-exploration_panels(subset_petrale_survey, bathy_dat, bathy_mat, 1990, 1999, "Petrale Sole 1990s")
-exploration_panels(subset_petrale_survey, bathy_dat, bathy_mat, 2000, 2009, "Petrale Sole 2000s")
+exploration_panels(subset_petrale_survey, bathy_dat, bathy_mat, 1990, 2001, "Petrale Sole 1990s")
+exploration_panels(subset_petrale_survey, bathy_dat, bathy_mat, 2002, 2009, "Petrale Sole 2000s")
 exploration_panels(subset_petrale_survey, bathy_dat, bathy_mat, 2010, 2018, "Petrale Sole 2010s")
 
 ## Decade maps
@@ -341,10 +334,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_petrale_survey, 1980, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_petrale_survey, 1990, 1999)
+cpue_fillpts(subset_petrale_survey, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_petrale_survey, 2000, 2009)
+cpue_fillpts(subset_petrale_survey, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_petrale_survey, 2010, 2018)
@@ -352,8 +345,8 @@ cpue_fillpts(subset_petrale_survey, 2010, 2018)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_surveys_ptrl <- cpue_grid(subset_petrale_survey, 1980, 1989)
-nineties_surveys_ptrl <- cpue_grid(subset_petrale_survey, 1990, 1999)
-thousands_surveys_ptrl <- cpue_grid(subset_petrale_survey, 2000, 2009)
+nineties_surveys_ptrl <- cpue_grid(subset_petrale_survey, 1990, 2001)
+thousands_surveys_ptrl <- cpue_grid(subset_petrale_survey, 2002, 2009)
 tens_surveys_ptrl <- cpue_grid(subset_petrale_survey, 2010, 2018)
 
 ## Make maps
@@ -415,7 +408,7 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_petrale_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -451,7 +444,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ptrl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_ptrl,
          tens_logbooks_ptrl, "Logbook Petrale Sole 2010s",
@@ -468,7 +461,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(eighties_surveys_ptrl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_surveys_ptrl,
          eighties_surveys_ptrl, "Survey Petrale Sole 2010s", bathy_dat, bathy_mat)
@@ -493,7 +486,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_ptrl_winter,
                  tens_logbooks_ptrl_winter, "Winter Petrale Sole 2010s",
@@ -510,7 +503,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_ptrl,
                  tens_logbooks_ptrl_winter, "Summer Petrale Sole 2010s", bathy_dat, bathy_mat)
@@ -537,7 +530,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ptrl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_ptrl,
                  tens_logbooks_ptrl,
@@ -564,7 +557,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(eighties_surveys_ptrl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_surveys_ptrl,
                  eighties_surveys_ptrl,
@@ -600,7 +593,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_ptrl_winter,
                  tens_logbooks_ptrl_winter,
@@ -627,7 +620,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ptrl_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_ptrl,
                  tens_logbooks_ptrl_winter,
@@ -655,8 +648,8 @@ subset_dover_logbook <- subset_dover_logbook[subset_dover_logbook$month_day >= 5
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_dover_logbook, bathy_dat, bathy_mat, 1981, 1989, "Dover Sole 1980s")
-exploration_panels(subset_dover_logbook, bathy_dat, bathy_mat, 1990, 1999, "Dover Sole 1990s")
-exploration_panels(subset_dover_logbook, bathy_dat, bathy_mat, 2000, 2009, "Dover Sole 2000s")
+exploration_panels(subset_dover_logbook, bathy_dat, bathy_mat, 1990, 2001, "Dover Sole 1990s")
+exploration_panels(subset_dover_logbook, bathy_dat, bathy_mat, 2002, 2009, "Dover Sole 2000s")
 exploration_panels(subset_dover_logbook, bathy_dat, bathy_mat, 2010, 2017, "Dover Sole 2010s")
 
 ## Decade maps
@@ -665,10 +658,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_dover_logbook, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_dover_logbook, 1990, 1999)
+cpue_fillpts(subset_dover_logbook, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_dover_logbook, 2000, 2009)
+cpue_fillpts(subset_dover_logbook, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_dover_logbook, 2010, 2017)
@@ -676,8 +669,8 @@ cpue_fillpts(subset_dover_logbook, 2010, 2017)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_logbooks_dovr <- cpue_grid(subset_dover_logbook, 1981, 1989)
-nineties_logbooks_dovr <- cpue_grid(subset_dover_logbook, 1990, 1999)
-thousands_logbooks_dovr <- cpue_grid(subset_dover_logbook, 2000, 2009)
+nineties_logbooks_dovr <- cpue_grid(subset_dover_logbook, 1990, 2001)
+thousands_logbooks_dovr <- cpue_grid(subset_dover_logbook, 2002, 2009)
 tens_logbooks_dovr <- cpue_grid(subset_dover_logbook, 2010, 2017)
 
 ## Make maps
@@ -740,7 +733,7 @@ ggplot(data = catch_dover,
        aes(x = YEAR, y = species_weight_sum / 1000)) +
   geom_bar(stat = "identity",
            position = position_dodge()) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   geom_col(fill = "orangered4") +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
@@ -767,7 +760,7 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_dover_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -793,18 +786,18 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(winter_dover, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(winter_dover, 1990, 1999)
+cpue_fillpts(winter_dover, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(winter_dover, 2000, 2009)
+cpue_fillpts(winter_dover, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(winter_dover, 2010, 2017)
 
 ## Decade data
 eighties_logbooks_dovr_winter <- cpue_grid(winter_dover, 1981, 1989)
-nineties_logbooks_dovr_winter <- cpue_grid(winter_dover, 1990, 1999)
-thousands_logbooks_dovr_winter <- cpue_grid(winter_dover, 2000, 2009)
+nineties_logbooks_dovr_winter <- cpue_grid(winter_dover, 1990, 2001)
+thousands_logbooks_dovr_winter <- cpue_grid(winter_dover, 2002, 2009)
 tens_logbooks_dovr_winter <- cpue_grid(winter_dover, 2010, 2017)
 
 ## Make maps
@@ -873,8 +866,8 @@ subset_dover_survey$pres[is.na(subset_dover_survey$pres)] <- 0
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_dover_survey, bathy_dat, bathy_mat, 1980, 1989, "Dover Sole 1980s")
-exploration_panels(subset_dover_survey, bathy_dat, bathy_mat, 1990, 1999, "Dover Sole 1990s")
-exploration_panels(subset_dover_survey, bathy_dat, bathy_mat, 2000, 2009, "Dover Sole 2000s")
+exploration_panels(subset_dover_survey, bathy_dat, bathy_mat, 1990, 2001, "Dover Sole 1990s")
+exploration_panels(subset_dover_survey, bathy_dat, bathy_mat, 2002, 2009, "Dover Sole 2000s")
 exploration_panels(subset_dover_survey, bathy_dat, bathy_mat, 2010, 2018, "Dover Sole 2010s")
 
 ## Decade maps
@@ -883,10 +876,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_dover_survey, 1980, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_dover_survey, 1990, 1999)
+cpue_fillpts(subset_dover_survey, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_dover_survey, 2000, 2009)
+cpue_fillpts(subset_dover_survey, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_dover_survey, 2010, 2018)
@@ -894,8 +887,8 @@ cpue_fillpts(subset_dover_survey, 2010, 2018)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_surveys_dovr <- cpue_grid(subset_dover_survey, 1980, 1989)
-nineties_surveys_dovr <- cpue_grid(subset_dover_survey, 1990, 1999)
-thousands_surveys_dovr <- cpue_grid(subset_dover_survey, 2000, 2009)
+nineties_surveys_dovr <- cpue_grid(subset_dover_survey, 1990, 2001)
+thousands_surveys_dovr <- cpue_grid(subset_dover_survey, 2002, 2009)
 tens_surveys_dovr <- cpue_grid(subset_dover_survey, 2010, 2018)
 
 ## Make maps
@@ -957,7 +950,7 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_dover_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -993,7 +986,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_dovr, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_dovr,
                  tens_logbooks_dovr, "Logbook Dover Sole 2010s",
@@ -1010,7 +1003,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_surveys_dovr, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_surveys_dovr,
                  thousands_surveys_dovr, "Survey Dover Sole 2010s", bathy_dat, bathy_mat)
@@ -1035,7 +1028,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_dovr_winter,
                  tens_logbooks_dovr_winter, "Winter Dover Sole 2010s",
@@ -1052,7 +1045,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_dovr,
                  tens_logbooks_dovr_winter, "Summer Dover Sole 2010s", bathy_dat, bathy_mat)
@@ -1079,7 +1072,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_dovr, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_dovr,
                  tens_logbooks_dovr,
@@ -1106,7 +1099,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_surveys_dovr, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_surveys_dovr,
                  thousands_surveys_dovr,
@@ -1142,7 +1135,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_dovr_winter,
                  tens_logbooks_dovr_winter,
@@ -1169,7 +1162,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_dovr_winter, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_dovr,
                  tens_logbooks_dovr_winter,
@@ -1196,8 +1189,8 @@ subset_sanddab_logbook <- subset_sanddab_logbook[subset_sanddab_logbook$month_da
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_sanddab_logbook, bathy_dat, bathy_mat, 1981, 1989, "Pacific Sanddab 1980s")
-exploration_panels(subset_sanddab_logbook, bathy_dat, bathy_mat, 1990, 1999, "Pacific Sanddab 1990s")
-exploration_panels(subset_sanddab_logbook, bathy_dat, bathy_mat, 2000, 2009, "Pacific Sanddab 2000s")
+exploration_panels(subset_sanddab_logbook, bathy_dat, bathy_mat, 1990, 2001, "Pacific Sanddab 1990s")
+exploration_panels(subset_sanddab_logbook, bathy_dat, bathy_mat, 2002, 2009, "Pacific Sanddab 2000s")
 exploration_panels(subset_sanddab_logbook, bathy_dat, bathy_mat, 2010, 2017, "Pacific Sanddab 2010s")
 
 ## Decade maps
@@ -1206,10 +1199,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sanddab_logbook, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sanddab_logbook, 1990, 1999)
+cpue_fillpts(subset_sanddab_logbook, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sanddab_logbook, 2000, 2009)
+cpue_fillpts(subset_sanddab_logbook, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sanddab_logbook, 2010, 2017)
@@ -1217,8 +1210,8 @@ cpue_fillpts(subset_sanddab_logbook, 2010, 2017)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_logbooks_sdab <- cpue_grid(subset_sanddab_logbook, 1981, 1989)
-nineties_logbooks_sdab <- cpue_grid(subset_sanddab_logbook, 1990, 1999)
-thousands_logbooks_sdab <- cpue_grid(subset_sanddab_logbook, 2000, 2009)
+nineties_logbooks_sdab <- cpue_grid(subset_sanddab_logbook, 1990, 2001)
+thousands_logbooks_sdab <- cpue_grid(subset_sanddab_logbook, 2002, 2009)
 tens_logbooks_sdab <- cpue_grid(subset_sanddab_logbook, 2010, 2017)
 
 ## Make maps
@@ -1282,7 +1275,7 @@ ggplot(data = catch_sanddab,
   geom_bar(stat = "identity",
            position = position_dodge()) +
   geom_col(fill = "orangered4") +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -1308,7 +1301,7 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_sanddab_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -1341,8 +1334,8 @@ subset_sanddab_survey$pres[is.na(subset_sanddab_survey$pres)] <- 0
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_sanddab_survey, bathy_dat, bathy_mat, 1980, 1989, "Pacific Sanddab 1980s")
-exploration_panels(subset_sanddab_survey, bathy_dat, bathy_mat, 1990, 1999, "Pacific Sanddab 1990s")
-exploration_panels(subset_sanddab_survey, bathy_dat, bathy_mat, 2000, 2009, "Pacific Sanddab 2000s")
+exploration_panels(subset_sanddab_survey, bathy_dat, bathy_mat, 1990, 2001, "Pacific Sanddab 1990s")
+exploration_panels(subset_sanddab_survey, bathy_dat, bathy_mat, 2002, 2009, "Pacific Sanddab 2000s")
 exploration_panels(subset_sanddab_survey, bathy_dat, bathy_mat, 2010, 2018, "Pacific Sanddab 2010s")
 
 ## Decade maps
@@ -1351,10 +1344,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sanddab_survey, 1980, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sanddab_survey, 1990, 1999)
+cpue_fillpts(subset_sanddab_survey, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sanddab_survey, 2000, 2009)
+cpue_fillpts(subset_sanddab_survey, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sanddab_survey, 2010, 2018)
@@ -1362,8 +1355,8 @@ cpue_fillpts(subset_sanddab_survey, 2010, 2018)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_surveys_sdab <- cpue_grid(subset_sanddab_survey, 1980, 1989)
-nineties_surveys_sdab <- cpue_grid(subset_sanddab_survey, 1990, 1999)
-thousands_surveys_sdab <- cpue_grid(subset_sanddab_survey, 2000, 2009)
+nineties_surveys_sdab <- cpue_grid(subset_sanddab_survey, 1990, 2001)
+thousands_surveys_sdab <- cpue_grid(subset_sanddab_survey, 2002, 2009)
 tens_surveys_sdab <- cpue_grid(subset_sanddab_survey, 2010, 2018)
 
 ## Make maps
@@ -1425,7 +1418,7 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_sanddab_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -1461,7 +1454,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(nineties_logbooks_sdab, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_sdab,
                  nineties_logbooks_sdab, "Logbook Pacific Sanddab \n 2010s",
@@ -1478,7 +1471,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(nineties_surveys_sdab, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_surveys_sdab,
                  nineties_surveys_sdab, "Survey Pacific Sanddab \n 2010s", bathy_dat, bathy_mat)
@@ -1505,7 +1498,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(nineties_logbooks_sdab, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_sdab,
                  nineties_logbooks_sdab,
@@ -1532,7 +1525,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(nineties_surveys_sdab, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_surveys_sdab,
                  nineties_surveys_sdab,
@@ -1559,8 +1552,8 @@ subset_english_logbook <- subset_english_logbook[subset_english_logbook$month_da
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_english_logbook, bathy_dat, bathy_mat, 1981, 1989, "English Sole 1980s")
-exploration_panels(subset_english_logbook, bathy_dat, bathy_mat, 1990, 1999, "English Sole 1990s")
-exploration_panels(subset_english_logbook, bathy_dat, bathy_mat, 2000, 2009, "English Sole 2000s")
+exploration_panels(subset_english_logbook, bathy_dat, bathy_mat, 1990, 2001, "English Sole 1990s")
+exploration_panels(subset_english_logbook, bathy_dat, bathy_mat, 2002, 2009, "English Sole 2000s")
 exploration_panels(subset_english_logbook, bathy_dat, bathy_mat, 2010, 2017, "English Sole 2010s")
 
 ## Decade maps
@@ -1569,10 +1562,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_english_logbook, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_english_logbook, 1990, 1999)
+cpue_fillpts(subset_english_logbook, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_english_logbook, 2000, 2009)
+cpue_fillpts(subset_english_logbook, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_english_logbook, 2010, 2017)
@@ -1580,8 +1573,8 @@ cpue_fillpts(subset_english_logbook, 2010, 2017)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_logbooks_engl <- cpue_grid(subset_english_logbook, 1981, 1989)
-nineties_logbooks_engl <- cpue_grid(subset_english_logbook, 1990, 1999)
-thousands_logbooks_engl <- cpue_grid(subset_english_logbook, 2000, 2009)
+nineties_logbooks_engl <- cpue_grid(subset_english_logbook, 1990, 2001)
+thousands_logbooks_engl <- cpue_grid(subset_english_logbook, 2002, 2009)
 tens_logbooks_engl <- cpue_grid(subset_english_logbook, 2010, 2017)
 
 ## Make maps
@@ -1645,7 +1638,7 @@ ggplot(data = catch_sanddab,
   geom_bar(stat = "identity",
            position = position_dodge()) +
   geom_col(fill = "orangered4") +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -1671,7 +1664,7 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_english_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -1704,8 +1697,8 @@ subset_english_survey$pres[is.na(subset_english_survey$pres)] <- 0
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_english_survey, bathy_dat, bathy_mat, 1980, 1989, "English Sole 1980s")
-exploration_panels(subset_english_survey, bathy_dat, bathy_mat, 1990, 1999, "English Sole 1990s")
-exploration_panels(subset_english_survey, bathy_dat, bathy_mat, 2000, 2009, "English Sole 2000s")
+exploration_panels(subset_english_survey, bathy_dat, bathy_mat, 1990, 2001, "English Sole 1990s")
+exploration_panels(subset_english_survey, bathy_dat, bathy_mat, 2002, 2009, "English Sole 2000s")
 exploration_panels(subset_english_survey, bathy_dat, bathy_mat, 2010, 2018, "English Sole 2010s")
 
 ## Decade maps
@@ -1714,10 +1707,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_english_survey, 1980, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_english_survey, 1990, 1999)
+cpue_fillpts(subset_english_survey, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_english_survey, 2000, 2009)
+cpue_fillpts(subset_english_survey, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_english_survey, 2010, 2018)
@@ -1725,8 +1718,8 @@ cpue_fillpts(subset_english_survey, 2010, 2018)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_surveys_engl <- cpue_grid(subset_english_survey, 1980, 1989)
-nineties_surveys_engl <- cpue_grid(subset_english_survey, 1990, 1999)
-thousands_surveys_engl <- cpue_grid(subset_english_survey, 2000, 2009)
+nineties_surveys_engl <- cpue_grid(subset_english_survey, 1990, 2001)
+thousands_surveys_engl <- cpue_grid(subset_english_survey, 2002, 2009)
 tens_surveys_engl <- cpue_grid(subset_english_survey, 2010, 2018)
 
 ## Make maps
@@ -1788,7 +1781,7 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_english_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -1824,7 +1817,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_engl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_engl,
                  tens_logbooks_engl, "Logbook English Sole 2010s",
@@ -1841,7 +1834,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(eighties_surveys_engl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_surveys_engl,
                  eighties_surveys_engl, "Survey English Sole 2010s", bathy_dat, bathy_mat)
@@ -1868,7 +1861,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_engl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_engl,
                  tens_logbooks_engl,
@@ -1895,7 +1888,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(eighties_surveys_engl, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_surveys_engl,
                  eighties_surveys_engl,
@@ -1922,8 +1915,8 @@ subset_sand_sole_logbook <- subset_sand_sole_logbook[subset_sand_sole_logbook$mo
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_sand_sole_logbook, bathy_dat, bathy_mat, 1981, 1989, "Sand Sole 1980s")
-exploration_panels(subset_sand_sole_logbook, bathy_dat, bathy_mat, 1990, 1999, "Sand Sole 1990s")
-exploration_panels(subset_sand_sole_logbook, bathy_dat, bathy_mat, 2000, 2009, "Sand Sole 2000s")
+exploration_panels(subset_sand_sole_logbook, bathy_dat, bathy_mat, 1990, 2001, "Sand Sole 1990s")
+exploration_panels(subset_sand_sole_logbook, bathy_dat, bathy_mat, 2002, 2009, "Sand Sole 2000s")
 exploration_panels(subset_sand_sole_logbook, bathy_dat, bathy_mat, 2010, 2017, "Sand Sole 2010s")
 
 ## Decade maps
@@ -1932,10 +1925,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sand_sole_logbook, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sand_sole_logbook, 1990, 1999)
+cpue_fillpts(subset_sand_sole_logbook, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sand_sole_logbook, 2000, 2009)
+cpue_fillpts(subset_sand_sole_logbook, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sand_sole_logbook, 2010, 2017)
@@ -1943,8 +1936,8 @@ cpue_fillpts(subset_sand_sole_logbook, 2010, 2017)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_logbooks_ssol <- cpue_grid(subset_sand_sole_logbook, 1981, 1989)
-nineties_logbooks_ssol <- cpue_grid(subset_sand_sole_logbook, 1990, 1999)
-thousands_logbooks_ssol <- cpue_grid(subset_sand_sole_logbook, 2000, 2009)
+nineties_logbooks_ssol <- cpue_grid(subset_sand_sole_logbook, 1990, 2001)
+thousands_logbooks_ssol <- cpue_grid(subset_sand_sole_logbook, 2002, 2009)
 tens_logbooks_ssol <- cpue_grid(subset_sand_sole_logbook, 2010, 2017)
 
 ## Make maps
@@ -2008,7 +2001,7 @@ ggplot(data = catch_sanddab,
   geom_bar(stat = "identity",
            position = position_dodge()) +
   geom_col(fill = "orangered4") +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -2034,7 +2027,7 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_sand_sole_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -2067,8 +2060,8 @@ subset_sand_sole_survey$pres[is.na(subset_sand_sole_survey$pres)] <- 0
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_sand_sole_survey, bathy_dat, bathy_mat, 1980, 1989, "Sand Sole 1980s")
-exploration_panels(subset_sand_sole_survey, bathy_dat, bathy_mat, 1990, 1999, "Sand Sole 1990s")
-exploration_panels(subset_sand_sole_survey, bathy_dat, bathy_mat, 2000, 2009, "Sand Sole 2000s")
+exploration_panels(subset_sand_sole_survey, bathy_dat, bathy_mat, 1990, 2001, "Sand Sole 1990s")
+exploration_panels(subset_sand_sole_survey, bathy_dat, bathy_mat, 2002, 2009, "Sand Sole 2000s")
 exploration_panels(subset_sand_sole_survey, bathy_dat, bathy_mat, 2010, 2018, "Sand Sole 2010s")
 
 ## Decade maps
@@ -2077,10 +2070,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sand_sole_survey, 1980, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sand_sole_survey, 1990, 1999)
+cpue_fillpts(subset_sand_sole_survey, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_sand_sole_survey, 2000, 2009)
+cpue_fillpts(subset_sand_sole_survey, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_sand_sole_survey, 2010, 2018)
@@ -2088,8 +2081,8 @@ cpue_fillpts(subset_sand_sole_survey, 2010, 2018)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_surveys_ssol <- cpue_grid(subset_sand_sole_survey, 1980, 1989)
-nineties_surveys_ssol <- cpue_grid(subset_sand_sole_survey, 1990, 1999)
-thousands_surveys_ssol <- cpue_grid(subset_sand_sole_survey, 2000, 2009)
+nineties_surveys_ssol <- cpue_grid(subset_sand_sole_survey, 1990, 2001)
+thousands_surveys_ssol <- cpue_grid(subset_sand_sole_survey, 2002, 2009)
 tens_surveys_ssol <- cpue_grid(subset_sand_sole_survey, 2010, 2018)
 
 ## Make maps
@@ -2151,7 +2144,7 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_sand_sole_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -2187,7 +2180,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ssol, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_ssol,
                  tens_logbooks_ssol, "Logbook Sand Sole 2010s",
@@ -2204,7 +2197,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_surveys_ssol, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_surveys_ssol,
                  thousands_surveys_ssol, "Survey Sand Sole 2010s", bathy_dat, bathy_mat)
@@ -2231,7 +2224,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(tens_logbooks_ssol, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_ssol,
                  tens_logbooks_ssol,
@@ -2258,7 +2251,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_surveys_ssol, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_surveys_ssol,
                  thousands_surveys_ssol,
@@ -2286,8 +2279,8 @@ subset_starry_logbook <- subset_starry_logbook[subset_starry_logbook$month_day >
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_starry_logbook, bathy_dat, bathy_mat, 1981, 1989, "Starry Flounder 1980s")
-exploration_panels(subset_starry_logbook, bathy_dat, bathy_mat, 1990, 1999, "Starry Flounder 1990s")
-exploration_panels(subset_starry_logbook, bathy_dat, bathy_mat, 2000, 2009, "Starry Flounder 2000s")
+exploration_panels(subset_starry_logbook, bathy_dat, bathy_mat, 1990, 2001, "Starry Flounder 1990s")
+exploration_panels(subset_starry_logbook, bathy_dat, bathy_mat, 2002, 2009, "Starry Flounder 2000s")
 exploration_panels(subset_starry_logbook, bathy_dat, bathy_mat, 2010, 2017, "Starry Flounder 2010s")
 
 ## Decade maps
@@ -2296,10 +2289,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_starry_logbook, 1981, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_starry_logbook, 1990, 1999)
+cpue_fillpts(subset_starry_logbook, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_starry_logbook, 2000, 2009)
+cpue_fillpts(subset_starry_logbook, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_starry_logbook, 2010, 2017)
@@ -2307,8 +2300,8 @@ cpue_fillpts(subset_starry_logbook, 2010, 2017)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_logbooks_stry <- cpue_grid(subset_starry_logbook, 1981, 1989)
-nineties_logbooks_stry <- cpue_grid(subset_starry_logbook, 1990, 1999)
-thousands_logbooks_stry <- cpue_grid(subset_starry_logbook, 2000, 2009)
+nineties_logbooks_stry <- cpue_grid(subset_starry_logbook, 1990, 2001)
+thousands_logbooks_stry <- cpue_grid(subset_starry_logbook, 2002, 2009)
 tens_logbooks_stry <- cpue_grid(subset_starry_logbook, 2010, 2017)
 
 ## Make maps
@@ -2372,7 +2365,7 @@ ggplot(data = catch_sanddab,
   geom_bar(stat = "identity",
            position = position_dodge()) +
   geom_col(fill = "orangered4") +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -2398,7 +2391,7 @@ par(mfrow = c(1, 1))
 ggplot(data = logbook_starry_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -2431,8 +2424,8 @@ subset_starry_survey$pres[is.na(subset_starry_survey$pres)] <- 0
 windows(width = 28, height = 18)
 par(mfrow = c(1, 4))
 exploration_panels(subset_starry_survey, bathy_dat, bathy_mat, 1980, 1989, "Starry Flounder 1980s")
-exploration_panels(subset_starry_survey, bathy_dat, bathy_mat, 1990, 1999, "Starry Flounder 1990s")
-exploration_panels(subset_starry_survey, bathy_dat, bathy_mat, 2000, 2009, "Starry Flounder 2000s")
+exploration_panels(subset_starry_survey, bathy_dat, bathy_mat, 1990, 2001, "Starry Flounder 1990s")
+exploration_panels(subset_starry_survey, bathy_dat, bathy_mat, 2002, 2009, "Starry Flounder 2000s")
 exploration_panels(subset_starry_survey, bathy_dat, bathy_mat, 2010, 2018, "Starry Flounder 2010s")
 
 ## Decade maps
@@ -2441,10 +2434,10 @@ dev.new(width = 4, height = 10)
 cpue_fillpts(subset_starry_survey, 1980, 1989)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_starry_survey, 1990, 1999)
+cpue_fillpts(subset_starry_survey, 1990, 2001)
 
 dev.new(width = 4, height = 10)
-cpue_fillpts(subset_starry_survey, 2000, 2009)
+cpue_fillpts(subset_starry_survey, 2002, 2009)
 
 dev.new(width = 4, height = 10)
 cpue_fillpts(subset_starry_survey, 2010, 2018)
@@ -2452,8 +2445,8 @@ cpue_fillpts(subset_starry_survey, 2010, 2018)
 ## Decade data
 # Make sure grid chunk has been run
 eighties_surveys_stry <- cpue_grid(subset_starry_survey, 1980, 1989)
-nineties_surveys_stry <- cpue_grid(subset_starry_survey, 1990, 1999)
-thousands_surveys_stry <- cpue_grid(subset_starry_survey, 2000, 2009)
+nineties_surveys_stry <- cpue_grid(subset_starry_survey, 1990, 2001)
+thousands_surveys_stry <- cpue_grid(subset_starry_survey, 2002, 2009)
 tens_surveys_stry <- cpue_grid(subset_starry_survey, 2010, 2018)
 
 ## Make maps
@@ -2515,7 +2508,7 @@ par(mfrow = c(1, 1))
 ggplot(data = survey_starry_cpue, aes(x = year, y = cpue_mean)) +
   geom_path(color = "orangered4", size = 0.5) +
   geom_point(size = 0.9) +
-  scale_x_continuous(breaks = c(1980, 1990, 2000, 2010)) +
+  scale_x_continuous(breaks = c(1980, 1990, 2002, 2010)) +
   theme_tufte() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -2551,7 +2544,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_logbooks_stry, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_logbooks_stry,
                  thousands_logbooks_stry, "Logbook Starry Flounder \n 2010s",
@@ -2568,7 +2561,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_surveys_stry, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.4))
 species_grid_pdf(tens_surveys_stry,
                  thousands_surveys_stry, "Survey Starry Flounder \n 2010s", bathy_dat, bathy_mat)
@@ -2595,7 +2588,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_logbooks_stry, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_logbooks_stry,
                  thousands_logbooks_stry,
@@ -2622,7 +2615,7 @@ image.plot(legend.only = T,
            legend.width = 0.5,
            legend.mar = 6,
            zlim = c(0, max(thousands_surveys_stry, na.rm = T)),
-           legend.args = list("ln(CPUE+1)",
+           legend.args = list("Scaled Catch",
                               side = 2, cex = 1.2))
 species_grid_sup(nineties_surveys_stry,
                  thousands_surveys_stry,

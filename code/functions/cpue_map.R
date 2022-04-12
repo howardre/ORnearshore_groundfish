@@ -23,7 +23,7 @@ cpue_map <- function(matrix, matrix2, color, title, bathy_dat, bathy_mat){
              axis.args = list(cex.axis = 0.9),
              legend.width = 1,
              zlim = c(0, max(matrix2, na.rm = T)),
-             legend.lab = "ln(CPUE+1)")
+             legend.lab = "Scaled Catch")
   contour(unique(bathy_dat$lon),
           sort(unique(bathy_dat$lat)),
           bathy_mat,

@@ -73,7 +73,7 @@ plot(trawl_counts$lon,
      pch = '.',
      ylim = c(42,47),
      xlim = c(-125, -123.9))
-grid_fill(30, 25, 1989, 2000, trawl_counts)
+grid_fill(30, 25, 1989, 2002, trawl_counts)
 
 # 00s
 dev.new(width = 4, height = 10)
@@ -82,7 +82,7 @@ plot(trawl_counts$lon,
      pch = '.',
      ylim = c(42,47),
      xlim = c(-125, -123.9))
-grid_fill(30, 25, 1999, 2010, trawl_counts)
+grid_fill(30, 25, 2002, 2010, trawl_counts)
 
 # 10s
 dev.new(width = 4, height = 10)
@@ -93,11 +93,11 @@ plot(trawl_counts$lon,
      xlim = c(-125, -123.9))
 grid_fill(30, 25, 2009, 2019, trawl_counts)
 
-## decades
+## Decades
 # This is the average effort per year for each decade
 eighties_logbook <- grid_data(20, 15, 1980, 1990, trawl_counts)
-nineties_logbook <- grid_data(20, 15, 1989, 2000, trawl_counts)
-thousands_logbook <- grid_data(20, 15, 1999, 2010, trawl_counts)
+nineties_logbook <- grid_data(20, 15, 1989, 2002, trawl_counts)
+thousands_logbook <- grid_data(20, 15, 2002, 2010, trawl_counts)
 teens_logbook <- grid_data(20, 15, 2009, 2018, trawl_counts)
 
 ### Map the grids ----
@@ -106,8 +106,8 @@ par(mfrow = c(1, 4),
     family = 'serif',
     mar = c(4, 5, 3, .3) + .1)
 grid_map(20, 15, 1980, 1990, 230, trawl_counts, eighties_logbook, "Fishing Effort 1980s", bathy_dat, bathy_mat)
-grid_map(20, 15, 1989, 2000, 190, trawl_counts, nineties_logbook, "Fishing Effort 1990s", bathy_dat, bathy_mat)
-grid_map(20, 15, 1999, 2010, 180, trawl_counts, thousands_logbook, "Fishing Effort 2000s", bathy_dat, bathy_mat)
+grid_map(20, 15, 1989, 2002, 190, trawl_counts, nineties_logbook, "Fishing Effort 1990s", bathy_dat, bathy_mat)
+grid_map(20, 15, 2002, 2010, 180, trawl_counts, thousands_logbook, "Fishing Effort 2000s", bathy_dat, bathy_mat)
 grid_map(20, 15, 2009, 2018, 180, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
 
 ## Survey ----
@@ -131,7 +131,7 @@ plot(survey_data$lon,
      pch = '.',
      ylim = c(42,47),
      xlim = c(-125, -123.9))
-grid_fill(30, 25, 1989, 2000, survey_data)
+grid_fill(30, 25, 1989, 2002, survey_data)
 
 # 00s
 dev.new(width = 4, height = 10)
@@ -140,7 +140,7 @@ plot(survey_data$lon,
      pch = '.',
      ylim = c(42,47),
      xlim = c(-125, -123.9))
-grid_fill(30, 25, 1999, 2010, survey_data)
+grid_fill(30, 25, 2002, 2010, survey_data)
 
 # 10s
 dev.new(width = 4, height = 10)
@@ -159,8 +159,8 @@ zlon <- (lond[1:(length(lond) - 1)] + lond[2:length(lond)]) / 2
 # Decades
 # This is the average effort per year for each decade
 eighties_survey <- grid_data(20, 15, 1980, 1990, survey_data)
-nineties_survey <- grid_data(20, 15, 1989, 2000, survey_data)
-thousands_survey <- grid_data(20, 15, 1999, 2010, survey_data)
+nineties_survey <- grid_data(20, 15, 1989, 2002, survey_data)
+thousands_survey <- grid_data(20, 15, 2002, 2010, survey_data)
 teens_survey <- grid_data(20, 15, 2009, 2018, survey_data)
 
 ### Map the grids ----
@@ -169,8 +169,8 @@ par(mfrow = c(1, 4),
     family = 'serif',
     mar = c(4, 5, 3, .3) + .1)
 grid_map(20, 15, 1980, 1990, 3, survey_data, eighties_survey, "Survey Effort 1980s", bathy_dat, bathy_mat)
-grid_map(20, 15, 1989, 2000, 3, survey_data, nineties_survey, "Survey Effort 1990s", bathy_dat, bathy_mat)
-grid_map(20, 15, 1999, 2010, 3, survey_data, thousands_survey, "Survey Effort 2000s", bathy_dat, bathy_mat)
+grid_map(20, 15, 1989, 2002, 3, survey_data, nineties_survey, "Survey Effort 1990s", bathy_dat, bathy_mat)
+grid_map(20, 15, 2002, 2010, 3, survey_data, thousands_survey, "Survey Effort 2000s", bathy_dat, bathy_mat)
 grid_map(20, 15, 2009, 2018, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
 
 ### Final figure ----
@@ -231,8 +231,8 @@ image.plot(legend.only = T,
            zlim = c(0, 230),
            legend.args = list("avg. annual \n number of tows",
                               side = 2, cex = 1.4))
-grid_pdf(20, 15, 1989, 2000, 230, trawl_counts, nineties_logbook, "Fishing Effort 1990s", bathy_dat, bathy_mat)
-grid_pdf(20, 15, 1999, 2010, 230, trawl_counts, thousands_logbook, "Fishing Effort 2000s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1989, 2002, 230, trawl_counts, nineties_logbook, "Fishing Effort 1990s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 2002, 2010, 230, trawl_counts, thousands_logbook, "Fishing Effort 2000s", bathy_dat, bathy_mat)
 grid_pdf(20, 15, 2009, 2018, 230, trawl_counts, teens_logbook, "Fishing Effort 2010s", bathy_dat, bathy_mat)
 grid_pdf(20, 15, 1980, 1990, 4.5, survey_data, eighties_survey, "Survey Effort 1980s", bathy_dat, bathy_mat)
 image.plot(legend.only = T,
@@ -246,8 +246,8 @@ image.plot(legend.only = T,
            zlim = c(0, 4.5),
            legend.args = list("avg. annual \n number of tows",
                               side = 2, cex = 1.4))
-grid_pdf(20, 15, 1989, 2000, 3, survey_data, nineties_survey, "Survey Effort 1990s", bathy_dat, bathy_mat)
-grid_pdf(20, 15, 1999, 2010, 3, survey_data, thousands_survey, "Survey Effort 2000s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 1989, 2002, 3, survey_data, nineties_survey, "Survey Effort 1990s", bathy_dat, bathy_mat)
+grid_pdf(20, 15, 2002, 2010, 3, survey_data, thousands_survey, "Survey Effort 2000s", bathy_dat, bathy_mat)
 grid_pdf(20, 15, 2009, 2018, 3, survey_data, teens_survey, "Survey Effort 2010s", bathy_dat, bathy_mat)
 mtext(expression(paste("Latitude ("^0,'N)')),
       side = 2,
