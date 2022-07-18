@@ -107,7 +107,7 @@ survey_petrale$CPUE[is.na(survey_petrale$CPUE)] <- 0
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_petrale, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(logbook_petrale, 1990, 2002)
+biomass_fillpts(logbook_petrale, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_petrale, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -115,7 +115,7 @@ biomass_fillpts(logbook_petrale, 2010, 2017)
 
 # Fill decade grids with data
 eighties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1981, 1989)
-nineties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1990, 2002)
+nineties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1990, 2001)
 thousands_logbooks_ptrl <- biomass_grid(logbook_petrale, 2002, 2009)
 tens_logbooks_ptrl <- biomass_grid(logbook_petrale, 2010, 2017)
 
@@ -123,7 +123,7 @@ tens_logbooks_ptrl <- biomass_grid(logbook_petrale, 2010, 2017)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_petrale, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(survey_petrale, 1990, 2002)
+biomass_fillpts(survey_petrale, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_petrale, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -131,7 +131,7 @@ biomass_fillpts(survey_petrale, 2010, 2017)
 
 # Fill decade grids with data
 eighties_survey_ptrl <- biomass_grid(survey_petrale, 1980, 1989)
-nineties_survey_ptrl <- biomass_grid(survey_petrale, 1990, 2002)
+nineties_survey_ptrl <- biomass_grid(survey_petrale, 1990, 2001)
 thousands_survey_ptrl <- biomass_grid(survey_petrale, 2002, 2009)
 tens_survey_ptrl <- biomass_grid(survey_petrale, 2010, 2018)
 
@@ -146,7 +146,7 @@ loc_collocfn(tens_logbooks_ptrl, tens_survey_ptrl)
 eighties_petrale <- spatial_lic(eighties_logbooks_ptrl, logbook_petrale,
                                eighties_survey_ptrl, survey_petrale, 1980, 1989)
 nineties_petrale <- spatial_lic(nineties_logbooks_ptrl, logbook_petrale,
-                               nineties_survey_ptrl, survey_petrale, 1990, 2002)
+                               nineties_survey_ptrl, survey_petrale, 1990, 2001)
 thousands_petrale <- spatial_lic(thousands_logbooks_ptrl, logbook_petrale,
                                 thousands_survey_ptrl, survey_petrale, 2002, 2009)
 tens_petrale <- spatial_lic(tens_logbooks_ptrl, logbook_petrale,
@@ -225,7 +225,7 @@ survey_dover$CPUE[is.na(survey_dover$CPUE)] <- 0
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_dover, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(logbook_dover, 1990, 2002)
+biomass_fillpts(logbook_dover, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_dover, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -233,7 +233,7 @@ biomass_fillpts(logbook_dover, 2010, 2017)
 
 # Fill decade grids with data
 eighties_logbooks_dovr <- biomass_grid(logbook_dover, 1981, 1989)
-nineties_logbooks_dovr <- biomass_grid(logbook_dover, 1990, 2002)
+nineties_logbooks_dovr <- biomass_grid(logbook_dover, 1990, 2001)
 thousands_logbooks_dovr <- biomass_grid(logbook_dover, 2002, 2009)
 tens_logbooks_dovr <- biomass_grid(logbook_dover, 2010, 2017)
 
@@ -241,7 +241,7 @@ tens_logbooks_dovr <- biomass_grid(logbook_dover, 2010, 2017)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_dover, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(survey_dover, 1990, 2002)
+biomass_fillpts(survey_dover, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_dover, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -249,7 +249,7 @@ biomass_fillpts(survey_dover, 2010, 2017)
 
 # Fill decade grids with data
 eighties_survey_dovr <- biomass_grid(survey_dover, 1980, 1989)
-nineties_survey_dovr <- biomass_grid(survey_dover, 1990, 2002)
+nineties_survey_dovr <- biomass_grid(survey_dover, 1990, 2001)
 thousands_survey_dovr <- biomass_grid(survey_dover, 2002, 2009)
 tens_survey_dovr <- biomass_grid(survey_dover, 2010, 2018)
 
@@ -264,7 +264,7 @@ loc_collocfn(tens_logbooks_dovr, tens_survey_dovr)
 eighties_dover <- spatial_lic(eighties_logbooks_dovr, logbook_dover,
                                 eighties_survey_dovr, survey_dover, 1980, 1989)
 nineties_dover <- spatial_lic(nineties_logbooks_dovr, logbook_dover,
-                                nineties_survey_dovr, survey_dover, 1990, 2002)
+                                nineties_survey_dovr, survey_dover, 1990, 2001)
 thousands_dover <- spatial_lic(thousands_logbooks_dovr, logbook_dover,
                                  thousands_survey_dovr, survey_dover, 2002, 2009)
 tens_dover <- spatial_lic(tens_logbooks_dovr, logbook_dover,
@@ -344,7 +344,7 @@ survey_english$CPUE[is.na(survey_english$CPUE)] <- 0
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_english, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(logbook_english, 1990, 2002)
+biomass_fillpts(logbook_english, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_english, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -352,7 +352,7 @@ biomass_fillpts(logbook_english, 2010, 2017)
 
 # Fill decade grids with data
 eighties_logbooks_egls <- biomass_grid(logbook_english, 1981, 1989)
-nineties_logbooks_egls <- biomass_grid(logbook_english, 1990, 2002)
+nineties_logbooks_egls <- biomass_grid(logbook_english, 1990, 2001)
 thousands_logbooks_egls <- biomass_grid(logbook_english, 2002, 2009)
 tens_logbooks_egls <- biomass_grid(logbook_english, 2010, 2017)
 
@@ -360,7 +360,7 @@ tens_logbooks_egls <- biomass_grid(logbook_english, 2010, 2017)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_english, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(survey_english, 1990, 2002)
+biomass_fillpts(survey_english, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_english, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -368,7 +368,7 @@ biomass_fillpts(survey_english, 2010, 2017)
 
 # Fill decade grids with data
 eighties_survey_egls <- biomass_grid(survey_english, 1980, 1989)
-nineties_survey_egls <- biomass_grid(survey_english, 1990, 2002)
+nineties_survey_egls <- biomass_grid(survey_english, 1990, 2001)
 thousands_survey_egls <- biomass_grid(survey_english, 2002, 2009)
 tens_survey_egls <- biomass_grid(survey_english, 2010, 2018)
 
@@ -383,7 +383,7 @@ loc_collocfn(tens_logbooks_egls, tens_survey_egls)
 eighties_english <- spatial_lic(eighties_logbooks_egls, logbook_english,
                               eighties_survey_egls, survey_english, 1980, 1989)
 nineties_english <- spatial_lic(nineties_logbooks_egls, logbook_english,
-                              nineties_survey_egls, survey_english, 1990, 2002)
+                              nineties_survey_egls, survey_english, 1990, 2001)
 thousands_english <- spatial_lic(thousands_logbooks_egls, logbook_english,
                                thousands_survey_egls, survey_english, 2002, 2009)
 tens_english <- spatial_lic(tens_logbooks_egls, logbook_english,
@@ -463,7 +463,7 @@ survey_sanddab$CPUE[is.na(survey_sanddab$CPUE)] <- 0
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sanddab, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(logbook_sanddab, 1990, 2002)
+biomass_fillpts(logbook_sanddab, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sanddab, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -471,7 +471,7 @@ biomass_fillpts(logbook_sanddab, 2010, 2017)
 
 # Fill decade grids with data
 eighties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1981, 1989)
-nineties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1990, 2002)
+nineties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1990, 2001)
 thousands_logbooks_sdab <- biomass_grid(logbook_sanddab, 2002, 2009)
 tens_logbooks_sdab <- biomass_grid(logbook_sanddab, 2010, 2017)
 
@@ -479,7 +479,7 @@ tens_logbooks_sdab <- biomass_grid(logbook_sanddab, 2010, 2017)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_sanddab, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(survey_sanddab, 1990, 2002)
+biomass_fillpts(survey_sanddab, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_sanddab, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -487,7 +487,7 @@ biomass_fillpts(survey_sanddab, 2010, 2017)
 
 # Fill decade grids with data
 eighties_survey_sdab <- biomass_grid(survey_sanddab, 1980, 1989)
-nineties_survey_sdab <- biomass_grid(survey_sanddab, 1990, 2002)
+nineties_survey_sdab <- biomass_grid(survey_sanddab, 1990, 2001)
 thousands_survey_sdab <- biomass_grid(survey_sanddab, 2002, 2009)
 tens_survey_sdab <- biomass_grid(survey_sanddab, 2010, 2018)
 
@@ -502,7 +502,7 @@ loc_collocfn(tens_logbooks_sdab, tens_survey_sdab)
 eighties_sanddab <- spatial_lic(eighties_logbooks_sdab, logbook_sanddab,
                                 eighties_survey_sdab, survey_sanddab, 1980, 1989)
 nineties_sanddab <- spatial_lic(nineties_logbooks_sdab, logbook_sanddab,
-                                nineties_survey_sdab, survey_sanddab, 1990, 2002)
+                                nineties_survey_sdab, survey_sanddab, 1990, 2001)
 thousands_sanddab <- spatial_lic(thousands_logbooks_sdab, logbook_sanddab,
                                  thousands_survey_sdab, survey_sanddab, 2002, 2009)
 tens_sanddab <- spatial_lic(tens_logbooks_sdab, logbook_sanddab,
@@ -582,7 +582,7 @@ survey_sandsole$CPUE[is.na(survey_sandsole$CPUE)] <- 0
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sandsole, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(logbook_sandsole, 1990, 2002)
+biomass_fillpts(logbook_sandsole, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sandsole, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -590,7 +590,7 @@ biomass_fillpts(logbook_sandsole, 2010, 2017)
 
 # Fill decade grids with data
 eighties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1981, 1989)
-nineties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1990, 2002)
+nineties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1990, 2001)
 thousands_logbooks_ssol <- biomass_grid(logbook_sandsole, 2002, 2009)
 tens_logbooks_ssol <- biomass_grid(logbook_sandsole, 2010, 2017)
 
@@ -598,7 +598,7 @@ tens_logbooks_ssol <- biomass_grid(logbook_sandsole, 2010, 2017)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_sandsole, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(survey_sandsole, 1990, 2002)
+biomass_fillpts(survey_sandsole, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_sandsole, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -606,7 +606,7 @@ biomass_fillpts(survey_sandsole, 2010, 2017)
 
 # Fill decade grids with data
 eighties_survey_ssol <- biomass_grid(survey_sandsole, 1980, 1989)
-nineties_survey_ssol <- biomass_grid(survey_sandsole, 1990, 2002)
+nineties_survey_ssol <- biomass_grid(survey_sandsole, 1990, 2001)
 thousands_survey_ssol <- biomass_grid(survey_sandsole, 2002, 2009)
 tens_survey_ssol <- biomass_grid(survey_sandsole, 2010, 2018)
 
@@ -621,7 +621,7 @@ loc_collocfn(tens_logbooks_ssol, tens_survey_ssol)
 eighties_sandsole <- spatial_lic(eighties_logbooks_ssol, logbook_sandsole,
                                 eighties_survey_ssol, survey_sandsole, 1980, 1989)
 nineties_sandsole <- spatial_lic(nineties_logbooks_ssol, logbook_sandsole,
-                                nineties_survey_ssol, survey_sandsole, 1990, 2002)
+                                nineties_survey_ssol, survey_sandsole, 1990, 2001)
 thousands_sandsole <- spatial_lic(thousands_logbooks_ssol, logbook_sandsole,
                                  thousands_survey_ssol, survey_sandsole, 2002, 2009)
 tens_sandsole <- spatial_lic(tens_logbooks_ssol, logbook_sandsole,
@@ -701,7 +701,7 @@ survey_starry$CPUE[is.na(survey_starry$CPUE)] <- 0
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_starry, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(logbook_starry, 1990, 2002)
+biomass_fillpts(logbook_starry, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_starry, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -709,7 +709,7 @@ biomass_fillpts(logbook_starry, 2010, 2017)
 
 # Fill decade grids with data
 eighties_logbooks_stry <- biomass_grid(logbook_starry, 1981, 1989)
-nineties_logbooks_stry <- biomass_grid(logbook_starry, 1990, 2002)
+nineties_logbooks_stry <- biomass_grid(logbook_starry, 1990, 2001)
 thousands_logbooks_stry <- biomass_grid(logbook_starry, 2002, 2009)
 tens_logbooks_stry <- biomass_grid(logbook_starry, 2010, 2017)
 
@@ -717,7 +717,7 @@ tens_logbooks_stry <- biomass_grid(logbook_starry, 2010, 2017)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_starry, 1981, 1989)
 dev.new(width = 4, height = 10)
-biomass_fillpts(survey_starry, 1990, 2002)
+biomass_fillpts(survey_starry, 1990, 2001)
 dev.new(width = 4, height = 10)
 biomass_fillpts(survey_starry, 2002, 2009)
 dev.new(width = 4, height = 10)
@@ -725,7 +725,7 @@ biomass_fillpts(survey_starry, 2010, 2017)
 
 # Fill decade grids with data
 eighties_survey_stry <- biomass_grid(survey_starry, 1980, 1989)
-nineties_survey_stry <- biomass_grid(survey_starry, 1990, 2002)
+nineties_survey_stry <- biomass_grid(survey_starry, 1990, 2001)
 thousands_survey_stry <- biomass_grid(survey_starry, 2002, 2009)
 tens_survey_stry <- biomass_grid(survey_starry, 2010, 2018)
 
@@ -740,7 +740,7 @@ loc_collocfn(tens_logbooks_stry, tens_survey_stry)
 eighties_starry <- spatial_lic(eighties_logbooks_stry, logbook_starry,
                                  eighties_survey_stry, survey_starry, 1980, 1989)
 nineties_starry <- spatial_lic(nineties_logbooks_stry, logbook_starry,
-                                 nineties_survey_stry, survey_starry, 1990, 2002)
+                                 nineties_survey_stry, survey_starry, 1990, 2001)
 thousands_starry <- spatial_lic(thousands_logbooks_stry, logbook_starry,
                                   thousands_survey_stry, survey_starry, 2002, 2009)
 tens_starry <- spatial_lic(tens_logbooks_stry, logbook_starry,
