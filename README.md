@@ -14,6 +14,7 @@ The **Oregon logbook, fish ticket, and vessel data** used are _confidential_ and
 Climate indices used are also available
 - [NPGO](data/Environmental_data/NPGO.csv/)
 - [PDO](data/Environmental_data/PDO/)
+- [Grain size](data/Environmental_data/grain_df.Rdata) and [lithology](data/Environmental_data/lith_df.Rdata) though larger files can be sourced from elsewhere (some included in sediment folder)
 - All other environmental data is found in the NMFS station data
 
 
@@ -39,4 +40,12 @@ Work in progress: only some code is available
 
 ### Comparing fishery-independent and fishery-dependent data for analysis of the distributions of Oregon shelf groundfishes
 This section is a work-in-progress and uses the _confidential_ ODFW data. If access to the data is available, it can be converted to a useable format [here](code/Access_import.R/) and then [QC](code/Logbook-Ticket_QC.R/)'d.
+#### Visualization of Logbook Data
+- General [effort](code/effort_visualization.R/) of the fleet and for [specific species](code/Logbook_visualization.R/) can be seen
+- Data is gridded to ensure confidentiality
+- Changes in [vessel use](code/Vessel_regression.R/) can also be visualized
 
+#### Local index of collocation (LIC)
+- This was calculated to look at overlap between the NMFS survey and Oregon logbook data
+- See [Carroll et al. (2019)](https://doi.org/10.1111/geb.12984) for more information on other metrics
+- The method used here is calculated [here](code/LIC.R/)
