@@ -25,12 +25,16 @@ NMS was used to investigate changes in community composition over time
 
 #### Generalized additive models (GAM)
 ##### Stationary formulation
-Work in progress: there is no available code yet.
+- Separate the data into species specific data frames, ensuring all zero tows retained
+- Initial analyses used basic [Gaussian GAMs](code/GAM_analysis.R/)
+- Final analyses used [zero-inflated Poisson GAMs](code/ZIP_analysis.R/)
+- Additional functions needed to run these scripts are available in [here](code/functions/)
 
 ##### Nonstationary formulation/threshold GAM (TGAM)
 Work in progress: only some code is available
-- [TGAM function](code/TGAM_function.R/) WIP
-- [TGAM bootstrap](code/TGAM_bootstrap.R/)
+- Only basic formulations were used to run threshold GAMs, meaning no environmental terms
+- Analyses are available [here](code/TGAM_analysis.R/) and the bootstrapping is available [here](code/TGAM_bootstrap.R/)
+- There are relevant [TGAM functions](code/functions/TGAM_function.R/) used in the above scripts
 
 ### Utility of combining fishery-independent and fishery-dependent data for spatiotemporal analyses in Oregon's groundfish fishery
 This section is a work-in-progress and uses the _confidential_ ODFW data. If access to the data is available, it can be converted to a useable format [here](code/Access_import.R/) and then [QC](code/Logbook-Ticket_QC.R/)'d.
