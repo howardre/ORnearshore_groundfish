@@ -18,6 +18,7 @@ Climate indices used are also available
 
 
 ### The effects of climate, oceanography, and habitat on the distribution and abundance of northern California Current continental shelf groundfishes
+#### [Manuscript](DOI:10.1111/fog.12553)
 #### Non-metric multidimensional scaling (NMS)
 NMS was used to investigate changes in community composition over time
 - First make samples by species and environmental variables by species matrices [here](code/NMS_matrices.R/)
@@ -36,5 +37,6 @@ Work in progress: only some code is available
 - Analyses are available [here](code/TGAM_analysis.R/) and the bootstrapping is available [here](code/TGAM_bootstrap.R/)
 - There are relevant [TGAM functions](code/functions/TGAM_function.R/) used in the above scripts
 
-### Utility of combining fishery-independent and fishery-dependent data for spatiotemporal analyses in Oregon's groundfish fishery
+### Comparing fishery-independent and fishery-dependent data for analysis of the distributions of Oregon shelf groundfishes
 This section is a work-in-progress and uses the _confidential_ ODFW data. If access to the data is available, it can be converted to a useable format [here](code/Access_import.R/) and then [QC](code/Logbook-Ticket_QC.R/)'d.
+
