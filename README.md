@@ -33,7 +33,6 @@ NMS was used to investigate changes in community composition over time
 - Additional functions needed to run these scripts are available in [here](code/functions/)
 
 ##### Nonstationary formulation/threshold GAM (TGAM)
-Work in progress: only some code is available
 - Only basic formulations were used to run threshold GAMs, meaning no environmental terms
 - Analyses are available [here](code/TGAM_analysis.R/) and the bootstrapping is available [here](code/TGAM_bootstrap.R/)
 - There are relevant [TGAM functions](code/functions/TGAM_function.R/) used in the above scripts
