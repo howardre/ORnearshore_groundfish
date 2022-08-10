@@ -1,6 +1,6 @@
 # Characterization of Oregon's Shelf Groundfishes and Associated Fisheries
 
-This repo is for my M.S. thesis research and its associated manuscripts. There are two sub-projects/chapters.
+The work contained here is for my M.S. thesis research and its associated manuscripts. This project was funded by Oregon Sea Grant and focuses on the groundfishes targeted by the Oregon nearshore trawl fleet.
 
 ### Data
 The **NMFS survey data** raw and modified files are available in [here](data/NMFS_data/)
