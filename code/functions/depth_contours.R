@@ -1,14 +1,15 @@
 ## Depth distribution by year
 
-depth_contours <- function(subset, year_upper, title){
-  subset %>% filter(year <= year_upper) %>% filter(CPUE > 0) %>%
+depth_contours <- function(subset, year_range, title){
+  subset %>% filter(year %in% (year_range)) %>%
+    filter(CPUE > 0) %>%
     ggplot(aes(x = depth, y = lat)) +
     stat_density_2d(aes(fill = stat(level)),
                     geom = "polygon",
                     show.legend = F,
-                    bins = 12) +
+                    bins = 11) +
     scale_fill_viridis_c(option = "F", direction = -1) +
-    scale_x_continuous(expand = c(0, 0), limits = c(-200, 0)) +
+    scale_x_continuous(expand = c(0, 0), limits = c(-210, 10)) +
     scale_y_continuous(expand = c(0, 0), limits = c(40, 49)) +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
