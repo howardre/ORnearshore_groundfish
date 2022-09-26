@@ -17,6 +17,7 @@ library(ineq)
 library(reldist)
 library(gridExtra)
 library(scales)
+library(grid)
 
 setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
 load("../data/ODFW_data/logbooks_corrected")
@@ -146,14 +147,14 @@ cpue_map(nineties_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale 
 cpue_map(thousands_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_ptrl, tens_logbooks_ptrl, "PurpOr", "Logbook Petrale Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel_logs.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1989, "1980s")
-logs_nineties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1999, "1990s")
-logs_thousands_depth_ptrl <- depth_contours(subset_petrale_logbook, 2009, "2000s")
-logs_tens_depth_ptrl <- depth_contours(subset_petrale_logbook, 2017, "2010s")
+logs_eighties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1981:1989, "1980s")
+logs_nineties_depth_ptrl <- depth_contours(subset_petrale_logbook, 1990:1999, "1990s")
+logs_thousands_depth_ptrl <- depth_contours(subset_petrale_logbook, 2002:2009, "2000s")
+logs_tens_depth_ptrl <- depth_contours(subset_petrale_logbook, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_ptrl,
@@ -175,8 +176,8 @@ grid.arrange(logs_eighties_depth_ptrl,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/petrale_sole_depth.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Catch over time
@@ -203,8 +204,8 @@ ggplot(data = catch_petrale,
   labs(x = "",
        y = "Total Catch (1000s of lbs)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_catch.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/petrale_sole_catch.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -229,8 +230,8 @@ ggplot(data = logbook_petrale_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/hr)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_change.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/petrale_sole_change.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Seasonality
@@ -273,14 +274,14 @@ cpue_map(nineties_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Lo
 cpue_map(thousands_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Logbook Petrale Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_ptrl_winter, tens_logbooks_ptrl_winter, "PurpOr", "Logbook Petrale Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel_winter.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year (winter)
-logs_eighties_depth_ptrlw <- depth_contours(winter_petrale, 1989, "1980s")
-logs_nineties_depth_ptrlw <- depth_contours(winter_petrale, 1999, "1990s")
-logs_thousands_depth_ptrlw <- depth_contours(winter_petrale, 2009, "2000s")
-logs_tens_depth_ptrlw <- depth_contours(winter_petrale, 2017, "2010s")
+logs_eighties_depth_ptrlw <- depth_contours(winter_petrale, 1981:1989, "1980s")
+logs_nineties_depth_ptrlw <- depth_contours(winter_petrale, 1990:2001, "1990s")
+logs_thousands_depth_ptrlw <- depth_contours(winter_petrale, 2002:2009, "2000s")
+logs_tens_depth_ptrlw <- depth_contours(winter_petrale, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_ptrlw,
@@ -302,8 +303,8 @@ grid.arrange(logs_eighties_depth_ptrlw,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth_winter.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/petrale_sole_depth_winter.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ### Survey ----
@@ -365,14 +366,14 @@ cpue_map(nineties_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale
 cpue_map(thousands_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_surveys_ptrl, eighties_surveys_ptrl, "PurpOr", "Survey Petrale Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/petrale_sole_fourpanel_survey.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-survey_eighties_depth_ptrl <- depth_contours(subset_petrale_survey, 1989, "1980s")
-survey_nineties_depth_ptrl <- depth_contours(subset_petrale_survey, 1999, "1990s")
-survey_thousands_depth_ptrl <- depth_contours(subset_petrale_survey, 2009, "2000s")
-survey_tens_depth_ptrl <- depth_contours(subset_petrale_survey, 2018, "2010s")
+survey_eighties_depth_ptrl <- depth_contours(subset_petrale_survey, 1980:1989, "1980s")
+survey_nineties_depth_ptrl <- depth_contours(subset_petrale_survey, 1990:2001, "1990s")
+survey_thousands_depth_ptrl <- depth_contours(subset_petrale_survey, 2002:2009, "2000s")
+survey_tens_depth_ptrl <- depth_contours(subset_petrale_survey, 2010:2018, "2010s")
 
 windows()
 grid.arrange(survey_eighties_depth_ptrl,
@@ -394,8 +395,8 @@ grid.arrange(survey_eighties_depth_ptrl,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_sole_depth_survey.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/petrale_sole_depth_survey.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -420,13 +421,13 @@ ggplot(data = survey_petrale_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/ha)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/petrale_change_survey.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/petrale_change_survey.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Manuscript Maps ----
 # Four panel maps
-pdf("../final_figs/manuscript2_fig_tables/petrale_sole_maps.pdf",
+pdf("../final_figs/fish_res_fig_tables/petrale_sole_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -468,7 +469,7 @@ species_grid_pdf(tens_surveys_ptrl,
 dev.off()
 
 # Winter maps (logbooks only)
-pdf("../final_figs/manuscript2_fig_tables/petrale_sole_winter.pdf",
+pdf("../final_figs/fish_res_fig_tables/petrale_sole_winter.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -511,7 +512,7 @@ dev.off()
 
 ### Supplement Maps ----
 # Eight panel logbooks and surveys
-pdf("../final_figs/manuscript2_fig_tables/petrale_sole_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/petrale_sole_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
@@ -574,7 +575,7 @@ species_grid_sup(tens_surveys_ptrl,
 dev.off()
 
 # Eight panel seasonality
-pdf("../final_figs/manuscript2_fig_tables/petrale_seasonal_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/petrale_seasonal_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
@@ -689,14 +690,14 @@ cpue_map(nineties_logbooks_dovr, tens_logbooks_dovr, "PurpOr", "Logbook Dover So
 cpue_map(thousands_logbooks_dovr, tens_logbooks_dovr, "PurpOr", "Logbook Dover Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_dovr, tens_logbooks_dovr, "PurpOr", "Logbook Dover Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/dover_sole_fourpanel_logs.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_dovr <- depth_contours(subset_dover_logbook, 1989, "1980s")
-logs_nineties_depth_dovr <- depth_contours(subset_dover_logbook, 1999, "1990s")
-logs_thousands_depth_dovr <- depth_contours(subset_dover_logbook, 2009, "2000s")
-logs_tens_depth_dovr <- depth_contours(subset_dover_logbook, 2017, "2010s")
+logs_eighties_depth_dovr <- depth_contours(subset_dover_logbook, 1981:1989, "1980s")
+logs_nineties_depth_dovr <- depth_contours(subset_dover_logbook, 1990:2001, "1990s")
+logs_thousands_depth_dovr <- depth_contours(subset_dover_logbook, 2002:2009, "2000s")
+logs_tens_depth_dovr <- depth_contours(subset_dover_logbook, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_dovr,
@@ -718,8 +719,8 @@ grid.arrange(logs_eighties_depth_dovr,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_depth.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/dover_sole_depth.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Catch over time
@@ -746,8 +747,8 @@ ggplot(data = catch_dover,
   labs(x = "",
        y = "Total Catch (1000s of lbs)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_catch.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/dover_sole_catch.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -772,8 +773,8 @@ ggplot(data = logbook_dover_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/hr)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_change.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/dover_sole_change.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Seasonality
@@ -816,14 +817,14 @@ cpue_map(nineties_logbooks_dovr_winter, tens_logbooks_dovr_winter, "PurpOr", "Lo
 cpue_map(thousands_logbooks_dovr_winter, tens_logbooks_dovr_winter, "PurpOr", "Logbook Dover Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_dovr_winter, tens_logbooks_dovr_winter, "PurpOr", "Logbook Dover Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/dover_sole_fourpanel_winter.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year (winter)
-logs_eighties_depth_dovrw <- depth_contours(winter_dover, 1989, "1980s")
-logs_nineties_depth_dovrw <- depth_contours(winter_dover, 1999, "1990s")
-logs_thousands_depth_dovrw <- depth_contours(winter_dover, 2009, "2000s")
-logs_tens_depth_dovrw <- depth_contours(winter_dover, 2017, "2010s")
+logs_eighties_depth_dovrw <- depth_contours(winter_dover, 1981:1989, "1980s")
+logs_nineties_depth_dovrw <- depth_contours(winter_dover, 1990:2001, "1990s")
+logs_thousands_depth_dovrw <- depth_contours(winter_dover, 2002:2009, "2000s")
+logs_tens_depth_dovrw <- depth_contours(winter_dover, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_dovrw,
@@ -845,8 +846,8 @@ grid.arrange(logs_eighties_depth_dovrw,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_depth_winter.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/dover_sole_depth_winter.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ### Survey ----
@@ -907,14 +908,14 @@ cpue_map(nineties_surveys_dovr, thousands_surveys_dovr, "PurpOr", "Survey Dover 
 cpue_map(thousands_surveys_dovr, thousands_surveys_dovr, "PurpOr", "Survey Dover Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_surveys_dovr, thousands_surveys_dovr, "PurpOr", "Survey Dover Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/dover_sole_fourpanel_survey.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-survey_eighties_depth_dovr <- depth_contours(subset_dover_survey, 1989, "1980s")
-survey_nineties_depth_dovr <- depth_contours(subset_dover_survey, 1999, "1990s")
-survey_thousands_depth_dovr <- depth_contours(subset_dover_survey, 2009, "2000s")
-survey_tens_depth_dovr <- depth_contours(subset_dover_survey, 2018, "2010s")
+survey_eighties_depth_dovr <- depth_contours(subset_dover_survey, 1980:1989, "1980s")
+survey_nineties_depth_dovr <- depth_contours(subset_dover_survey, 1990:2001, "1990s")
+survey_thousands_depth_dovr <- depth_contours(subset_dover_survey, 2002:2009, "2000s")
+survey_tens_depth_dovr <- depth_contours(subset_dover_survey, 2010:2018, "2010s")
 
 windows()
 grid.arrange(survey_eighties_depth_dovr,
@@ -936,8 +937,8 @@ grid.arrange(survey_eighties_depth_dovr,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_sole_depth_survey.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/dover_sole_depth_survey.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -962,13 +963,13 @@ ggplot(data = survey_dover_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/ha)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/dover_change_survey.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/dover_change_survey.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Manuscript Maps ----
 # Four panel maps
-pdf("../final_figs/manuscript2_fig_tables/dover_sole_maps.pdf",
+pdf("../final_figs/fish_res_fig_tables/dover_sole_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -1010,7 +1011,7 @@ species_grid_pdf(tens_surveys_dovr,
 dev.off()
 
 # Winter maps (logbooks only)
-pdf("../final_figs/manuscript2_fig_tables/dover_sole_winter.pdf",
+pdf("../final_figs/fish_res_fig_tables/dover_sole_winter.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -1053,7 +1054,7 @@ dev.off()
 
 ### Supplement Maps ----
 # Eight panel logbooks and surveys
-pdf("../final_figs/manuscript2_fig_tables/dover_sole_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/dover_sole_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
@@ -1116,7 +1117,7 @@ species_grid_sup(tens_surveys_dovr,
 dev.off()
 
 # Eight panel seasonality
-pdf("../final_figs/manuscript2_fig_tables/dover_seasonal_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/dover_seasonal_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
@@ -1230,14 +1231,14 @@ cpue_map(nineties_logbooks_sdab, nineties_logbooks_sdab, "PurpOr", "Logbook Paci
 cpue_map(thousands_logbooks_sdab, nineties_logbooks_sdab, "PurpOr", "Logbook Pacific Sanddab 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_sdab, nineties_logbooks_sdab, "PurpOr", "Logbook Pacific Sanddab 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/sanddab_fourpanel_logs.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_sdab <- depth_contours(subset_sanddab_logbook, 1989, "1980s")
-logs_nineties_depth_sdab <- depth_contours(subset_sanddab_logbook, 1999, "1990s")
-logs_thousands_depth_sdab <- depth_contours(subset_sanddab_logbook, 2009, "2000s")
-logs_tens_depth_sdab <- depth_contours(subset_sanddab_logbook, 2017, "2010s")
+logs_eighties_depth_sdab <- depth_contours(subset_sanddab_logbook, 1981:1989, "1980s")
+logs_nineties_depth_sdab <- depth_contours(subset_sanddab_logbook, 1990:2001, "1990s")
+logs_thousands_depth_sdab <- depth_contours(subset_sanddab_logbook, 2002:2009, "2000s")
+logs_tens_depth_sdab <- depth_contours(subset_sanddab_logbook, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_sdab,
@@ -1259,8 +1260,8 @@ grid.arrange(logs_eighties_depth_sdab,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_depth.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sanddab_depth.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Catch over time
@@ -1287,8 +1288,8 @@ ggplot(data = catch_sanddab,
   labs(x = "",
        y = "Total Catch (1000s of lbs)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_catch.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sanddab_catch.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -1313,8 +1314,8 @@ ggplot(data = logbook_sanddab_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/hr)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_change.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sanddab_change.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Survey ----
@@ -1375,14 +1376,14 @@ cpue_map(nineties_surveys_sdab, nineties_surveys_sdab, "PurpOr", "Survey Pacific
 cpue_map(thousands_surveys_sdab, nineties_surveys_sdab, "PurpOr", "Survey Pacific Sanddab 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_surveys_sdab, nineties_surveys_sdab, "PurpOr", "Survey Pacific Sanddab 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/sanddab_fourpanel_survey.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-survey_eighties_depth_sdab <- depth_contours(subset_sanddab_survey, 1989, "1980s")
-survey_nineties_depth_sdab <- depth_contours(subset_sanddab_survey, 1999, "1990s")
-survey_thousands_depth_sdab <- depth_contours(subset_sanddab_survey, 2009, "2000s")
-survey_tens_depth_sdab <- depth_contours(subset_sanddab_survey, 2018, "2010s")
+survey_eighties_depth_sdab <- depth_contours(subset_sanddab_survey, 1980:1989, "1980s")
+survey_nineties_depth_sdab <- depth_contours(subset_sanddab_survey, 1990:2001, "1990s")
+survey_thousands_depth_sdab <- depth_contours(subset_sanddab_survey, 2002:2009, "2000s")
+survey_tens_depth_sdab <- depth_contours(subset_sanddab_survey, 2010:2018, "2010s")
 
 windows()
 grid.arrange(survey_eighties_depth_sdab,
@@ -1404,8 +1405,8 @@ grid.arrange(survey_eighties_depth_sdab,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_depth_survey.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sanddab_depth_survey.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -1430,13 +1431,13 @@ ggplot(data = survey_sanddab_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/ha)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sanddab_change_survey.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sanddab_change_survey.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Manuscript Maps ----
 # Four panel maps
-pdf("../final_figs/manuscript2_fig_tables/sanddab_maps.pdf",
+pdf("../final_figs/fish_res_fig_tables/sanddab_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -1479,7 +1480,7 @@ dev.off()
 
 ### Supplement Maps ----
 # Eight panel logbooks and surveys
-pdf("../final_figs/manuscript2_fig_tables/sanddab_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/sanddab_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
@@ -1593,14 +1594,14 @@ cpue_map(nineties_logbooks_engl, tens_logbooks_engl, "PurpOr", "Logbook English 
 cpue_map(thousands_logbooks_engl, tens_logbooks_engl, "PurpOr", "Logbook English Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_engl, tens_logbooks_engl, "PurpOr", "Logbook English Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/english_fourpanel_logs.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_engl <- depth_contours(subset_english_logbook, 1989, "1980s")
-logs_nineties_depth_engl <- depth_contours(subset_english_logbook, 1999, "1990s")
-logs_thousands_depth_engl <- depth_contours(subset_english_logbook, 2009, "2000s")
-logs_tens_depth_engl <- depth_contours(subset_english_logbook, 2017, "2010s")
+logs_eighties_depth_engl <- depth_contours(subset_english_logbook, 1981:1989, "1980s")
+logs_nineties_depth_engl <- depth_contours(subset_english_logbook, 1990:2001, "1990s")
+logs_thousands_depth_engl <- depth_contours(subset_english_logbook, 2002:2009, "2000s")
+logs_tens_depth_engl <- depth_contours(subset_english_logbook, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_engl,
@@ -1622,8 +1623,8 @@ grid.arrange(logs_eighties_depth_engl,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_depth.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/english_depth.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Catch over time
@@ -1650,8 +1651,8 @@ ggplot(data = catch_sanddab,
   labs(x = "",
        y = "Total Catch (1000s of lbs)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_catch.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/english_catch.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -1676,8 +1677,8 @@ ggplot(data = logbook_english_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/hr)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_change.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/english_change.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Survey ----
@@ -1738,14 +1739,14 @@ cpue_map(nineties_surveys_engl, eighties_surveys_engl, "PurpOr", "Survey English
 cpue_map(thousands_surveys_engl, eighties_surveys_engl, "PurpOr", "Survey English Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_surveys_engl, eighties_surveys_engl, "PurpOr", "Survey English Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/english_fourpanel_survey.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-survey_eighties_depth_engl <- depth_contours(subset_english_survey, 1989, "1980s")
-survey_nineties_depth_engl <- depth_contours(subset_english_survey, 1999, "1990s")
-survey_thousands_depth_engl <- depth_contours(subset_english_survey, 2009, "2000s")
-survey_tens_depth_engl <- depth_contours(subset_english_survey, 2018, "2010s")
+survey_eighties_depth_engl <- depth_contours(subset_english_survey, 1980:1989, "1980s")
+survey_nineties_depth_engl <- depth_contours(subset_english_survey, 1990:2001, "1990s")
+survey_thousands_depth_engl <- depth_contours(subset_english_survey, 2002:2009, "2000s")
+survey_tens_depth_engl <- depth_contours(subset_english_survey, 2010:2018, "2010s")
 
 windows()
 grid.arrange(survey_eighties_depth_engl,
@@ -1767,8 +1768,8 @@ grid.arrange(survey_eighties_depth_engl,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_depth_survey.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/english_depth_survey.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -1793,13 +1794,13 @@ ggplot(data = survey_english_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/ha)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/english_change_survey.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/english_change_survey.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Manuscript Maps ----
 # Four panel maps
-pdf("../final_figs/manuscript2_fig_tables/english_maps.pdf",
+pdf("../final_figs/fish_res_fig_tables/english_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -1842,7 +1843,7 @@ dev.off()
 
 ### Supplement Maps ----
 # Eight panel logbooks and surveys
-pdf("../final_figs/manuscript2_fig_tables/english_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/english_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
@@ -1956,14 +1957,14 @@ cpue_map(nineties_logbooks_ssol, tens_logbooks_ssol, "PurpOr", "Logbook Sand Sol
 cpue_map(thousands_logbooks_ssol, tens_logbooks_ssol, "PurpOr", "Logbook Sand Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_ssol, tens_logbooks_ssol, "PurpOr", "Logbook Sand Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/sand_sole_fourpanel_logs.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_ssol <- depth_contours(subset_sand_sole_logbook, 1989, "1980s")
-logs_nineties_depth_ssol <- depth_contours(subset_sand_sole_logbook, 1999, "1990s")
-logs_thousands_depth_ssol <- depth_contours(subset_sand_sole_logbook, 2009, "2000s")
-logs_tens_depth_ssol <- depth_contours(subset_sand_sole_logbook, 2017, "2010s")
+logs_eighties_depth_ssol <- depth_contours(subset_sand_sole_logbook, 1981:1989, "1980s")
+logs_nineties_depth_ssol <- depth_contours(subset_sand_sole_logbook, 1990:2001, "1990s")
+logs_thousands_depth_ssol <- depth_contours(subset_sand_sole_logbook, 2002:2009, "2000s")
+logs_tens_depth_ssol <- depth_contours(subset_sand_sole_logbook, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_ssol,
@@ -1985,8 +1986,8 @@ grid.arrange(logs_eighties_depth_ssol,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_depth.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sand_sole_depth.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Catch over time
@@ -2013,8 +2014,8 @@ ggplot(data = catch_sanddab,
   labs(x = "",
        y = "Total Catch (1000s of lbs)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_catch.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sand_sole_catch.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -2039,8 +2040,8 @@ ggplot(data = logbook_sand_sole_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/hr)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_change.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sand_sole_change.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Survey ----
@@ -2101,14 +2102,14 @@ cpue_map(nineties_surveys_ssol, thousands_surveys_ssol, "PurpOr", "Survey Sand S
 cpue_map(thousands_surveys_ssol, thousands_surveys_ssol, "PurpOr", "Survey Sand Sole 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_surveys_ssol, thousands_surveys_ssol, "PurpOr", "Survey Sand Sole 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/sand_sole_fourpanel_survey.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-survey_eighties_depth_ssol <- depth_contours(subset_sand_sole_survey, 1989, "1980s")
-survey_nineties_depth_ssol <- depth_contours(subset_sand_sole_survey, 1999, "1990s")
-survey_thousands_depth_ssol <- depth_contours(subset_sand_sole_survey, 2009, "2000s")
-survey_tens_depth_ssol <- depth_contours(subset_sand_sole_survey, 2018, "2010s")
+survey_eighties_depth_ssol <- depth_contours(subset_sand_sole_survey, 1980:1989, "1980s")
+survey_nineties_depth_ssol <- depth_contours(subset_sand_sole_survey, 1990:2001, "1990s")
+survey_thousands_depth_ssol <- depth_contours(subset_sand_sole_survey, 2002:2009, "2000s")
+survey_tens_depth_ssol <- depth_contours(subset_sand_sole_survey, 2010:2018, "2010s")
 
 windows()
 grid.arrange(survey_eighties_depth_ssol,
@@ -2130,8 +2131,8 @@ grid.arrange(survey_eighties_depth_ssol,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sand_sole_depth_survey.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sand_sole_depth_survey.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -2156,13 +2157,13 @@ ggplot(data = survey_sand_sole_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "",
        y = "CPUE (kg/ha)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/sandsole_change_survey.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/sandsole_change_survey.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Manuscript Maps ----
 # Four panel maps
-pdf("../final_figs/manuscript2_fig_tables/sandsole_maps.pdf",
+pdf("../final_figs/fish_res_fig_tables/sandsole_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -2205,7 +2206,7 @@ dev.off()
 
 ### Supplement Maps ----
 # Eight panel logbooks and surveys
-pdf("../final_figs/manuscript2_fig_tables/sandsole_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/sandsole_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
@@ -2320,14 +2321,14 @@ cpue_map(nineties_logbooks_stry, thousands_logbooks_stry, "PurpOr", "Logbook Sta
 cpue_map(thousands_logbooks_stry, thousands_logbooks_stry, "PurpOr", "Logbook Starry Flounder 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_logbooks_stry, thousands_logbooks_stry, "PurpOr", "Logbook Starry Flounder 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/starry_fourpanel_logs.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-logs_eighties_depth_stry <- depth_contours(subset_starry_logbook, 1989, "1980s")
-logs_nineties_depth_stry <- depth_contours(subset_starry_logbook, 1999, "1990s")
-logs_thousands_depth_stry <- depth_contours(subset_starry_logbook, 2009, "2000s")
-logs_tens_depth_stry <- depth_contours(subset_starry_logbook, 2017, "2010s")
+logs_eighties_depth_stry <- depth_contours(subset_starry_logbook, 1981:1989, "1980s")
+logs_nineties_depth_stry <- depth_contours(subset_starry_logbook, 1990:2001, "1990s")
+logs_thousands_depth_stry <- depth_contours(subset_starry_logbook, 2002:2009, "2000s")
+logs_tens_depth_stry <- depth_contours(subset_starry_logbook, 2010:2017, "2010s")
 
 windows()
 grid.arrange(logs_eighties_depth_stry,
@@ -2349,8 +2350,8 @@ grid.arrange(logs_eighties_depth_stry,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_depth.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/starry_depth.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Catch over time
@@ -2377,8 +2378,8 @@ ggplot(data = catch_sanddab,
   labs(x = "Year",
        y = "Total Catch (1000s of lbs)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_catch.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/starry_catch.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -2403,8 +2404,8 @@ ggplot(data = logbook_starry_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "Year",
        y = "CPUE (kg/hr)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_change.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/starry_change.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Survey ----
@@ -2465,14 +2466,14 @@ cpue_map(nineties_surveys_stry, thousands_surveys_stry, "PurpOr", "Survey Starry
 cpue_map(thousands_surveys_stry, thousands_surveys_stry, "PurpOr", "Survey Starry Flounder 2000s", bathy_dat, bathy_mat)
 cpue_map(tens_surveys_stry, thousands_surveys_stry, "PurpOr", "Survey Starry Flounder 2010s", bathy_dat, bathy_mat)
 dev.copy(tiff, "../results/visualization/starry_fourpanel_survey.tiff",
-         width = 15, height = 9, units = "in", res = 200)
+         width = 15, height = 9, units = "in", res = 300)
 dev.off()
 
 ## Depth distribution by year
-survey_eighties_depth_stry <- depth_contours(subset_starry_survey, 1989, "1980s")
-survey_nineties_depth_stry <- depth_contours(subset_starry_survey, 1999, "1990s")
-survey_thousands_depth_stry <- depth_contours(subset_starry_survey, 2009, "2000s")
-survey_tens_depth_stry <- depth_contours(subset_starry_survey, 2018, "2010s")
+survey_eighties_depth_stry <- depth_contours(subset_starry_survey, 1980:1989, "1980s")
+survey_nineties_depth_stry <- depth_contours(subset_starry_survey, 1990:2001, "1990s")
+survey_thousands_depth_stry <- depth_contours(subset_starry_survey, 2002:2009, "2000s")
+survey_tens_depth_stry <- depth_contours(subset_starry_survey, 2010:2018, "2010s")
 
 windows()
 grid.arrange(survey_eighties_depth_stry,
@@ -2494,8 +2495,8 @@ grid.arrange(survey_eighties_depth_stry,
                                        cex = 0.8,
                                        fontface = "bold",
                                        vjust = 1)))
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_depth_survey.tiff",
-         width = 4, height = 4, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/starry_depth_survey.tiff",
+         width = 4, height = 4, units = "in", res = 300)
 dev.off()
 
 ## Average CPUE over time
@@ -2520,13 +2521,13 @@ ggplot(data = survey_starry_cpue, aes(x = year, y = cpue_mean)) +
   labs(x = "Year",
        y = "CPUE (kg/ha)",
        title = "")
-dev.copy(tiff, "../final_figs/manuscript2_fig_tables/starry_change_survey.tiff",
-         width = 4, height = 2, units = "in", res = 200)
+dev.copy(tiff, "../final_figs/fish_res_fig_tables/starry_change_survey.tiff",
+         width = 4, height = 2, units = "in", res = 300)
 dev.off()
 
 ### Manuscript Maps ----
 # Four panel maps
-pdf("../final_figs/manuscript2_fig_tables/starry_maps.pdf",
+pdf("../final_figs/fish_res_fig_tables/starry_maps.pdf",
     width = 7.5,
     height = 18)
 par(mfrow = c(2, 2),
@@ -2569,7 +2570,7 @@ dev.off()
 
 ### Supplement Maps ----
 # Eight panel logbooks and surveys
-pdf("../final_figs/manuscript2_fig_tables/starry_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/starry_supplement.pdf",
     width = 15,
     height = 17)
 par(mfrow = c(2, 4),
