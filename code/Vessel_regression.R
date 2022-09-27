@@ -1,8 +1,4 @@
-# library(dplyr)
-# library(tidyr)
-# library(reshape)
-# library(reshape2)
-# library(MASS)
+library(dplyr)
 library(here)
 
 load(here("data/ODFW_data", "vessel_data"))
@@ -36,54 +32,92 @@ subset_starry$lncpue <- log(subset_starry$CPUE + 1)
 subset_starry <- subset_starry[subset_starry$depth <= -5, ] # remove unreasonably shallow tows
 
 # Decade subset
-subset_starry_eighties <- subset_starry[subset_starry$year < 1990, ]
-subset_starry_nineties <- subset_starry[subset_starry$year > 1989 & subset_starry$year < 2002, ]
-subset_starry_thousands <- subset_starry[subset_starry$year > 2001 & subset_starry$year < 2010, ]
-subset_starry_teens <- subset_starry[subset_starry$year > 2009 & subset_starry$year < 2018, ]
+subset_starry_eighties <- filter(subset_starry,
+                                 !is.na(vessel_length),
+                                 !is.na(CPUE),
+                                 year <= 1989)
+subset_starry_nineties <- filter(subset_starry,
+                                 !is.na(vessel_length),
+                                 !is.na(CPUE),
+                                 year >= 1990 & year <= 2001)
+subset_starry_thousands <- filter(subset_starry,
+                                 !is.na(vessel_length),
+                                 !is.na(CPUE),
+                                 year >= 2002 & year <= 2009)
+subset_starry_teens <- filter(subset_starry,
+                                  !is.na(vessel_length),
+                                  !is.na(CPUE),
+                                  year >= 2010 & year <= 2018)
 
-subset_starry_eighties <- dplyr::filter(subset_starry_eighties, !is.na(vessel_length), !is.na(CPUE))
+par(mfrow = c(2, 2))
+hist(subset_starry$lncpue,
+     main = "log(CPUE + 1)")
+hist(log(subset_starry$CPUE + mean(subset_starry$CPUE) * 0.1),
+     main = "log(CPUE + 10% of mean CPUE)")
+hist(sqrt(subset_starry$CPUE),
+     main = "sqrt(CPUE)")
+hist((subset_starry$CPUE ^ (1 / 4)),
+     main = "4th rt(CPUE)")
 
 # Sensitivity analysis
 eighties_test <- nlsLM(log(x + CPUE) ~ vessel_length,
                        start = list(x = 1),
                        data = subset_starry_eighties) # not working for response variable
 
-eighties_constant <- bestNormalize(subset_starry$CPUE)
-hist(eighties_constant$x.t)
-hist(eighties_constant$x)
-hist(subset_starry$lncpue)
-hist((subset_starry$CPUE ^ (1 / 4)))
-hist(log(subset_starry$CPUE + 1))
-
 # Linear regression
-eighties_lm <- lm(formula = lncpue ~ vessel_length, data = subset_starry_eighties)
-nineties_lm <- lm(formula = lncpue ~ vessel_length, data = subset_starry_nineties)
-thousands_lm <- lm(formula = lncpue ~ vessel_length, data = subset_starry_thousands)
-teens_lm <- lm(formula = lncpue ~ vessel_length, data = subset_starry_teens)
+regression_sensitivity <- function(subset){
+  eighties_lm <- lm(formula = lncpue ~ vessel_length, data = subset)
+  eighties_lm_log <- lm(formula = log(CPUE + (mean(CPUE) * 0.1)) ~ vessel_length, data = subset)
+  eighties_lm_sqrt <- lm(formula = sqrt(CPUE) ~ vessel_length, data = subset)
+  eighties_lm_frth <- lm(formula = (CPUE)^(1/4) ~ vessel_length, data = subset)
+  lm_list <- list(eighties_lm, eighties_lm_log, eighties_lm_sqrt, eighties_lm_frth)
+  return(lm_list)
+  }
+
+lm_plots <- function(subset, title, list){
+  plot(x = subset$vessel_length,
+       y = subset$lncpue,
+       xlab = "Length",
+       ylab = "log(CPUE + 1)",
+       main = title)
+  abline(list[[1]], col = "red")
+  plot(x = subset$vessel_length,
+       y = log(subset$CPUE + (mean(subset$CPUE) * 0.1)),
+       xlab = "Length",
+       ylab = "log(CPUE + 10% mean)",
+       main = title)
+  abline(list[[2]], col = "red")
+  plot(x = subset$vessel_length,
+       y = sqrt(subset$CPUE),
+       xlab = "Length",
+       ylab = "sqrt(CPUE)",
+       main =  title)
+  abline(list[[3]], col = "red")
+  plot(x = subset$vessel_length,
+       y = subset$CPUE ^ (1 / 4),
+       xlab = "Length",
+       ylab = "fourth root CPUE",
+       main = title)
+  abline(list[[4]], col = "red")
+}
+
+eighties_list <- regression_sensitivity(subset_starry_eighties)
+nineties_list <- regression_sensitivity(subset_starry_nineties)
+thousands_list <- regression_sensitivity(subset_starry_thousands)
+teens_list <- regression_sensitivity(subset_starry_teens)
 
 windows()
 par(mfrow = c(2, 2))
-plot(x = subset_starry_eighties$vessel_length,
-     y = subset_starry_eighties$lncpue,
-     xlab = "Length",
-     ylab = "lnCPUE",
-     main = "1980s")
-abline(eighties_lm, col = "red")
-plot(x = subset_starry_nineties$vessel_length,
-     y = subset_starry_nineties$lncpue,
-     xlab = "Length",
-     ylab = "lnCPUE",
-     main = "1990s")
-abline(nineties_lm, col = "red")
-plot(x = subset_starry_thousands$vessel_length,
-     y = subset_starry_thousands$lncpue,
-     xlab = "Length",
-     ylab = "lnCPUE",
-     main = "2000s")
-abline(thousands_lm, col = "red")
-plot(x = subset_starry_teens$vessel_length,
-     y = subset_starry_teens$lncpue,
-     xlab = "Length",
-     ylab = "lnCPUE",
-     main = "2010s")
-abline(teens_lm, col = "red")
+lm_plots(subset_starry_eighties, "1980s", eighties_list)
+
+windows()
+par(mfrow = c(2, 2))
+lm_plots(subset_starry_nineties, "1990s", nineties_list)
+
+windows()
+par(mfrow = c(2, 2))
+lm_plots(subset_starry_thousands, "2000s", thousands_list)
+
+windows()
+par(mfrow = c(2, 2))
+lm_plots(subset_starry_teens, "2010s", teens_list)
