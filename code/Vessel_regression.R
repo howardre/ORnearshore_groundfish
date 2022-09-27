@@ -52,7 +52,7 @@ eighties_constant <- bestNormalize(subset_starry$CPUE)
 hist(eighties_constant$x.t)
 hist(eighties_constant$x)
 hist(subset_starry$lncpue)
-hist((subset_starry$CPUE^(1 / 4)))
+hist((subset_starry$CPUE ^ (1 / 4)))
 hist(log(subset_starry$CPUE + 1))
 
 # Linear regression
