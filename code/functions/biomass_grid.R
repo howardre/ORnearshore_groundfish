@@ -1,6 +1,6 @@
 ## Fill proportion of biomass in grid cells
 
-biomass_grid <- function(subset, year1, year2) {
+biomass_grid <- function(subset, year1, year2, index) {
   nstations = NA * (1:nrow(grid_lon))
 
   for (i in 1:length(nstations)) {
