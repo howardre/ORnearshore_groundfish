@@ -18,6 +18,10 @@ load("../data/ODFW_data/logbooks_corrected")
 load("../data/ODFW_data/fish_tickets_final")
 load('../data/NMFS_data/trawl_data')
 load('../data/NMFS_data/OR_fish')
+load('../data/ODFW_data/eighties_logbooks')
+load('../data/ODFW_data/nineties_logbooks')
+load('../data/ODFW_data/thousands_logbooks')
+load('../data/ODFW_data/teens_logbooks')
 survey_data <- trawl_data
 remove(trawl_data)
 
@@ -56,6 +60,12 @@ logbooks_final$pres <- 1 * (logbooks_final$species_weight > 0)
 logbooks_final$month_day <- as.numeric(format(logbooks_final$TOWDATE, '%m%d'))
 logbooks_final <- logbooks_final[logbooks_final$month_day >= 517 &
                                  logbooks_final$month_day <= 929, ]
+
+# Create index matrices from average tow counts
+eighties_index <- replace(eighties_logbook, eighties_logbook < 0.1 * mean(eighties_logbook, na.rm = T), NA) != TRUE
+nineties_index <- replace(nineties_logbook, nineties_logbook < 0.1 * mean(nineties_logbook, na.rm = T), NA) != TRUE
+thousands_index <- replace(thousands_logbook, thousands_logbook < 0.1 * mean(thousands_logbook, na.rm = T), NA) != TRUE
+teens_index <- replace(teens_logbook, teens_logbook < 0.1 * mean(teens_logbook, na.rm = T), NA) != TRUE
 
 # Survey: fill any NAs with 0s, rename columns to match logbooks, filter out columns
 OR_fish$lncpue[is.na(OR_fish$lncpue)] <- 0
