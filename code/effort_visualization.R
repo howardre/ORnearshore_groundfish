@@ -100,6 +100,12 @@ nineties_logbook <- grid_data(20, 15, 1989, 2002, trawl_counts)
 thousands_logbook <- grid_data(20, 15, 2001, 2010, trawl_counts)
 teens_logbook <- grid_data(20, 15, 2009, 2018, trawl_counts)
 
+save(eighties_logbook, file = "../data/ODFW_data/eighties_logbook")
+save(nineties_logbook, file = "../data/ODFW_data/nineties_logbook")
+save(thousands_logbook, file = "../data/ODFW_data/thousands_logbook")
+save(teens_logbook, file = "../data/ODFW_data/teens_logbook")
+
+
 ### Map the grids ----
 windows(width = 15, height = 9)
 par(mfrow = c(1, 4),
