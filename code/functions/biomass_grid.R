@@ -19,8 +19,10 @@ biomass_grid <- function(subset, year1, year2, index) {
            pch = 16)
     polygon(grid_lon[i,], grid_lat[i,])
   }
-  matrix(nstations,
+  nstations_matrix <- matrix(nstations,
          ncol = length(zlat),
          nrow = length(zlon),
          byrow = F)
+  nstations_filtered <- replace(array(dim = dim(nstations_matrix)), index, nstations_matrix[index])
+  return(nstations_filtered)
 }
