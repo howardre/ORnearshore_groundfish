@@ -11,19 +11,19 @@ library(maps)
 library(mapdata)
 library(sgeostat)
 library(fields)
+library(here)
 
 # Data
-setwd("C:/Users/howar/Documents/Oregon State/ORnearshore_groundfish/code/")
-load("../data/ODFW_data/logbooks_corrected")
-load("../data/ODFW_data/fish_tickets_final")
-load('../data/NMFS_data/trawl_data')
-load('../data/NMFS_data/OR_fish')
-load('../data/ODFW_data/eighties_logbooks')
-load('../data/ODFW_data/nineties_logbooks')
-load('../data/ODFW_data/thousands_logbooks')
-load('../data/ODFW_data/teens_logbooks')
+load(here('data/ODFW_data', 'logbooks_corrected'))
+load(here ('data/ODFW_data', 'fish_tickets_final'))
+load(here('data/NMFS_data', 'trawl_data'))
+load(here('data/NMFS_data', 'OR_fish'))
+load(here('data/ODFW_data', 'eighties_logbook'))
+load(here('data/ODFW_data', 'nineties_logbook'))
+load(here('data/ODFW_data', 'thousands_logbook'))
+load(here('data/ODFW_data', 'teens_logbook'))
 survey_data <- trawl_data
-remove(trawl_data)
+rm(trawl_data)
 
 # Functions
 # local index of collocation function (just gives singular value)
@@ -63,9 +63,13 @@ logbooks_final <- logbooks_final[logbooks_final$month_day >= 517 &
 
 # Create index matrices from average tow counts
 eighties_index <- replace(eighties_logbook, eighties_logbook < 0.1 * mean(eighties_logbook, na.rm = T), NA) != TRUE
+eighties_index[is.na(eighties_index)] <- FALSE
 nineties_index <- replace(nineties_logbook, nineties_logbook < 0.1 * mean(nineties_logbook, na.rm = T), NA) != TRUE
+nineties_index[is.na(nineties_index)] <- FALSE
 thousands_index <- replace(thousands_logbook, thousands_logbook < 0.1 * mean(thousands_logbook, na.rm = T), NA) != TRUE
+thousands_index[is.na(thousands_index)] <- FALSE
 teens_index <- replace(teens_logbook, teens_logbook < 0.1 * mean(teens_logbook, na.rm = T), NA) != TRUE
+teens_index[is.na(teens_index)] <- FALSE
 
 # Survey: fill any NAs with 0s, rename columns to match logbooks, filter out columns
 OR_fish$lncpue[is.na(OR_fish$lncpue)] <- 0
@@ -124,10 +128,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_petrale, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1981, 1989)
-nineties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1990, 2001)
-thousands_logbooks_ptrl <- biomass_grid(logbook_petrale, 2002, 2009)
-tens_logbooks_ptrl <- biomass_grid(logbook_petrale, 2010, 2017)
+eighties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1981, 1989, eighties_index)
+nineties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1990, 2001, nineties_index)
+thousands_logbooks_ptrl <- biomass_grid(logbook_petrale, 2002, 2009, thousands_index)
+tens_logbooks_ptrl <- biomass_grid(logbook_petrale, 2010, 2017, teens_index)
 
 ### Survey
 dev.new(width = 4, height = 10)
