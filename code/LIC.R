@@ -246,10 +246,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_dover, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_dovr <- biomass_grid(logbook_dover, 1981, 1989)
-nineties_logbooks_dovr <- biomass_grid(logbook_dover, 1990, 2001)
-thousands_logbooks_dovr <- biomass_grid(logbook_dover, 2002, 2009)
-tens_logbooks_dovr <- biomass_grid(logbook_dover, 2010, 2017)
+eighties_logbooks_dovr <- biomass_grid(logbook_dover, 1981, 1989, eighties_index)
+nineties_logbooks_dovr <- biomass_grid(logbook_dover, 1990, 2001, nineties_index)
+thousands_logbooks_dovr <- biomass_grid(logbook_dover, 2002, 2009, thousands_index)
+tens_logbooks_dovr <- biomass_grid(logbook_dover, 2010, 2017, teens_index)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -365,10 +365,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_english, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_egls <- biomass_grid(logbook_english, 1981, 1989)
-nineties_logbooks_egls <- biomass_grid(logbook_english, 1990, 2001)
-thousands_logbooks_egls <- biomass_grid(logbook_english, 2002, 2009)
-tens_logbooks_egls <- biomass_grid(logbook_english, 2010, 2017)
+eighties_logbooks_egls <- biomass_grid(logbook_english, 1981, 1989, eighties_index)
+nineties_logbooks_egls <- biomass_grid(logbook_english, 1990, 2001, nineties_index)
+thousands_logbooks_egls <- biomass_grid(logbook_english, 2002, 2009, thousands_index)
+tens_logbooks_egls <- biomass_grid(logbook_english, 2010, 2017, teens_index)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -484,10 +484,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sanddab, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1981, 1989)
-nineties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1990, 2001)
-thousands_logbooks_sdab <- biomass_grid(logbook_sanddab, 2002, 2009)
-tens_logbooks_sdab <- biomass_grid(logbook_sanddab, 2010, 2017)
+eighties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1981, 1989, eighties_index)
+nineties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1990, 2001, nineties_index)
+thousands_logbooks_sdab <- biomass_grid(logbook_sanddab, 2002, 2009, thousands_index)
+tens_logbooks_sdab <- biomass_grid(logbook_sanddab, 2010, 2017, teens_index)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -603,10 +603,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sandsole, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1981, 1989)
-nineties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1990, 2001)
-thousands_logbooks_ssol <- biomass_grid(logbook_sandsole, 2002, 2009)
-tens_logbooks_ssol <- biomass_grid(logbook_sandsole, 2010, 2017)
+eighties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1981, 1989, eighties_index)
+nineties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1990, 2001, nineties_index)
+thousands_logbooks_ssol <- biomass_grid(logbook_sandsole, 2002, 2009, thousands_index)
+tens_logbooks_ssol <- biomass_grid(logbook_sandsole, 2010, 2017, teens_index)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -722,10 +722,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_starry, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_stry <- biomass_grid(logbook_starry, 1981, 1989)
-nineties_logbooks_stry <- biomass_grid(logbook_starry, 1990, 2001)
-thousands_logbooks_stry <- biomass_grid(logbook_starry, 2002, 2009)
-tens_logbooks_stry <- biomass_grid(logbook_starry, 2010, 2017)
+eighties_logbooks_stry <- biomass_grid(logbook_starry, 1981, 1989, eighties_index)
+nineties_logbooks_stry <- biomass_grid(logbook_starry, 1990, 2001, nineties_index)
+thousands_logbooks_stry <- biomass_grid(logbook_starry, 2002, 2009, thousands_index)
+tens_logbooks_stry <- biomass_grid(logbook_starry, 2010, 2017, teens_index)
 
 ### Survey
 dev.new(width = 4, height = 10)
