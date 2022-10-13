@@ -62,14 +62,15 @@ logbooks_final <- logbooks_final[logbooks_final$month_day >= 517 &
                                  logbooks_final$month_day <= 929, ]
 
 # Create index matrices from average tow counts
-eighties_index <- replace(eighties_logbook, eighties_logbook < 0.1 * mean(eighties_logbook, na.rm = T), NA) != TRUE
-eighties_index[is.na(eighties_index)] <- FALSE
-nineties_index <- replace(nineties_logbook, nineties_logbook < 0.1 * mean(nineties_logbook, na.rm = T), NA) != TRUE
-nineties_index[is.na(nineties_index)] <- FALSE
-thousands_index <- replace(thousands_logbook, thousands_logbook < 0.1 * mean(thousands_logbook, na.rm = T), NA) != TRUE
-thousands_index[is.na(thousands_index)] <- FALSE
-teens_index <- replace(teens_logbook, teens_logbook < 0.1 * mean(teens_logbook, na.rm = T), NA) != TRUE
-teens_index[is.na(teens_index)] <- FALSE
+# Use if reducing to only high effort cells
+# eighties_index <- replace(eighties_logbook, eighties_logbook < 0.1 * mean(eighties_logbook, na.rm = T), NA) != TRUE
+# eighties_index[is.na(eighties_index)] <- FALSE
+# nineties_index <- replace(nineties_logbook, nineties_logbook < 0.1 * mean(nineties_logbook, na.rm = T), NA) != TRUE
+# nineties_index[is.na(nineties_index)] <- FALSE
+# thousands_index <- replace(thousands_logbook, thousands_logbook < 0.1 * mean(thousands_logbook, na.rm = T), NA) != TRUE
+# thousands_index[is.na(thousands_index)] <- FALSE
+# teens_index <- replace(teens_logbook, teens_logbook < 0.1 * mean(teens_logbook, na.rm = T), NA) != TRUE
+# teens_index[is.na(teens_index)] <- FALSE
 
 # Survey: fill any NAs with 0s, rename columns to match logbooks, filter out columns
 OR_fish$lncpue[is.na(OR_fish$lncpue)] <- 0
@@ -128,10 +129,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_petrale, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1981, 1989, eighties_index)
-nineties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1990, 2001, nineties_index)
-thousands_logbooks_ptrl <- biomass_grid(logbook_petrale, 2002, 2009, thousands_index)
-tens_logbooks_ptrl <- biomass_grid(logbook_petrale, 2010, 2017, teens_index)
+eighties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1981, 1989)
+nineties_logbooks_ptrl <- biomass_grid(logbook_petrale, 1990, 2001)
+thousands_logbooks_ptrl <- biomass_grid(logbook_petrale, 2002, 2009)
+tens_logbooks_ptrl <- biomass_grid(logbook_petrale, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -172,8 +173,19 @@ max(nineties_petrale, na.rm = T)
 max(thousands_petrale, na.rm = T) # max
 max(tens_petrale, na.rm = T)
 
+# Mean and SD
+mean(eighties_petrale, na.rm = T)
+mean(nineties_petrale, na.rm = T)
+mean(thousands_petrale, na.rm = T)
+mean(tens_petrale, na.rm = T)
+
+sd(eighties_petrale, na.rm = T)
+sd(nineties_petrale, na.rm = T)
+sd(thousands_petrale, na.rm = T)
+sd(tens_petrale, na.rm = T)
+
 # Create map
-pdf("../final_figs/manuscript2_fig_tables/petrale_overlap.pdf",
+pdf("../final_figs/fish_res_fig_tables/petrale_overlap.pdf",
     width = 7.5,
     height = 9)
 par(mfrow = c(1, 2),
@@ -197,7 +209,7 @@ lic_map(tens_petrale, thousands_petrale, "Petrale Sole 2010s",
 dev.off()
 
 # Supplement figure
-pdf("../final_figs/manuscript2_fig_tables/petrale_overlap_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/petrale_overlap_supplement.pdf",
     width = 15,
     height = 8.5)
 par(mfrow = c(1, 4),
@@ -246,10 +258,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_dover, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_dovr <- biomass_grid(logbook_dover, 1981, 1989, eighties_index)
-nineties_logbooks_dovr <- biomass_grid(logbook_dover, 1990, 2001, nineties_index)
-thousands_logbooks_dovr <- biomass_grid(logbook_dover, 2002, 2009, thousands_index)
-tens_logbooks_dovr <- biomass_grid(logbook_dover, 2010, 2017, teens_index)
+eighties_logbooks_dovr <- biomass_grid(logbook_dover, 1981, 1989)
+nineties_logbooks_dovr <- biomass_grid(logbook_dover, 1990, 2001)
+thousands_logbooks_dovr <- biomass_grid(logbook_dover, 2002, 2009)
+tens_logbooks_dovr <- biomass_grid(logbook_dover, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -290,9 +302,20 @@ max(nineties_dover, na.rm = T)
 max(thousands_dover, na.rm = T)
 max(tens_dover, na.rm = T)
 
+# Mean and SD
+mean(eighties_dover, na.rm = T)
+mean(nineties_dover, na.rm = T)
+mean(thousands_dover, na.rm = T)
+mean(tens_dover, na.rm = T)
+
+sd(eighties_dover, na.rm = T)
+sd(nineties_dover, na.rm = T)
+sd(thousands_dover, na.rm = T)
+sd(tens_dover, na.rm = T)
+
 # Create map
 # Manuscript figure
-pdf("../final_figs/manuscript2_fig_tables/dover_overlap.pdf",
+pdf("../final_figs/fish_res_fig_tables/dover_overlap.pdf",
     width = 7.5,
     height = 9)
 par(mfrow = c(1, 2),
@@ -316,7 +339,7 @@ lic_map(tens_dover, eighties_dover, "Dover Sole 2010s",
 dev.off()
 
 # Supplement figure
-pdf("../final_figs/manuscript2_fig_tables/dover_overlap_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/dover_overlap_supplement.pdf",
     width = 15,
     height = 8.5)
 par(mfrow = c(1, 4),
@@ -365,10 +388,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_english, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_egls <- biomass_grid(logbook_english, 1981, 1989, eighties_index)
-nineties_logbooks_egls <- biomass_grid(logbook_english, 1990, 2001, nineties_index)
-thousands_logbooks_egls <- biomass_grid(logbook_english, 2002, 2009, thousands_index)
-tens_logbooks_egls <- biomass_grid(logbook_english, 2010, 2017, teens_index)
+eighties_logbooks_egls <- biomass_grid(logbook_english, 1981, 1989)
+nineties_logbooks_egls <- biomass_grid(logbook_english, 1990, 2001)
+thousands_logbooks_egls <- biomass_grid(logbook_english, 2002, 2009)
+tens_logbooks_egls <- biomass_grid(logbook_english, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -409,9 +432,20 @@ max(nineties_english, na.rm = T)
 max(thousands_english, na.rm = T)
 max(tens_english, na.rm = T)
 
+# Mean and SD
+mean(eighties_english, na.rm = T)
+mean(nineties_english, na.rm = T)
+mean(thousands_english, na.rm = T)
+mean(tens_english, na.rm = T)
+
+sd(eighties_english, na.rm = T)
+sd(nineties_english, na.rm = T)
+sd(thousands_english, na.rm = T)
+sd(tens_english, na.rm = T)
+
 # Create map
 # Manuscript figure
-pdf("../final_figs/manuscript2_fig_tables/english_overlap.pdf",
+pdf("../final_figs/fish_res_fig_tables/english_overlap.pdf",
     width = 7.5,
     height = 9)
 par(mfrow = c(1, 2),
@@ -435,7 +469,7 @@ lic_map(tens_english, eighties_english, "English Sole 2010s",
 dev.off()
 
 # Supplement figure
-pdf("../final_figs/manuscript2_fig_tables/english_overlap_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/english_overlap_supplement.pdf",
     width = 15,
     height = 8.5)
 par(mfrow = c(1, 4),
@@ -484,10 +518,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sanddab, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1981, 1989, eighties_index)
-nineties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1990, 2001, nineties_index)
-thousands_logbooks_sdab <- biomass_grid(logbook_sanddab, 2002, 2009, thousands_index)
-tens_logbooks_sdab <- biomass_grid(logbook_sanddab, 2010, 2017, teens_index)
+eighties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1981, 1989)
+nineties_logbooks_sdab <- biomass_grid(logbook_sanddab, 1990, 2001)
+thousands_logbooks_sdab <- biomass_grid(logbook_sanddab, 2002, 2009)
+tens_logbooks_sdab <- biomass_grid(logbook_sanddab, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -528,9 +562,20 @@ max(nineties_sanddab, na.rm = T)
 max(thousands_sanddab, na.rm = T)
 max(tens_sanddab, na.rm = T)
 
+# Mean and SD
+mean(eighties_sanddab, na.rm = T)
+mean(nineties_sanddab, na.rm = T)
+mean(thousands_sanddab, na.rm = T)
+mean(tens_sanddab, na.rm = T)
+
+sd(eighties_sanddab, na.rm = T)
+sd(nineties_sanddab, na.rm = T)
+sd(thousands_sanddab, na.rm = T)
+sd(tens_sanddab, na.rm = T)
+
 # Create map
 # Manuscript figure
-pdf("../final_figs/manuscript2_fig_tables/sanddab_overlap.pdf",
+pdf("../final_figs/fish_res_fig_tables/sanddab_overlap.pdf",
     width = 7.5,
     height = 9)
 par(mfrow = c(1, 2),
@@ -554,7 +599,7 @@ lic_map(tens_sanddab, eighties_sanddab, "Pacific Sanddab 2010s",
 dev.off()
 
 # Supplement figure
-pdf("../final_figs/manuscript2_fig_tables/sanddab_overlap_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/sanddab_overlap_supplement.pdf",
     width = 15,
     height = 8.5)
 par(mfrow = c(1, 4),
@@ -603,10 +648,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_sandsole, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1981, 1989, eighties_index)
-nineties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1990, 2001, nineties_index)
-thousands_logbooks_ssol <- biomass_grid(logbook_sandsole, 2002, 2009, thousands_index)
-tens_logbooks_ssol <- biomass_grid(logbook_sandsole, 2010, 2017, teens_index)
+eighties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1981, 1989)
+nineties_logbooks_ssol <- biomass_grid(logbook_sandsole, 1990, 2001)
+thousands_logbooks_ssol <- biomass_grid(logbook_sandsole, 2002, 2009)
+tens_logbooks_ssol <- biomass_grid(logbook_sandsole, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -647,9 +692,20 @@ max(nineties_sandsole, na.rm = T)
 max(thousands_sandsole, na.rm = T)
 max(tens_sandsole, na.rm = T)
 
+# Mean and SD
+mean(eighties_sandsole, na.rm = T)
+mean(nineties_sandsole, na.rm = T)
+mean(thousands_sandsole, na.rm = T)
+mean(tens_sandsole, na.rm = T)
+
+sd(eighties_sandsole, na.rm = T)
+sd(nineties_sandsole, na.rm = T)
+sd(thousands_sandsole, na.rm = T)
+sd(tens_sandsole, na.rm = T)
+
 # Create map
 # Manuscript figure
-pdf("../final_figs/manuscript2_fig_tables/sandsole_overlap.pdf",
+pdf("../final_figs/fish_res_fig_tables/sandsole_overlap.pdf",
     width = 7.5,
     height = 9)
 par(mfrow = c(1, 2),
@@ -673,7 +729,7 @@ lic_map(tens_sandsole, eighties_sandsole, "Sand Sole 2010s",
 dev.off()
 
 # Supplement figure
-pdf("../final_figs/manuscript2_fig_tables/sandsole_overlap_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/sandsole_overlap_supplement.pdf",
     width = 15,
     height = 8.5)
 par(mfrow = c(1, 4),
@@ -722,10 +778,10 @@ dev.new(width = 4, height = 10)
 biomass_fillpts(logbook_starry, 2010, 2017)
 
 # Fill decade grids with data
-eighties_logbooks_stry <- biomass_grid(logbook_starry, 1981, 1989, eighties_index)
-nineties_logbooks_stry <- biomass_grid(logbook_starry, 1990, 2001, nineties_index)
-thousands_logbooks_stry <- biomass_grid(logbook_starry, 2002, 2009, thousands_index)
-tens_logbooks_stry <- biomass_grid(logbook_starry, 2010, 2017, teens_index)
+eighties_logbooks_stry <- biomass_grid(logbook_starry, 1981, 1989)
+nineties_logbooks_stry <- biomass_grid(logbook_starry, 1990, 2001)
+thousands_logbooks_stry <- biomass_grid(logbook_starry, 2002, 2009)
+tens_logbooks_stry <- biomass_grid(logbook_starry, 2010, 2017)
 
 ### Survey
 dev.new(width = 4, height = 10)
@@ -766,8 +822,19 @@ max(nineties_starry, na.rm = T)
 max(thousands_starry, na.rm = T)
 max(tens_starry, na.rm = T)
 
+# Mean and SD
+mean(eighties_starry, na.rm = T)
+mean(nineties_starry, na.rm = T)
+mean(thousands_starry, na.rm = T)
+mean(tens_starry, na.rm = T)
+
+sd(eighties_starry, na.rm = T)
+sd(nineties_starry, na.rm = T)
+sd(thousands_starry, na.rm = T)
+sd(tens_starry, na.rm = T)
+
 # Create map
-pdf("../final_figs/manuscript2_fig_tables/starry_overlap.pdf",
+pdf("../final_figs/fish_res_fig_tables/starry_overlap.pdf",
     width = 7.5,
     height = 9)
 par(mfrow = c(1, 2),
@@ -791,7 +858,7 @@ lic_map(tens_starry, eighties_starry, "Starry Flounder 2010s",
 dev.off()
 
 # Supplement figure
-pdf("../final_figs/manuscript2_fig_tables/starry_overlap_supplement.pdf",
+pdf("../final_figs/fish_res_fig_tables/starry_overlap_supplement.pdf",
     width = 15,
     height = 8.5)
 par(mfrow = c(1, 4),
