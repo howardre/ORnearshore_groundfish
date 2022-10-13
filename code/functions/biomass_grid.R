@@ -23,6 +23,6 @@ biomass_grid <- function(subset, year1, year2, index) {
          ncol = length(zlat),
          nrow = length(zlon),
          byrow = F)
-  nstations_filtered <- replace(array(dim = dim(nstations_matrix)), index, nstations_matrix[index])
-  return(nstations_filtered)
+  # nstations_filtered <- replace(array(dim = dim(nstations_matrix)), index, nstations_matrix[index])
+  return(nstations_matrix)
 }
