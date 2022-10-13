@@ -33,15 +33,15 @@ loc_collocfn <- function(prey, pred) {
   sum(p_prey * p_pred, na.rm = T) / (sqrt(sum(p_prey ^ 2, na.rm = T) * sum(p_pred ^
                                                                              2, na.rm = T)))
 }
-source("functions/biomass_fillpts.R")
-source("functions/biomass_grid.R")
-source("functions/lic_map.R")
-source("functions/lic_sup.R")
-source("functions/spatial_lic.R")
+source(here("code/functions", "biomass_fillpts.R"))
+source(here("code/functions", "biomass_grid.R"))
+source(here("code/functions", "lic_map.R"))
+source(here("code/functions", "lic_sup.R"))
+source(here("code/functions", "spatial_lic.R"))
 
 # For depth, import data and show contour on a map
 # .xyz option no longer available for download
-bathy_dat <- read.table("../data/etopo1.xyz", sep = '')
+bathy_dat <- read.table(here("data", "etopo1.xyz"), sep = '')
 names(bathy_dat) <- c('lon', 'lat', 'depth')
 bathy_dat$depth[bathy_dat$depth > 0] <- NA # Avoid points above water
 bathy_mat <- matrix(bathy_dat$depth,
