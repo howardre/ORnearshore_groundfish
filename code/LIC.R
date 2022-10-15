@@ -30,9 +30,17 @@ rm(trawl_data)
 loc_collocfn <- function(prey, pred) {
   p_prey <- prey / sum(prey, na.rm = T)
   p_pred <- pred / sum(pred, na.rm = T)
-  sum(p_prey * p_pred, na.rm = T) / (sqrt(sum(p_prey ^ 2, na.rm = T) * sum(p_pred ^
-                                                                             2, na.rm = T)))
+  sum(p_prey * p_pred, na.rm = T) / (sqrt(sum(p_prey ^ 2, na.rm = T) *
+                                            sum(p_pred ^ 2, na.rm = T)))
 }
+
+uncertainty_lic <- function(logbooks, survey, dates){
+  logs <- biomass_grid(logbooks, dates, dates)
+  survs <- biomass_grid(survey, dates, dates)
+  lic <- loc_collocfn(logs, survs)
+  return(lic)
+}
+
 source(here("code/functions", "biomass_fillpts.R"))
 source(here("code/functions", "biomass_grid.R"))
 source(here("code/functions", "lic_map.R"))
@@ -174,15 +182,29 @@ max(thousands_petrale, na.rm = T) # max
 max(tens_petrale, na.rm = T)
 
 # Mean and SD
-mean(eighties_petrale, na.rm = T)
-mean(nineties_petrale, na.rm = T)
-mean(thousands_petrale, na.rm = T)
-mean(tens_petrale, na.rm = T)
+ptrl_80s <- lapply(c(1983, 1986, 1989), function(x){
+  lic <- uncertainty_lic(logbook_petrale, survey_petrale, x)
+  })
+mean(unlist(ptrl_80s))
+sd(unlist(ptrl_80s))
 
-sd(eighties_petrale, na.rm = T)
-sd(nineties_petrale, na.rm = T)
-sd(thousands_petrale, na.rm = T)
-sd(tens_petrale, na.rm = T)
+ptrl_90s <- lapply(c(1992, 1995, 1998, 2001), function(x){
+  lic <- uncertainty_lic(logbook_petrale, survey_petrale, x)
+})
+mean(unlist(ptrl_90s))
+sd(unlist(ptrl_90s))
+
+ptrl_00s <- lapply(2003:2009, function(x){
+  lic <- uncertainty_lic(logbook_petrale, survey_petrale, x)
+})
+mean(unlist(ptrl_00s))
+sd(unlist(ptrl_00s))
+
+ptrl_10s <- lapply(2010:2017, function(x){
+  lic <- uncertainty_lic(logbook_petrale, survey_petrale, x)
+})
+mean(unlist(ptrl_10s))
+sd(unlist(ptrl_10s))
 
 # Create map
 pdf("../final_figs/fish_res_fig_tables/petrale_overlap.pdf",
@@ -303,15 +325,29 @@ max(thousands_dover, na.rm = T)
 max(tens_dover, na.rm = T)
 
 # Mean and SD
-mean(eighties_dover, na.rm = T)
-mean(nineties_dover, na.rm = T)
-mean(thousands_dover, na.rm = T)
-mean(tens_dover, na.rm = T)
+dovr_80s <- lapply(c(1983, 1986, 1989), function(x){
+  lic <- uncertainty_lic(logbook_dover, survey_dover, x)
+})
+mean(unlist(dovr_80s))
+sd(unlist(dovr_80s))
 
-sd(eighties_dover, na.rm = T)
-sd(nineties_dover, na.rm = T)
-sd(thousands_dover, na.rm = T)
-sd(tens_dover, na.rm = T)
+dovr_90s <- lapply(c(1992, 1995, 1998, 2001), function(x){
+  lic <- uncertainty_lic(logbook_dover, survey_dover, x)
+})
+mean(unlist(dovr_90s))
+sd(unlist(dovr_90s))
+
+dovr_00s <- lapply(2003:2009, function(x){
+  lic <- uncertainty_lic(logbook_dover, survey_dover, x)
+})
+mean(unlist(dovr_00s))
+sd(unlist(dovr_00s))
+
+dovr_10s <- lapply(2010:2017, function(x){
+  lic <- uncertainty_lic(logbook_dover, survey_dover, x)
+})
+mean(unlist(dovr_10s))
+sd(unlist(dovr_10s))
 
 # Create map
 # Manuscript figure
@@ -433,15 +469,29 @@ max(thousands_english, na.rm = T)
 max(tens_english, na.rm = T)
 
 # Mean and SD
-mean(eighties_english, na.rm = T)
-mean(nineties_english, na.rm = T)
-mean(thousands_english, na.rm = T)
-mean(tens_english, na.rm = T)
+engl_80s <- lapply(c(1983, 1986, 1989), function(x){
+  lic <- uncertainty_lic(logbook_english, survey_english, x)
+})
+mean(unlist(engl_80s))
+sd(unlist(engl_80s))
 
-sd(eighties_english, na.rm = T)
-sd(nineties_english, na.rm = T)
-sd(thousands_english, na.rm = T)
-sd(tens_english, na.rm = T)
+engl_90s <- lapply(c(1992, 1995, 1998, 2001), function(x){
+  lic <- uncertainty_lic(logbook_english, survey_english, x)
+})
+mean(unlist(engl_90s))
+sd(unlist(engl_90s))
+
+engl_00s <- lapply(2003:2009, function(x){
+  lic <- uncertainty_lic(logbook_english, survey_english, x)
+})
+mean(unlist(engl_00s))
+sd(unlist(engl_00s))
+
+engl_10s <- lapply(2010:2017, function(x){
+  lic <- uncertainty_lic(logbook_english, survey_english, x)
+})
+mean(unlist(engl_10s))
+sd(unlist(engl_10s))
 
 # Create map
 # Manuscript figure
@@ -563,15 +613,29 @@ max(thousands_sanddab, na.rm = T)
 max(tens_sanddab, na.rm = T)
 
 # Mean and SD
-mean(eighties_sanddab, na.rm = T)
-mean(nineties_sanddab, na.rm = T)
-mean(thousands_sanddab, na.rm = T)
-mean(tens_sanddab, na.rm = T)
+sdab_80s <- lapply(c(1983, 1986, 1989), function(x){
+  lic <- uncertainty_lic(logbook_sanddab, survey_sanddab, x)
+})
+mean(unlist(sdab_80s))
+sd(unlist(sdab_80s))
 
-sd(eighties_sanddab, na.rm = T)
-sd(nineties_sanddab, na.rm = T)
-sd(thousands_sanddab, na.rm = T)
-sd(tens_sanddab, na.rm = T)
+sdab_90s <- lapply(c(1992, 1995, 1998, 2001), function(x){
+  lic <- uncertainty_lic(logbook_sanddab, survey_sanddab, x)
+})
+mean(unlist(sdab_90s))
+sd(unlist(sdab_90s))
+
+sdab_00s <- lapply(2003:2009, function(x){
+  lic <- uncertainty_lic(logbook_sanddab, survey_sanddab, x)
+})
+mean(unlist(sdab_00s))
+sd(unlist(sdab_00s))
+
+sdab_10s <- lapply(2010:2017, function(x){
+  lic <- uncertainty_lic(logbook_sanddab, survey_sanddab, x)
+})
+mean(unlist(sdab_10s))
+sd(unlist(sdab_10s))
 
 # Create map
 # Manuscript figure
@@ -693,15 +757,29 @@ max(thousands_sandsole, na.rm = T)
 max(tens_sandsole, na.rm = T)
 
 # Mean and SD
-mean(eighties_sandsole, na.rm = T)
-mean(nineties_sandsole, na.rm = T)
-mean(thousands_sandsole, na.rm = T)
-mean(tens_sandsole, na.rm = T)
+ssol_80s <- lapply(c(1983, 1986, 1989), function(x){
+  lic <- uncertainty_lic(logbook_sandsole, survey_sandsole, x)
+})
+mean(unlist(ssol_80s))
+sd(unlist(ssol_80s))
 
-sd(eighties_sandsole, na.rm = T)
-sd(nineties_sandsole, na.rm = T)
-sd(thousands_sandsole, na.rm = T)
-sd(tens_sandsole, na.rm = T)
+ssol_90s <- lapply(c(1992, 1995, 1998, 2001), function(x){
+  lic <- uncertainty_lic(logbook_sandsole, survey_sandsole, x)
+})
+mean(unlist(ssol_90s))
+sd(unlist(ssol_90s))
+
+ssol_00s <- lapply(2003:2009, function(x){
+  lic <- uncertainty_lic(logbook_sandsole, survey_sandsole, x)
+})
+mean(unlist(ssol_00s))
+sd(unlist(ssol_00s))
+
+ssol_10s <- lapply(2010:2017, function(x){
+  lic <- uncertainty_lic(logbook_sandsole, survey_sandsole, x)
+})
+mean(unlist(ssol_10s))
+sd(unlist(ssol_10s))
 
 # Create map
 # Manuscript figure
@@ -823,15 +901,29 @@ max(thousands_starry, na.rm = T)
 max(tens_starry, na.rm = T)
 
 # Mean and SD
-mean(eighties_starry, na.rm = T)
-mean(nineties_starry, na.rm = T)
-mean(thousands_starry, na.rm = T)
-mean(tens_starry, na.rm = T)
+stry_80s <- lapply(c(1983, 1986, 1989), function(x){
+  lic <- uncertainty_lic(logbook_starry, survey_starry, x)
+})
+mean(unlist(stry_80s))
+sd(unlist(stry_80s))
 
-sd(eighties_starry, na.rm = T)
-sd(nineties_starry, na.rm = T)
-sd(thousands_starry, na.rm = T)
-sd(tens_starry, na.rm = T)
+stry_90s <- lapply(c(1992, 1995, 1998, 2001), function(x){
+  lic <- uncertainty_lic(logbook_starry, survey_starry, x)
+})
+mean(unlist(stry_90s))
+sd(unlist(stry_90s))
+
+stry_00s <- lapply(2003:2009, function(x){
+  lic <- uncertainty_lic(logbook_starry, survey_starry, x)
+})
+mean(unlist(stry_00s))
+sd(unlist(stry_00s))
+
+stry_10s <- lapply(2010:2017, function(x){
+  lic <- uncertainty_lic(logbook_starry, survey_starry, x)
+})
+mean(unlist(stry_10s))
+sd(unlist(stry_10s))
 
 # Create map
 pdf("../final_figs/fish_res_fig_tables/starry_overlap.pdf",
