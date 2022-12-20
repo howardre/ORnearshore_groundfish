@@ -38,7 +38,8 @@ NMS was used to investigate changes in community composition over time
 - There are relevant [TGAM functions](code/functions/TGAM_function.R/) used in the above scripts
 
 ### Comparing fishery-independent and fishery-dependent data for analysis of the distributions of Oregon shelf groundfishes
-This section is a work-in-progress and uses the _confidential_ ODFW data. If access to the data is available, it can be converted to a useable format [here](code/Access_import.R/) and then [QC](code/Logbook-Ticket_QC.R/)'d.
+#### [Manuscript](https://doi.org/10.1016/j.fishres.2022.106553)
+This section uses the _confidential_ ODFW data. If access to the data is available, it can be converted to a useable format [here](code/Access_import.R/) and then [QC](code/Logbook-Ticket_QC.R/)'d.
 #### Visualization of Logbook Data
 - General [effort](code/effort_visualization.R/) of the fleet and for [specific species](code/Logbook_visualization.R/) can be seen
 - Data is gridded to ensure confidentiality
